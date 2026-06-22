@@ -1,0 +1,445 @@
+"""
+Finance Toolkit MCP Server
+"""
+
+import argparse
+import os
+import pathlib
+import subprocess
+import sys
+
+import yaml
+from dotenv import dotenv_values, load_dotenv
+from mcp.server.fastmcp import FastMCP
+
+from financetoolkit.mcp_server import setup_model
+from financetoolkit.mcp_server.inspection_controller import ControllerInspector
+from financetoolkit.mcp_server.provider_model import ToolkitProvider
+from financetoolkit.mcp_server.registry_controller import ToolRegistry
+from financetoolkit.mcp_server.tools_model import UtilityToolRegistry
+from financetoolkit.utilities.logger_model import get_logger, setup_logger
+
+# Attach the stderr handler immediately — before any module-level log calls
+# and before FastMCP is imported/initialised.  Mirrors the pattern used by
+# toolkit_controller.py and discovery_controller.py.
+setup_logger()
+
+
+def _load_dotenv_configuration() -> None:
+    """Load dotenv configuration only when an API key is not already present.
+
+    MCP clients can inject ``FINANCIAL_MODELING_PREP_API_KEY`` directly into
+    the server process environment (the ``env`` block in their config).  When
+    that key is present the server uses it immediately without reading any file.
+    Otherwise the server falls back to ``FINANCETOOLKIT_ENV_FILE`` (a path to a
+    ``.env`` file) and then to the global Finance Toolkit ``.env`` location.
+    """
+    if os.environ.get("FINANCIAL_MODELING_PREP_API_KEY"):
+        return
+
+    # Resolution order:
+    #   1. Local cwd .env (highest priority — wins over everything)
+    #   2. FINANCETOOLKIT_ENV_FILE (global path written by setup wizard)
+    #   3. Global config dir fallback (~/.config/financetoolkit/.env)
+    local_env = pathlib.Path.cwd() / ".env"
+    if local_env.exists():
+        load_dotenv(local_env, override=True)
+    env_file = os.environ.get("FINANCETOOLKIT_ENV_FILE")
+    if env_file and pathlib.Path(env_file).exists():
+        load_dotenv(env_file, override=False)
+    else:
+        load_dotenv(override=False)
+
+
+_load_dotenv_configuration()
+
+
+def _build_mcp_app() -> FastMCP:
+    """
+    Bootstrap the MCP application and return the configured FastMCP instance.
+
+    Reads the server configuration from config.yaml, instantiates the
+    ToolkitProvider, ControllerInspector, ToolRegistry, and UtilityToolRegistry,
+    registers all tools, and returns the ready-to-run FastMCP instance. The
+    FINANCIAL_MODELING_PREP_API_KEY environment variable (or .env file via
+    python-dotenv) is loaded before any component is initialized.
+
+    Returns:
+        FastMCP: A fully configured FastMCP instance with all toolkit and utility
+            tools registered and ready to serve requests.
+    """
+    _load_dotenv_configuration()
+    logger = get_logger()
+
+    configuration_path = pathlib.Path(__file__).parent / "config.yaml"
+
+    with open(configuration_path, encoding="utf-8") as _f:
+        configuration: dict = yaml.safe_load(_f)
+
+    _cache_db_env = os.environ.get("FINANCE_TOOLKIT_CACHE_DB", "")
+    _cache_ttl_env = os.environ.get("FINANCE_TOOLKIT_CACHE_TTL", "")
+    provider = ToolkitProvider(
+        api_key=os.environ.get("FINANCIAL_MODELING_PREP_API_KEY", ""),
+        cache_ttl=(
+            int(_cache_ttl_env)
+            if _cache_ttl_env.isdigit()
+            else configuration["cache"]["ttl_seconds"]
+        ),
+        database_location=_cache_db_env or str(setup_model.get_global_cache_db_path()),
+    )
+
+    mcp = FastMCP(
+        name="Finance Toolkit Analyst",
+        log_level="CRITICAL",
+    )
+
+    controller_inspector = ControllerInspector(
+        categories=configuration["categories"],
+        skip_params=configuration["skip_params"],
+        init_handled_params=configuration["init_handled_params"],
+    )
+
+    toolkit_registry = ToolRegistry(
+        mcp=mcp,
+        provider=provider,
+        inspector=controller_inspector,
+        module_class_map=configuration["module_class_map"],
+        skip_methods=configuration["skip_methods"],
+        direct_methods=configuration["direct_methods"],
+        tool_groups=configuration["tool_groups"],
+        blocked_periods=configuration.get("blocked_periods", {}),
+    )
+
+    utility_registry = UtilityToolRegistry(
+        mcp=mcp,
+        registry=toolkit_registry,
+        provider=provider,
+        search_stop_words=configuration["search_stop_words"],
+        category_descriptions=configuration["category_descriptions"],
+    )
+
+    toolkit_count = toolkit_registry.register_all_tools()
+    utility_count = utility_registry.register_all_tools()
+
+    logger.info(
+        f"Finance Toolkit MCP Server ready. Registered {toolkit_count} "
+        f"router tools and {utility_count} utility tools."
+    )
+
+    return mcp
+
+
+def main() -> None:
+    """
+    Start the Finance Toolkit MCP server.
+
+    Bootstraps the MCP application via _build_mcp_app() and starts the server
+    using the transport defined by the MCP_TRANSPORT environment variable.
+    Defaults to stdio transport when MCP_TRANSPORT is not set, which is the
+    correct setting for use with VS Code and other MCP clients.
+    """
+    mcp = _build_mcp_app()
+    transport = os.environ.get("MCP_TRANSPORT", "stdio")
+    get_logger().info(f"Starting MCP server on transport {transport}")
+    mcp.run(transport=transport)
+
+
+def inspector() -> None:
+    """
+    Launch the MCP Inspector UI for interactive testing of the server.
+
+    Invokes the MCP Inspector via npx, pointing it at this module so that all
+    registered tools can be explored and tested interactively in a browser.
+    Exits with the same return code as the Inspector process.
+    """
+    server_path = str(pathlib.Path(__file__).resolve())
+    sys.exit(
+        subprocess.call(  # noqa
+            ["npx", "@modelcontextprotocol/inspector", "python", server_path]  # noqa
+        )
+    )
+
+
+def setup() -> None:
+    """Entry point for ``financetoolkit-mcp-setup``.
+
+    When called **without** arguments the interactive setup wizard is launched.
+
+    When called **with** ``--client`` the configuration is written
+    non-interactively using a uvx-based server invocation so the entry works
+    without a pre-installed local package.
+
+    The setup contains the following optional arguments:
+
+    --client {claude-desktop,claude-code,vscode,cursor,gemini,windsurf}
+        Configure a single client without opening the interactive menu.
+    --include-skills
+        Also copy the SKILL.md analyst instructions to the appropriate
+        location for the chosen client.
+    --overwrite
+        Silently overwrite an existing configuration.  Without this flag the
+        command exits with a warning if the target already contains a
+        ``finance-toolkit`` entry.
+    """
+    parser = argparse.ArgumentParser(
+        prog="financetoolkit-mcp-setup",
+        description="Finance Toolkit MCP Setup Wizard",
+        add_help=True,
+    )
+    parser.add_argument(
+        "--client",
+        choices=[
+            "claude-desktop",
+            "claude-code",
+            "vscode",
+            "cursor",
+            "gemini",
+            "windsurf",
+        ],
+        metavar="CLIENT",
+        help=(
+            "Configure a specific client non-interactively. "
+            "Choices: claude-desktop, claude-code, vscode, cursor, gemini, windsurf."
+        ),
+    )
+    parser.add_argument(
+        "--include-skills",
+        action="store_true",
+        help="Also install the SKILL.md analyst instructions for the chosen client.",
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Overwrite existing configuration without prompting.",
+    )
+
+    args = parser.parse_args()
+
+    if args.client:
+        _setup_cli(args.client, args.include_skills, args.overwrite)
+    else:
+        _setup_interactive()
+
+
+def _setup_cli(client: str, include_skills: bool, overwrite: bool) -> None:
+    """Non-interactive setup: write uvx-based config for *client*."""
+    setup_model.print_banner()
+
+    api_key, key_source = setup_model.discover_api_key()
+    global_env = setup_model.get_global_env_path()
+
+    if api_key:
+        masked = (
+            f"{api_key[:4]}...{api_key[-4:]}" if len(api_key) > 8 else "****"  # noqa
+        )
+        setup_model.ok(
+            f"API key found  [dim]·[/]  [dim]{key_source}[/]  [dim]·[/]  [dim cyan]{masked}[/]"
+        )
+        if client != "claude-desktop" and (
+            not global_env.exists() or key_source != "global config"
+        ):
+            global_values = dotenv_values(global_env) if global_env.exists() else {}
+            if global_values.get("FINANCIAL_MODELING_PREP_API_KEY") != api_key:
+                setup_model.info(f"Syncing key to global config ({global_env})…")
+                if not setup_model.write_global_env_key(api_key):
+                    setup_model.warn(
+                        "Could not write the global config file — "
+                        "the API key will be embedded directly in the client config instead."
+                    )
+    else:
+        setup_model.warn(
+            "No API key found.  "
+            "Set FINANCIAL_MODELING_PREP_API_KEY in your environment or run without "
+            "--client to use the interactive wizard."
+        )
+
+    setup_model.console.print()
+    setup_model.write_client_config_uvx(
+        client, pathlib.Path.cwd(), overwrite, api_key=api_key
+    )
+
+    if include_skills:
+        setup_model.write_skill_for_client(client, pathlib.Path.cwd(), overwrite)
+
+    setup_model.console.print()
+
+
+def _setup_interactive() -> None:
+    """Launch the full interactive setup wizard."""
+    setup_model.print_banner()
+
+    # Discover an existing key from all known sources before prompting.
+    api_key, key_source = setup_model.discover_api_key()
+    global_env = setup_model.get_global_env_path()
+
+    if api_key:
+        masked_key = (
+            f"{api_key[:4]}...{api_key[-4:]}" if len(api_key) > 8 else "****"  # noqa
+        )
+        setup_model.ok(
+            f"API key found  [dim]·[/]  [dim]{key_source}[/]  [dim]·[/]  [dim cyan]{masked_key}[/]"
+        )
+    else:
+        setup_model.warn(
+            "No API key found.  Get one at [cyan]https://www.jeroenbouma.com/fmp[/]  [dim](15% discount)[/]"
+        )
+        setup_model.info("Press [bold]Enter[/] to skip and configure via .env later.")
+        setup_model.console.print()
+        api_key = setup_model.console.input(
+            "  [bold]API Key[/]  [dim cyan]›[/] "
+        ).strip()
+
+        if api_key and not setup_model.write_global_env_key(api_key):
+            setup_model.warn(
+                "Could not write the global config file — "
+                "the API key will be embedded directly in the client config instead."
+            )
+
+    setup_model.console.print()
+    setup_model.print_menu()
+    setup_model.console.print()
+    choice_str = setup_model.console.input("  [cyan]›[/] ").strip()
+
+    if not choice_str or "0" in choice_str:
+        setup_model.console.print()
+        setup_model.info("Setup cancelled.")
+        setup_model.console.print()
+        return
+
+    cwd = pathlib.Path.cwd()
+
+    # Option 7 is handled as a distinct removal flow.
+    if "7" in choice_str:
+        setup_model.remove_all_configs(cwd)
+        return
+
+    # Extract unique valid choices from the input string (e.g., '13' -> ['1', '3'])
+    valid_map = {
+        "1": ("Claude Desktop", setup_model.write_claude_config),
+        "2": ("Claude Code", setup_model.write_claude_code_config),
+        "3": ("VS Code", lambda k: setup_model.write_vscode_config(k, cwd)),
+        "4": ("Cursor", lambda k: setup_model.write_cursor_config(k, cwd)),
+        "5": ("Gemini", setup_model.write_gemini_config),
+        "6": ("Windsurf", setup_model.write_windsurf_config),
+    }
+
+    # Filter only valid numeric choices from input
+    to_process = [c for c in dict.fromkeys(choice_str) if c in valid_map]
+
+    if not to_process:
+        setup_model.console.print()
+        setup_model.err("No valid options selected.")
+        return
+
+    needs_global_env = any(c in to_process for c in ("2", "3", "4", "5", "6"))
+    if (
+        api_key
+        and needs_global_env
+        and (not global_env.exists() or key_source != "global config")
+    ):
+        global_values = dotenv_values(global_env) if global_env.exists() else {}
+        if global_values.get("FINANCIAL_MODELING_PREP_API_KEY") != api_key:
+            setup_model.info(f"Syncing key to global config ({global_env})…")
+            if not setup_model.write_global_env_key(api_key):
+                setup_model.warn(
+                    "Could not write the global config file — "
+                    "the API key will be embedded directly in the client config instead."
+                )
+
+    setup_model.console.print()
+    for char in to_process:
+        name, func = valid_map[char]
+        try:
+            func(api_key)
+        except Exception as e:
+            setup_model.err(f"Error configuring {name}: {e}")
+
+    # Offer SKILL.md installation for clients that support file-based skills.
+    # Claude Desktop has no equivalent concept, so it is offered separately as a
+    # cwd copy the user can move into place themselves.
+    skill_clients = {"3": "VS Code", "4": "Cursor"}
+    claude_code_selected = "2" in to_process
+    claude_desktop_selected = "1" in to_process
+    gemini_selected = "5" in to_process
+    windsurf_selected = "6" in to_process
+    if any(c in to_process for c in skill_clients):
+        client_names = " / ".join(
+            skill_clients[c] for c in to_process if c in skill_clients
+        )
+        setup_model.console.print()
+        if setup_model.Confirm.ask(
+            f"  Install the SKILL.md analyst instructions for {client_names}?",
+            default=True,
+        ):
+            success = setup_model.write_skill_file(cwd)
+            if not success:
+                setup_model.console.print()
+                setup_model.warn("Could not write to the standard skill location.")
+                if setup_model.Confirm.ask(
+                    "  Copy SKILL.md to current directory so you can move it yourself?",
+                    default=True,
+                ):
+                    setup_model.copy_skill_file_to_cwd(cwd)
+
+    if claude_code_selected:
+        setup_model.console.print()
+        if setup_model.Confirm.ask(
+            "  Install the SKILL.md analyst instructions for Claude Code (.claude/skills/)?",
+            default=True,
+        ):
+            success = setup_model.write_claude_skill_file(cwd)
+            if not success:
+                setup_model.console.print()
+                setup_model.warn("Could not write to .claude/skills/.")
+                if setup_model.Confirm.ask(
+                    "  Copy SKILL.md to current directory so you can move it yourself?",
+                    default=True,
+                ):
+                    setup_model.copy_skill_file_to_cwd(cwd)
+
+    for flag, label, client_key in [
+        (gemini_selected, "Gemini", "gemini"),
+        (windsurf_selected, "Windsurf", "windsurf"),
+    ]:
+        if flag:
+            setup_model.console.print()
+            if setup_model.Confirm.ask(
+                f"  Install the SKILL.md analyst instructions for {label}?",
+                default=True,
+            ):
+                success = setup_model.write_skill_for_client(
+                    client_key, cwd, overwrite=False
+                )
+                if not success:
+                    setup_model.console.print()
+                    if setup_model.Confirm.ask(
+                        "  Copy SKILL.md to current directory so you can move it yourself?",
+                        default=True,
+                    ):
+                        setup_model.copy_skill_file_to_cwd(cwd)
+
+    if (
+        claude_desktop_selected
+        and not any(c in to_process for c in skill_clients)
+        and not claude_code_selected
+    ):
+        setup_model.console.print()
+        setup_model.info("Claude Desktop does not support file-based skills natively.")
+        if setup_model.Confirm.ask(
+            "  Copy SKILL.md to current directory so you can move it yourself?",
+            default=True,
+        ):
+            setup_model.copy_skill_file_to_cwd(cwd)
+
+    # Final summary
+    setup_model.console.print()
+    setup_model.console.rule("[dim]Done[/]", style="dim")
+    setup_model.console.print()
+    setup_model.ok("[bold]All selected configurations updated![/]")
+    setup_model.info("Restart your client(s) to apply changes.")
+
+    setup_model.console.print()
+
+
+if __name__ == "__main__":
+    main()

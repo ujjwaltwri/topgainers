@@ -1,0 +1,454 @@
+17:39:21 │ INFO    │ ======================================================================
+17:39:21 │ INFO    │   TopGainers Exhaustive Pipeline — Starting
+17:39:21 │ INFO    │ ======================================================================
+17:39:21 │ INFO    │ Fetching FX rates...
+17:39:23 │ INFO    │ Loaded FX rates: {'USD': 1.0, 'INR': 0.01056189276278019, 'KRW': 0.0006505587953142822, 'JPY': 0.006181615870445967, 'CNY': 0.14784806966781616, 'HKD': 0.1275617629289627, 'GBP': 1.3249069452285767, 'EUR': 1.1460003852844238, 'CAD': 0.7062645554542542, 'AUD': 0.7010656595230103, 'BRL': 0.1940843164920807, 'SAR': 0.2663683295249939}
+17:39:23 │ INFO    │ Loading Equities from FinanceDatabase...
+17:39:37 │ INFO    │ Resolved 151096 tickers from groups: []
+17:39:37 │ INFO    │ Processing batch 1/6044 (25 tickers) ... [0 successful so far]
+17:39:42 │ ERROR   │ $000046.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:39:43 │ ERROR   │ $000040.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:39:44 │ ERROR   │ $000005.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:39:44 │ ERROR   │ 
+3 Failed downloads:
+17:39:44 │ ERROR   │ ['000046.SZ', '000040.SZ', '000005.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:40:13 │ INFO    │   … sleeping 2s (rate limit)
+17:40:15 │ INFO    │ Processing batch 2/6044 (25 tickers) ... [22 successful so far]
+17:40:19 │ ERROR   │ $000075.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:40:22 │ ERROR   │ $000060.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:40:22 │ ERROR   │ 
+2 Failed downloads:
+17:40:22 │ ERROR   │ ['000075.KS', '000060.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:40:54 │ INFO    │   … sleeping 2s (rate limit)
+17:40:56 │ INFO    │ Processing batch 3/6044 (25 tickers) ... [45 successful so far]
+17:40:59 │ ERROR   │ $000150.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:41:01 │ ERROR   │ 
+1 Failed download:
+17:41:01 │ ERROR   │ ['000150.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:41:34 │ INFO    │   … sleeping 2s (rate limit)
+17:41:36 │ INFO    │ Processing batch 4/6044 (25 tickers) ... [69 successful so far]
+17:41:38 │ ERROR   │ $000416.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:41:40 │ ERROR   │ $000413.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:41:40 │ ERROR   │ 
+2 Failed downloads:
+17:41:40 │ ERROR   │ ['000416.SZ', '000413.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:42:02 │ INFO    │   … sleeping 2s (rate limit)
+17:42:04 │ INFO    │ Processing batch 5/6044 (25 tickers) ... [92 successful so far]
+17:42:07 │ ERROR   │ $000502.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:42:08 │ ERROR   │ 
+1 Failed download:
+17:42:08 │ ERROR   │ ['000502.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:42:35 │ INFO    │   … sleeping 2s (rate limit)
+17:42:37 │ INFO    │ Processing batch 6/6044 (25 tickers) ... [116 successful so far]
+17:42:39 │ ERROR   │ $000547.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:42:41 │ ERROR   │ $000540.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:42:41 │ ERROR   │ 
+2 Failed downloads:
+17:42:41 │ ERROR   │ ['000547.KS', '000540.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:43:06 │ INFO    │   … sleeping 2s (rate limit)
+17:43:08 │ INFO    │ Processing batch 7/6044 (25 tickers) ... [139 successful so far]
+17:43:10 │ ERROR   │ $000585.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:43:10 │ ERROR   │ $000584.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:43:12 │ ERROR   │ $000587.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:43:12 │ ERROR   │ 
+3 Failed downloads:
+17:43:12 │ ERROR   │ ['000585.SZ', '000584.SZ', '000587.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:43:35 │ INFO    │   … sleeping 2s (rate limit)
+17:43:37 │ INFO    │ Processing batch 8/6044 (25 tickers) ... [161 successful so far]
+17:43:39 │ ERROR   │ $000622.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:43:39 │ ERROR   │ $000616.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:43:39 │ ERROR   │ $000606.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:43:41 │ ERROR   │ $000613.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:43:41 │ ERROR   │ $000627.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:43:42 │ ERROR   │ $000611.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:43:43 │ ERROR   │ 
+6 Failed downloads:
+17:43:43 │ ERROR   │ ['000622.SZ', '000616.SZ', '000606.SZ', '000613.SZ', '000627.SZ', '000611.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:44:04 │ INFO    │   … sleeping 2s (rate limit)
+17:44:06 │ INFO    │ Processing batch 9/6044 (25 tickers) ... [180 successful so far]
+17:44:09 │ ERROR   │ $000671.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:44:09 │ ERROR   │ $000666.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:44:12 │ ERROR   │ $000638.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:44:13 │ ERROR   │ $000667.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:44:13 │ ERROR   │ 
+4 Failed downloads:
+17:44:13 │ ERROR   │ ['000671.SZ', '000666.SZ', '000638.SZ', '000667.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:44:41 │ INFO    │   … sleeping 2s (rate limit)
+17:44:43 │ INFO    │ Processing batch 10/6044 (25 tickers) ... [201 successful so far]
+17:44:46 │ ERROR   │ $000687.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:44:48 │ ERROR   │ 
+1 Failed download:
+17:44:48 │ ERROR   │ ['000687.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:45:21 │ INFO    │   … sleeping 2s (rate limit)
+17:45:23 │ INFO    │ Processing batch 11/6044 (25 tickers) ... [225 successful so far]
+17:45:26 │ ERROR   │ $000732.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:45:28 │ ERROR   │ 
+1 Failed download:
+17:45:28 │ ERROR   │ ['000732.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:46:01 │ INFO    │   … sleeping 2s (rate limit)
+17:46:03 │ INFO    │ Processing batch 12/6044 (25 tickers) ... [249 successful so far]
+17:46:08 │ ERROR   │ $000780.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:46:09 │ ERROR   │ 
+1 Failed download:
+17:46:09 │ ERROR   │ ['000780.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:46:43 │ INFO    │   … sleeping 2s (rate limit)
+17:46:45 │ INFO    │ Processing batch 13/6044 (25 tickers) ... [273 successful so far]
+17:47:26 │ INFO    │   … sleeping 2s (rate limit)
+17:47:28 │ INFO    │ Processing batch 14/6044 (25 tickers) ... [298 successful so far]
+17:47:32 │ ERROR   │ $000861.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:47:32 │ ERROR   │ 
+1 Failed download:
+17:47:32 │ ERROR   │ ['000861.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:47:57 │ INFO    │   … sleeping 2s (rate limit)
+17:47:59 │ INFO    │ Processing batch 15/6044 (25 tickers) ... [322 successful so far]
+17:48:01 │ ERROR   │ $000918.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:48:02 │ ERROR   │ 
+1 Failed download:
+17:48:02 │ ERROR   │ ['000918.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:48:27 │ INFO    │   … sleeping 2s (rate limit)
+17:48:29 │ INFO    │ Processing batch 16/6044 (25 tickers) ... [346 successful so far]
+17:48:33 │ ERROR   │ $000961.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:48:33 │ ERROR   │ 
+1 Failed download:
+17:48:33 │ ERROR   │ ['000961.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:48:57 │ INFO    │   … sleeping 2s (rate limit)
+17:48:59 │ INFO    │ Processing batch 17/6044 (25 tickers) ... [370 successful so far]
+17:49:01 │ ERROR   │ $000995.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:49:03 │ ERROR   │ $000976.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:49:05 │ ERROR   │ $000996.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:49:05 │ ERROR   │ 
+3 Failed downloads:
+17:49:05 │ ERROR   │ ['000995.KS', '000976.SZ', '000996.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:49:28 │ INFO    │   … sleeping 2s (rate limit)
+17:49:30 │ INFO    │ Processing batch 18/6044 (25 tickers) ... [392 successful so far]
+17:49:34 │ ERROR   │ $001.BE: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:49:35 │ ERROR   │ $001.SG: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:49:35 │ ERROR   │ $001140.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:49:36 │ ERROR   │ $001.F: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:49:36 │ ERROR   │ 
+4 Failed downloads:
+17:49:36 │ ERROR   │ ['001.BE', '001.SG', '001140.KS', '001.F']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:49:57 │ INFO    │   … sleeping 2s (rate limit)
+17:49:59 │ INFO    │ Processing batch 19/6044 (25 tickers) ... [413 successful so far]
+17:50:02 │ ERROR   │ $001725.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:50:04 │ ERROR   │ 
+1 Failed download:
+17:50:04 │ ERROR   │ ['001725.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:50:36 │ INFO    │   … sleeping 2s (rate limit)
+17:50:38 │ INFO    │ Processing batch 20/6044 (25 tickers) ... [437 successful so far]
+17:50:40 │ ERROR   │ $002013.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:50:41 │ ERROR   │ $002002.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:50:42 │ ERROR   │ 
+2 Failed downloads:
+17:50:42 │ ERROR   │ ['002013.SZ', '002002.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:51:05 │ INFO    │   … sleeping 2s (rate limit)
+17:51:07 │ INFO    │ Processing batch 21/6044 (25 tickers) ... [460 successful so far]
+17:51:35 │ INFO    │   … sleeping 2s (rate limit)
+17:51:37 │ INFO    │ Processing batch 22/6044 (25 tickers) ... [485 successful so far]
+17:51:41 │ ERROR   │ $002071.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:51:42 │ ERROR   │ 
+1 Failed download:
+17:51:42 │ ERROR   │ ['002071.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:52:16 │ INFO    │   … sleeping 2s (rate limit)
+17:52:18 │ INFO    │ Processing batch 23/6044 (25 tickers) ... [509 successful so far]
+17:52:22 │ ERROR   │ $002087.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:52:23 │ ERROR   │ $0021.KL: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:52:23 │ ERROR   │ 
+2 Failed downloads:
+17:52:23 │ ERROR   │ ['002087.SZ', '0021.KL']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:52:55 │ INFO    │   … sleeping 2s (rate limit)
+17:52:57 │ INFO    │ Processing batch 24/6044 (25 tickers) ... [532 successful so far]
+17:53:00 │ ERROR   │ $002118.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:53:02 │ ERROR   │ $002113.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:53:03 │ ERROR   │ 
+2 Failed downloads:
+17:53:03 │ ERROR   │ ['002118.SZ', '002113.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:53:34 │ INFO    │   … sleeping 2s (rate limit)
+17:53:36 │ INFO    │ Processing batch 25/6044 (25 tickers) ... [555 successful so far]
+17:53:39 │ ERROR   │ $002147.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:53:41 │ ERROR   │ 
+1 Failed download:
+17:53:41 │ ERROR   │ ['002147.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:54:15 │ INFO    │   … sleeping 2s (rate limit)
+17:54:17 │ INFO    │ Processing batch 26/6044 (25 tickers) ... [579 successful so far]
+17:54:56 │ INFO    │   … sleeping 2s (rate limit)
+17:54:58 │ INFO    │ Processing batch 27/6044 (25 tickers) ... [604 successful so far]
+17:55:37 │ INFO    │   … sleeping 2s (rate limit)
+17:55:39 │ INFO    │ Processing batch 28/6044 (25 tickers) ... [629 successful so far]
+17:55:42 │ ERROR   │ $002231.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:55:45 │ ERROR   │ 
+1 Failed download:
+17:55:45 │ ERROR   │ ['002231.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:56:18 │ INFO    │   … sleeping 2s (rate limit)
+17:56:20 │ INFO    │ Processing batch 29/6044 (25 tickers) ... [653 successful so far]
+17:56:25 │ ERROR   │ $002280.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:56:25 │ ERROR   │ 
+1 Failed download:
+17:56:25 │ ERROR   │ ['002280.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:56:58 │ INFO    │   … sleeping 2s (rate limit)
+17:57:00 │ INFO    │ Processing batch 30/6044 (25 tickers) ... [677 successful so far]
+17:57:04 │ ERROR   │ $002288.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:57:05 │ ERROR   │ $002308.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:57:05 │ ERROR   │ 
+2 Failed downloads:
+17:57:05 │ ERROR   │ ['002288.SZ', '002308.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:57:37 │ INFO    │   … sleeping 2s (rate limit)
+17:57:39 │ INFO    │ Processing batch 31/6044 (25 tickers) ... [700 successful so far]
+17:57:43 │ ERROR   │ $002336.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:57:46 │ ERROR   │ $002341.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:57:46 │ ERROR   │ $002325.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:57:46 │ ERROR   │ 
+3 Failed downloads:
+17:57:46 │ ERROR   │ ['002336.SZ', '002341.SZ', '002325.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:58:16 │ INFO    │   … sleeping 2s (rate limit)
+17:58:18 │ INFO    │ Processing batch 32/6044 (25 tickers) ... [722 successful so far]
+17:59:02 │ INFO    │   … sleeping 2s (rate limit)
+17:59:04 │ INFO    │ Processing batch 33/6044 (25 tickers) ... [747 successful so far]
+17:59:44 │ INFO    │   … sleeping 2s (rate limit)
+17:59:46 │ INFO    │ Processing batch 34/6044 (25 tickers) ... [772 successful so far]
+17:59:50 │ ERROR   │ $002411.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:59:50 │ ERROR   │ $002417.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:59:52 │ ERROR   │ 
+2 Failed downloads:
+17:59:52 │ ERROR   │ ['002411.SZ', '002417.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:00:22 │ INFO    │   … sleeping 2s (rate limit)
+18:00:24 │ INFO    │ Processing batch 35/6044 (25 tickers) ... [795 successful so far]
+18:00:28 │ ERROR   │ $002433.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:00:30 │ ERROR   │ $002435.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:00:30 │ ERROR   │ 
+2 Failed downloads:
+18:00:30 │ ERROR   │ ['002433.SZ', '002435.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:01:03 │ INFO    │   … sleeping 2s (rate limit)
+18:01:05 │ INFO    │ Processing batch 36/6044 (25 tickers) ... [818 successful so far]
+18:01:08 │ ERROR   │ $002473.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:01:12 │ ERROR   │ $002450.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:01:12 │ ERROR   │ 
+2 Failed downloads:
+18:01:12 │ ERROR   │ ['002473.SZ', '002450.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:01:36 │ INFO    │   … sleeping 2s (rate limit)
+18:01:38 │ INFO    │ Processing batch 37/6044 (25 tickers) ... [841 successful so far]
+18:01:40 │ ERROR   │ $002499.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:01:41 │ ERROR   │ 
+1 Failed download:
+18:01:41 │ ERROR   │ ['002499.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:02:05 │ INFO    │   … sleeping 2s (rate limit)
+18:02:07 │ INFO    │ Processing batch 38/6044 (25 tickers) ... [865 successful so far]
+18:02:08 │ ERROR   │ $002503.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:02:09 │ ERROR   │ $002505.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:02:10 │ ERROR   │ $002504.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:02:11 │ ERROR   │ $002502.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:02:11 │ ERROR   │ 
+4 Failed downloads:
+18:02:11 │ ERROR   │ ['002503.SZ', '002505.SZ', '002504.SZ', '002502.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:02:33 │ INFO    │   … sleeping 2s (rate limit)
+18:02:35 │ INFO    │ Processing batch 39/6044 (25 tickers) ... [886 successful so far]
+18:03:02 │ INFO    │   … sleeping 2s (rate limit)
+18:03:04 │ INFO    │ Processing batch 40/6044 (25 tickers) ... [911 successful so far]
+18:03:32 │ INFO    │   … sleeping 2s (rate limit)
+18:03:34 │ INFO    │ Processing batch 41/6044 (25 tickers) ... [936 successful so far]
+18:03:37 │ ERROR   │ $002619.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:03:38 │ ERROR   │ $002618.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:03:38 │ ERROR   │ 
+2 Failed downloads:
+18:03:38 │ ERROR   │ ['002619.SZ', '002618.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:04:01 │ INFO    │   … sleeping 2s (rate limit)
+18:04:03 │ INFO    │ Processing batch 42/6044 (25 tickers) ... [959 successful so far]
+18:04:32 │ INFO    │   … sleeping 2s (rate limit)
+18:04:34 │ INFO    │ Processing batch 43/6044 (25 tickers) ... [984 successful so far]
+18:04:37 │ ERROR   │ $002665.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:04:40 │ ERROR   │ 
+1 Failed download:
+18:04:40 │ ERROR   │ ['002665.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:05:13 │ INFO    │   … sleeping 2s (rate limit)
+18:05:15 │ INFO    │ Processing batch 44/6044 (25 tickers) ... [1008 successful so far]
+18:05:19 │ ERROR   │ $002699.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:05:21 │ ERROR   │ $002684.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:05:22 │ ERROR   │ $0026PA.KL: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:05:22 │ ERROR   │ 
+3 Failed downloads:
+18:05:22 │ ERROR   │ ['002699.SZ', '002684.SZ', '0026PA.KL']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:05:54 │ INFO    │   … sleeping 2s (rate limit)
+18:05:56 │ INFO    │ Processing batch 45/6044 (25 tickers) ... [1030 successful so far]
+18:06:35 │ INFO    │   … sleeping 2s (rate limit)
+18:06:37 │ INFO    │ Processing batch 46/6044 (25 tickers) ... [1055 successful so far]
+18:06:40 │ ERROR   │ $002750.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:06:41 │ ERROR   │ $002751.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:06:43 │ ERROR   │ 
+2 Failed downloads:
+18:06:43 │ ERROR   │ ['002750.SZ', '002751.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:07:15 │ INFO    │   … sleeping 2s (rate limit)
+18:07:17 │ INFO    │ Processing batch 47/6044 (25 tickers) ... [1078 successful so far]
+18:07:19 │ ERROR   │ $002781.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:07:19 │ ERROR   │ $002776.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:07:20 │ ERROR   │ $002770.SZ: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:07:21 │ ERROR   │ 
+3 Failed downloads:
+18:07:21 │ ERROR   │ ['002781.SZ', '002776.SZ', '002770.SZ']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:07:43 │ INFO    │   … sleeping 2s (rate limit)
+18:07:45 │ INFO    │ Processing batch 48/6044 (25 tickers) ... [1100 successful so far]
+18:08:13 │ INFO    │   … sleeping 2s (rate limit)
+18:08:15 │ INFO    │ Processing batch 49/6044 (25 tickers) ... [1125 successful so far]
+18:08:45 │ INFO    │   … sleeping 2s (rate limit)
+18:08:47 │ INFO    │ Processing batch 50/6044 (25 tickers) ... [1150 successful so far]
+18:09:25 │ INFO    │   … sleeping 2s (rate limit)
+18:09:27 │ INFO    │ Processing batch 51/6044 (25 tickers) ... [1175 successful so far]
+18:10:05 │ INFO    │   … sleeping 2s (rate limit)
+18:10:07 │ INFO    │ Processing batch 52/6044 (25 tickers) ... [1200 successful so far]
+18:10:47 │ INFO    │   … sleeping 2s (rate limit)
+18:10:49 │ INFO    │ Processing batch 53/6044 (25 tickers) ... [1225 successful so far]
+18:11:32 │ INFO    │   … sleeping 2s (rate limit)
+18:11:34 │ INFO    │ Processing batch 54/6044 (25 tickers) ... [1250 successful so far]
+18:12:12 │ INFO    │   … sleeping 2s (rate limit)
+18:12:14 │ INFO    │ Processing batch 55/6044 (25 tickers) ... [1275 successful so far]
+18:12:17 │ ERROR   │ $0029N.NX: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:12:20 │ ERROR   │ 
+1 Failed download:
+18:12:20 │ ERROR   │ ['0029N.NX']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:12:52 │ INFO    │   … sleeping 2s (rate limit)
+18:12:54 │ INFO    │ Processing batch 56/6044 (25 tickers) ... [1299 successful so far]
+18:13:33 │ INFO    │   … sleeping 2s (rate limit)
+18:13:35 │ INFO    │ Processing batch 57/6044 (25 tickers) ... [1324 successful so far]
+18:13:38 │ ERROR   │ $0034PA.KL: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:13:40 │ ERROR   │ $003410.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:13:42 │ ERROR   │ 
+2 Failed downloads:
+18:13:42 │ ERROR   │ ['0034PA.KL', '003410.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:14:14 │ INFO    │   … sleeping 2s (rate limit)
+18:14:16 │ INFO    │ Processing batch 58/6044 (25 tickers) ... [1347 successful so far]
+18:14:20 │ ERROR   │ $003560.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:14:21 │ ERROR   │ 
+1 Failed download:
+18:14:21 │ ERROR   │ ['003560.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:14:55 │ INFO    │   … sleeping 2s (rate limit)
+18:14:57 │ INFO    │ Processing batch 59/6044 (25 tickers) ... [1371 successful so far]
+18:15:01 │ ERROR   │ $0043.HK: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:15:02 │ ERROR   │ 
+1 Failed download:
+18:15:02 │ ERROR   │ ['0043.HK']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:15:34 │ INFO    │   … sleeping 2s (rate limit)
+18:15:36 │ INFO    │ Processing batch 60/6044 (25 tickers) ... [1395 successful so far]
+18:15:38 │ ERROR   │ $0048721A.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:15:38 │ ERROR   │ $004565.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:15:39 │ ERROR   │ $0047.HK: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:15:41 │ ERROR   │ 
+3 Failed downloads:
+18:15:41 │ ERROR   │ ['0048721A.KS', '004565.KS', '0047.HK']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:16:12 │ INFO    │   … sleeping 2s (rate limit)
+18:16:14 │ INFO    │ Processing batch 61/6044 (25 tickers) ... [1417 successful so far]
+18:16:17 │ ERROR   │ $005390.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:16:19 │ ERROR   │ 
+1 Failed download:
+18:16:19 │ ERROR   │ ['005390.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:16:52 │ INFO    │   … sleeping 2s (rate limit)
+18:16:54 │ INFO    │ Processing batch 62/6044 (25 tickers) ... [1441 successful so far]
+18:17:34 │ INFO    │   … sleeping 2s (rate limit)
+18:17:36 │ INFO    │ Processing batch 63/6044 (25 tickers) ... [1466 successful so far]
+18:17:42 │ ERROR   │ $006390.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:17:42 │ ERROR   │ 
+1 Failed download:
+18:17:42 │ ERROR   │ ['006390.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:18:14 │ INFO    │   … sleeping 2s (rate limit)
+18:18:17 │ INFO    │ Processing batch 64/6044 (25 tickers) ... [1490 successful so far]
+18:18:57 │ INFO    │   … sleeping 2s (rate limit)
+18:18:59 │ INFO    │ Processing batch 65/6044 (25 tickers) ... [1515 successful so far]
+18:19:03 │ ERROR   │ $008110.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:19:11 │ ERROR   │ Failed to get ticker '007820.KQ' reason: Failed to perform, curl: (28) Operation timed out after 10002 milliseconds with 318 out of 1124 bytes received. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+18:19:21 │ ERROR   │ $007820.KQ: possibly delisted; no price data found  (period=5y)
+18:19:21 │ ERROR   │ 
+2 Failed downloads:
+18:19:21 │ ERROR   │ ['008110.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:19:21 │ ERROR   │ ['007820.KQ']: possibly delisted; no price data found  (period=5y)
+18:19:43 │ INFO    │   … sleeping 2s (rate limit)
+18:19:46 │ INFO    │ Processing batch 66/6044 (25 tickers) ... [1538 successful so far]
+18:19:48 │ ERROR   │ $008560.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:19:49 │ ERROR   │ 
+1 Failed download:
+18:19:49 │ ERROR   │ ['008560.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:20:15 │ INFO    │   … sleeping 2s (rate limit)
+18:20:17 │ INFO    │ Processing batch 67/6044 (25 tickers) ... [1562 successful so far]
+18:20:20 │ ERROR   │ $009275.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:20:20 │ ERROR   │ 
+1 Failed download:
+18:20:20 │ ERROR   │ ['009275.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:20:45 │ INFO    │   … sleeping 2s (rate limit)
+18:20:47 │ INFO    │ Processing batch 68/6044 (25 tickers) ... [1586 successful so far]
+18:20:51 │ ERROR   │ $010050.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:20:52 │ ERROR   │ 
+1 Failed download:
+18:20:52 │ ERROR   │ ['010050.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:21:27 │ INFO    │   … sleeping 2s (rate limit)
+18:21:29 │ INFO    │ Processing batch 69/6044 (25 tickers) ... [1610 successful so far]
+18:21:32 │ ERROR   │ $0105PA.KL: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:21:35 │ ERROR   │ $010420.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:21:35 │ ERROR   │ 
+2 Failed downloads:
+18:21:35 │ ERROR   │ ['0105PA.KL', '010420.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:22:07 │ INFO    │   … sleeping 2s (rate limit)
+18:22:09 │ INFO    │ Processing batch 70/6044 (25 tickers) ... [1633 successful so far]
+18:22:49 │ INFO    │   … sleeping 2s (rate limit)
+18:22:51 │ INFO    │ Processing batch 71/6044 (25 tickers) ... [1658 successful so far]
+18:22:54 │ ERROR   │ $012600.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:22:56 │ ERROR   │ 
+1 Failed download:
+18:22:56 │ ERROR   │ ['012600.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:23:28 │ INFO    │   … sleeping 2s (rate limit)
+18:23:30 │ INFO    │ Processing batch 72/6044 (25 tickers) ... [1682 successful so far]
+18:23:34 │ ERROR   │ $013A.BE: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:23:36 │ ERROR   │ $0133OR.KL: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:23:36 │ ERROR   │ 
+2 Failed downloads:
+18:23:36 │ ERROR   │ ['013A.BE', '0133OR.KL']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:24:08 │ INFO    │   … sleeping 2s (rate limit)
+18:24:10 │ INFO    │ Processing batch 73/6044 (25 tickers) ... [1705 successful so far]
+18:24:14 │ ERROR   │ $0143.HK: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:24:15 │ ERROR   │ $0141.HK: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:24:16 │ ERROR   │ $013C.BE: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:24:17 │ ERROR   │ 
+3 Failed downloads:
+18:24:17 │ ERROR   │ ['0143.HK', '0141.HK', '013C.BE']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:24:46 │ INFO    │   … sleeping 2s (rate limit)
+18:24:48 │ INFO    │ Processing batch 74/6044 (25 tickers) ... [1727 successful so far]
+18:24:50 │ ERROR   │ $015350.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:24:51 │ ERROR   │ 
+1 Failed download:
+18:24:51 │ ERROR   │ ['015350.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:25:17 │ INFO    │   … sleeping 2s (rate limit)
+18:25:19 │ INFO    │ Processing batch 75/6044 (25 tickers) ... [1751 successful so far]
+18:25:22 │ ERROR   │ $015540.KS: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:25:23 │ ERROR   │ 
+1 Failed download:
+18:25:23 │ ERROR   │ ['015540.KS']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:25:47 │ INFO    │   … sleeping 2s (rate limit)
+18:25:49 │ INFO    │ Processing batch 76/6044 (25 tickers) ... [1775 successful so far]
+18:26:28 │ INFO    │   … sleeping 2s (rate limit)
+18:26:30 │ INFO    │ Processing batch 77/6044 (25 tickers) ... [1800 successful so far]
+18:26:32 │ ERROR   │ $0179PR.KL: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:26:34 │ ERROR   │ $0179OR.KL: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:26:37 │ ERROR   │ $0175OR.KL: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:26:37 │ ERROR   │ 
+3 Failed downloads:
+18:26:37 │ ERROR   │ ['0179PR.KL', '0179OR.KL', '0175OR.KL']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:26:57 │ INFO    │   … sleeping 2s (rate limit)
+18:26:59 │ INFO    │ Processing batch 78/6044 (25 tickers) ... [1822 successful so far]
+18:27:02 │ ERROR   │ $0190.HK: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:27:02 │ ERROR   │ 
+1 Failed download:
+18:27:02 │ ERROR   │ ['0190.HK']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:27:23 │ INFO    │   … sleeping 2s (rate limit)
+18:27:25 │ INFO    │ Processing batch 79/6044 (25 tickers) ... [1846 successful so far]
+18:27:27 │ ERROR   │ $01H.BE: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:27:28 │ ERROR   │ 
+1 Failed download:
+18:27:28 │ ERROR   │ ['01H.BE']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:27:50 │ INFO    │   … sleeping 2s (rate limit)
+18:27:52 │ INFO    │ Processing batch 80/6044 (25 tickers) ... [1870 successful so far]
+18:27:58 │ ERROR   │ $01P.BE: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:27:58 │ ERROR   │ 
+1 Failed download:
+18:27:58 │ ERROR   │ ['01P.BE']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:28:33 │ INFO    │   … sleeping 2s (rate limit)
+18:28:35 │ INFO    │ Processing batch 81/6044 (25 tickers) ... [1894 successful so far]
+18:28:38 │ ERROR   │ $0208.HK: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+18:28:40 │ ERROR   │ 
+1 Failed download:
+18:28:40 │ ERROR   │ ['0208.HK']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")

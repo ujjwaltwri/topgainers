@@ -1,0 +1,67 @@
+17:21:57 │ INFO    │ ======================================================================
+17:21:57 │ INFO    │   TopGainers Exhaustive Pipeline — Starting
+17:21:57 │ INFO    │ ======================================================================
+17:21:57 │ INFO    │ Fetching FX rates...
+17:21:58 │ INFO    │ Loaded FX rates: {'USD': 1.0, 'INR': 0.01056189276278019, 'KRW': 0.0006505334749817848, 'JPY': 0.006182533223181963, 'CNY': 0.14784806966781616, 'HKD': 0.12756484746932983, 'GBP': 1.3242928981781006, 'EUR': 1.1456066370010376, 'CAD': 0.7056117653846741, 'AUD': 0.7005254030227661, 'BRL': 0.19447308778762817, 'SAR': 0.2663683295249939}
+17:21:58 │ INFO    │ Loading Equities from FinanceDatabase...
+17:22:10 │ INFO    │ Resolved 19580 tickers from groups: ['US', 'India', 'Japan', 'Korea', 'UK', 'Germany', 'HongKong', 'Canada', 'Australia', 'Brazil']
+17:22:10 │ INFO    │ Processing batch 1/784 (25 tickers) ... [0 successful so far]
+17:22:12 │ ERROR   │ HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: AAIC^C"}}}
+17:22:12 │ ERROR   │ $AAM^A: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:13 │ ERROR   │ $AAIC^C: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:13 │ ERROR   │ $AAMC: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:13 │ ERROR   │ $AAM^B: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:15 │ ERROR   │ 
+4 Failed downloads:
+17:22:15 │ ERROR   │ ['AAM^A', 'AAIC^C', 'AAMC', 'AAM^B']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:32 │ INFO    │   … sleeping 2s (rate limit)
+17:22:34 │ INFO    │ Processing batch 2/784 (25 tickers) ... [17 successful so far]
+17:22:35 │ ERROR   │ $ABR^D: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:35 │ ERROR   │ $ABR-PB: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:37 │ ERROR   │ $ABR-PC: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:37 │ ERROR   │ $AAQC-UN: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:37 │ ERROR   │ $ABR^F: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:38 │ ERROR   │ $ABR-PA: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:39 │ ERROR   │ $ABR^E: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:39 │ ERROR   │ 
+7 Failed downloads:
+17:22:39 │ ERROR   │ ['ABR^D', 'ABR-PB', 'ABR-PC', 'AAQC-UN', 'ABR^F', 'ABR-PA', 'ABR^E']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:22:55 │ INFO    │   … sleeping 2s (rate limit)
+17:22:57 │ INFO    │ Processing batch 3/784 (25 tickers) ... [33 successful so far]
+17:22:59 │ ERROR   │ $ACAXW: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:00 │ ERROR   │ $ACAXR: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:00 │ ERROR   │ $ACACW: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:01 │ ERROR   │ $ACAB: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:01 │ ERROR   │ $ACEVW: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:01 │ ERROR   │ 
+5 Failed downloads:
+17:23:01 │ ERROR   │ ['ACAXW', 'ACAXR', 'ACACW', 'ACAB', 'ACEVW']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:21 │ INFO    │   … sleeping 2s (rate limit)
+17:23:23 │ INFO    │ Processing batch 4/784 (25 tickers) ... [52 successful so far]
+17:23:25 │ ERROR   │ $ACND: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:25 │ ERROR   │ $ACR^D: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:27 │ ERROR   │ $ACP^A: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:27 │ ERROR   │ $ACR^C: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:28 │ ERROR   │ $ACND-UN: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:28 │ ERROR   │ $ACND-WT: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:28 │ ERROR   │ $ACY: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:28 │ ERROR   │ 
+7 Failed downloads:
+17:23:28 │ ERROR   │ ['ACND', 'ACR^D', 'ACP^A', 'ACR^C', 'ACND-UN', 'ACND-WT', 'ACY']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:46 │ INFO    │   … sleeping 2s (rate limit)
+17:23:48 │ INFO    │ Processing batch 5/784 (25 tickers) ... [70 successful so far]
+17:23:50 │ ERROR   │ $ADF-UN: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:50 │ ERROR   │ $ADC^A: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:51 │ ERROR   │ $ADEXU: possibly delisted; no price data found  (period=5y)
+17:23:51 │ ERROR   │ $ADES: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:52 │ ERROR   │ $ADEX-WT: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:52 │ ERROR   │ 
+5 Failed downloads:
+17:23:52 │ ERROR   │ ['ADF-UN', 'ADC^A', 'ADES', 'ADEX-WT']: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:23:52 │ ERROR   │ ['ADEXU']: possibly delisted; no price data found  (period=5y)
+17:24:08 │ INFO    │   … sleeping 2s (rate limit)
+17:24:10 │ INFO    │ Processing batch 6/784 (25 tickers) ... [89 successful so far]
+17:24:11 │ ERROR   │ $AEL^B: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:24:11 │ ERROR   │ $AEL^A: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:24:11 │ ERROR   │ $ADRAU: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
+17:24:11 │ ERROR   │ $ADRA-WT: possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")
