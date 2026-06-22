@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='dark'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>TopGainers — Market Overview</title>
+  <meta name='description' content='Comprehensive market overview with treemap, sector performance, and country heatmap visualizations.'>
+  <link rel='preconnect' href='https://fonts.googleapis.com'>
+  <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap' rel='stylesheet'>
+  <link rel='stylesheet' href='css/styles.css'>
+  <!-- Lightweight Charts -->
+  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+  <!-- Supabase -->
+  <script src="js/supabase.js"></script>
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       OVERVIEW PAGE — ADDITIONAL STYLES
+       ═══════════════════════════════════════════════════════════════ */
+
+    /* ──────────── HEADER NAV ──────────── */
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: var(--space-lg);
+      padding: 3px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+    .nav-link {
+      padding: 6px 16px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+    .nav-link:hover {
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
+    }
+    .nav-link.active {
+      background: var(--accent-purple);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 0 12px var(--accent-purple-glow);
+    }
+
+    /* ──────────── OVERVIEW LAYOUT ──────────── */
+    .overview-container {
+      margin-top: 64px;
+      padding: var(--space-xl) var(--space-lg);
+      max-width: 1600px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ──────────── PAGE TITLE ROW ──────────── */
+    .page-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-xl);
+      flex-wrap: wrap;
+      gap: var(--space-md);
+    }
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    .page-title h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .page-title .subtitle {
+      font-size: 0.82rem;
+      color: var(--text-tertiary);
+      padding: 4px 12px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* ──────────── PERIOD SELECTOR ──────────── */
+    .period-selector {
+      display: flex;
+      gap: 4px;
+      padding: 3px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+    .period-btn {
+      padding: 7px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-sm);
+      color: var(--text-tertiary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      letter-spacing: 0.3px;
+    }
+    .period-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
+    }
+    .period-btn.active {
+      background: var(--accent-purple);
+      color: #fff;
+      box-shadow: 0 0 12px var(--accent-purple-glow), 0 2px 8px rgba(123, 97, 255, 0.2);
+    }
+
+    /* ──────────── SUMMARY CARDS ──────────── */
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+    }
+    .summary-card {
+      background: var(--bg-glass);
+      backdrop-filter: blur(24px) saturate(1.2);
+      -webkit-backdrop-filter: blur(24px) saturate(1.2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      position: relative;
+      overflow: hidden;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+    }
+    .summary-card:hover {
+      border-color: var(--border-medium);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+    .summary-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+    .summary-card:nth-child(1)::before { background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); }
+    .summary-card:nth-child(2)::before { background: linear-gradient(90deg, var(--gain-primary), var(--accent-cyan)); }
+    .summary-card:nth-child(3)::before { background: linear-gradient(90deg, var(--gain-primary), #00d4aa); }
+    .summary-card:nth-child(4)::before { background: linear-gradient(90deg, var(--loss-primary), #ff4488); }
+
+    .summary-card .card-icon {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-sm);
+      opacity: 0.8;
+    }
+    .summary-card .card-label {
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .summary-card .card-value {
+      font-family: var(--font-mono);
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .summary-card .card-sub {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    /* ──────────── SECTION CONTAINERS ──────────── */
+    .viz-section {
+      margin-bottom: var(--space-xl);
+      background: var(--bg-glass);
+      backdrop-filter: blur(24px) saturate(1.2);
+      -webkit-backdrop-filter: blur(24px) saturate(1.2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      animation: slideInUp 0.5s ease-out both;
+    }
+    .viz-section:nth-child(2) { animation-delay: 0.1s; }
+    .viz-section:nth-child(3) { animation-delay: 0.2s; }
+
+    .viz-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-lg) var(--space-xl);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .viz-header h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .viz-header .viz-badge {
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      padding: 3px 10px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .viz-body {
+      padding: var(--space-lg);
+    }
+
+    /* ──────────── TREEMAP ──────────── */
+    .treemap-container {
+      position: relative;
+      width: 100%;
+      height: 520px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+    }
+    .treemap-rect {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      transition: filter var(--transition-fast), z-index 0s;
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      text-align: center;
+      padding: 4px;
+    }
+    .treemap-rect:hover {
+      filter: brightness(1.25);
+      z-index: 10;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    .treemap-rect .tm-ticker {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.78rem;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .treemap-rect .tm-change {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.85);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Treemap tooltip */
+    .tm-tooltip {
+      position: fixed;
+      z-index: 9999;
+      pointer-events: none;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-xl);
+      padding: 12px 16px;
+      min-width: 220px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    .tm-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .tm-tooltip .tt-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      color: var(--text-primary);
+    }
+    .tm-tooltip .tt-ticker {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+    }
+    .tm-tooltip .tt-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      padding: 3px 0;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .tm-tooltip .tt-row:first-of-type { border-top: none; }
+    .tm-tooltip .tt-label {
+      color: var(--text-secondary);
+    }
+    .tm-tooltip .tt-val {
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    /* ──────────── SECTOR BAR CHART ──────────── */
+    .sector-chart-container {
+      width: 100%;
+      position: relative;
+    }
+    .sector-chart-container canvas {
+      width: 100%;
+      display: block;
+    }
+
+    /* ──────────── COUNTRY HEATMAP ──────────── */
+    .country-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--space-md);
+    }
+    .country-card {
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+      animation: fadeIn 0.4s ease-out both;
+    }
+    .country-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border-medium);
+    }
+    .country-card .cc-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+    .country-card .cc-flag {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+    .country-card .cc-name {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .country-card .cc-change {
+      font-family: var(--font-mono);
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .country-card .cc-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+    }
+    .country-card .cc-meta span {
+      font-family: var(--font-mono);
+    }
+    .country-card .cc-breadth-bar {
+      margin-top: 8px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(245, 0, 79, 0.3);
+      overflow: hidden;
+    }
+    .country-card .cc-breadth-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--gain-primary);
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ──────────── LOADING STATES ──────────── */
+    .loading-overlay {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      color: var(--text-tertiary);
+      font-size: 0.9rem;
+      gap: var(--space-sm);
+    }
+    .loading-overlay .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-medium);
+      border-top-color: var(--accent-purple);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ──────────── RESPONSIVE ──────────── */
+    @media (max-width: 1024px) {
+      .summary-cards { grid-template-columns: repeat(2, 1fr); }
+      .treemap-container { height: 400px; }
+      .overview-container { padding: var(--space-lg) var(--space-md); }
+    }
+    @media (max-width: 768px) {
+      .summary-cards { grid-template-columns: 1fr 1fr; }
+      .page-title-row { flex-direction: column; align-items: flex-start; }
+      .period-selector { flex-wrap: wrap; }
+      .treemap-container { height: 350px; }
+      .country-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+      .header-nav { margin-left: var(--space-sm); }
+      .nav-link { padding: 5px 10px; font-size: 0.75rem; }
+    }
+    @media (max-width: 480px) {
+      .summary-cards { grid-template-columns: 1fr; }
+      .treemap-container { height: 300px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header glass-card">
+    <div class="logo">🌍 TopGainers</div>
+    <nav class="header-nav">
+      <a href="/" class="nav-link">Dashboard</a>
+      <a href="/overview.html" class="nav-link active">📊 Overview</a>
+    </nav>
+
+    <div class="header-actions">
+      <div class="pipeline-status">
+        <span class="status-dot"></span>
+        <span>Pipeline Active</span>
+      </div>
+      <div class="last-updated">
+        <span class="pulse-dot"></span> <span id="last-updated-time">Updating...</span>
+      </div>
+      <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
+        <span class="icon moon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="overview-container">
+
+    <!-- Page Title & Period Selector -->
+    <div class="page-title-row">
+      <div class="page-title">
+        <h1>Market Overview</h1>
+        <span class="subtitle" id="data-timestamp">Loading…</span>
+      </div>
+      <div class="period-selector" id="period-selector">
+        <button class="period-btn" data-period="1D">1D</button>
+        <button class="period-btn" data-period="5D">5D</button>
+        <button class="period-btn" data-period="1M">1M</button>
+        <button class="period-btn" data-period="3M">3M</button>
+        <button class="period-btn active" data-period="6M">6M</button>
+        <button class="period-btn" data-period="1Y">1Y</button>
+        <button class="period-btn" data-period="YTD">YTD</button>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="card-icon">📡</div>
+        <div class="card-label">Total Stocks Tracked</div>
+        <div class="card-value" id="card-total">—</div>
+        <div class="card-sub" id="card-total-sub">across all exchanges</div>
+      </div>
+      <div class="summary-card">
+        <div class="card-icon">📊</div>
+        <div class="card-label">Market Breadth</div>
+        <div class="card-value" id="card-breadth">—</div>
+        <div class="card-sub" id="card-breadth-sub">stocks positive</div>
+      </div>
+      <div class="summary-card">
+        <div class="card-icon">🏆</div>
+        <div class="card-label">Best Sector</div>
+        <div class="card-value text-gain" id="card-best-sector">—</div>
+        <div class="card-sub" id="card-best-sector-sub"></div>
+      </div>
+      <div class="summary-card">
+        <div class="card-icon">📉</div>
+        <div class="card-label">Worst Sector</div>
+        <div class="card-value text-loss" id="card-worst-sector">—</div>
+        <div class="card-sub" id="card-worst-sector-sub"></div>
+      </div>
+    </div>
+
+    <!-- Section 1: Market Treemap -->
+    <div class="viz-section">
+      <div class="viz-header">
+        <h2>🗺️ Market Treemap</h2>
+        <span class="viz-badge" id="treemap-badge">Loading…</span>
+      </div>
+      <div class="viz-body">
+        <div class="treemap-container" id="treemap">
+          <div class="loading-overlay"><div class="spinner"></div>Building treemap…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Sector Performance -->
+    <div class="viz-section">
+      <div class="viz-header">
+        <h2>📊 Sector Performance</h2>
+        <span class="viz-badge" id="sector-badge">Loading…</span>
+      </div>
+      <div class="viz-body">
+        <div class="sector-chart-container" id="sector-chart-container">
+          <canvas id="sector-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Country Heatmap -->
+    <div class="viz-section">
+      <div class="viz-header">
+        <h2>🌍 Country Heatmap</h2>
+        <span class="viz-badge" id="country-badge">Loading…</span>
+      </div>
+      <div class="viz-body">
+        <div class="country-grid" id="country-grid">
+          <div class="loading-overlay"><div class="spinner"></div>Loading countries…</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="app-footer">
+    <span>© 2026 TopGainers — Global Stock Intelligence</span> · 
+    <span>Data sourced from <a href="https://finance.yahoo.com" target="_blank" rel="noopener">Yahoo Finance</a></span> · 
+    <span>Not financial advice</span>
+  </footer>
+
+  <!-- Treemap Tooltip -->
+  <div class="tm-tooltip" id="tm-tooltip">
+    <div class="tt-name" id="tt-name"></div>
+    <div class="tt-ticker" id="tt-ticker"></div>
+    <div class="tt-row"><span class="tt-label">Change</span><span class="tt-val" id="tt-change"></span></div>
+    <div class="tt-row"><span class="tt-label">Market Cap</span><span class="tt-val" id="tt-mcap"></span></div>
+    <div class="tt-row"><span class="tt-label">Sector</span><span class="tt-val" id="tt-sector"></span></div>
+    <div class="tt-row"><span class="tt-label">Volume Ratio</span><span class="tt-val" id="tt-volume"></span></div>
+  </div>
+
+  <script src="js/supabase-api.js"></script>
+  <script src="js/overview.js"></script>
+</body>
+</html>

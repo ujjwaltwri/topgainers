@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang='en' data-theme='dark'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>TopGainers — Global Stock Intelligence</title>
+  <meta name='description' content='Find the top gaining stocks in every sector, every country, every exchange worldwide. Real-time global stock screener with AI-powered insights.'>
+  <link rel='preconnect' href='https://fonts.googleapis.com'>
+  <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap' rel='stylesheet'>
+  <link rel='stylesheet' href='css/styles.css'>
+  <!-- Lightweight Charts -->
+  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+  <!-- Supabase -->
+  <script src="js/supabase.js"></script>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header glass-card">
+    <div class="logo">🌍 TopGainers</div>
+    
+    <nav class="header-nav">
+      <a href="/" class="nav-link active">Dashboard</a>
+      <a href="/overview.html" class="nav-link">📊 Overview</a>
+    </nav>
+    
+    <div class="search-container">
+      <input type="text" id="stock-search" placeholder="Search stocks or tickers (e.g. AAPL, Reliance) [/]" autocomplete="off">
+      <div id="search-results" class="search-results hidden"></div>
+    </div>
+    
+    <div class="header-actions">
+      <div class="pipeline-status">
+        <span class="status-dot"></span>
+        <span>Pipeline Active</span>
+      </div>
+      <div class="last-updated">
+        <span class="pulse-dot"></span> <span id="last-updated-time">Updating...</span>
+      </div>
+      <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
+        <span class="icon moon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="main-container">
+    
+    <!-- LEFT SIDEBAR: FILTERS -->
+    <aside class="sidebar glass-card">
+      <div class="sidebar-header">
+        <h3>Filters</h3>
+        <button id="reset-filters" class="btn-ghost text-small">Reset All</button>
+      </div>
+
+      <div class="filter-group">
+        <label><span class="filter-icon">⏱</span> Time Period</label>
+        <div class="segmented-control" id="period-buttons">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      
+      <div class="filter-group hidden" id="custom-date-group">
+        <label><span class="filter-icon">📅</span> Custom Date Range</label>
+        <div class="date-inputs">
+          <input type="date" id="date-from">
+          <span>to</span>
+          <input type="date" id="date-to">
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label><span class="filter-icon">🌍</span> Geography</label>
+        <select id="filter-region"><option value="">-- All Regions --</option></select>
+        <select id="filter-country" disabled><option value="">-- All Countries --</option></select>
+        <select id="filter-exchange" disabled><option value="">-- All Exchanges --</option></select>
+      </div>
+
+      <div class="filter-group">
+        <label><span class="filter-icon">🏢</span> Sector & Industry</label>
+        <select id="filter-sector"><option value="">-- All Sectors --</option></select>
+        <select id="filter-industry" disabled><option value="">-- All Industries --</option></select>
+      </div>
+
+      <div class="filter-group">
+        <label><span class="filter-icon">💎</span> Market Cap</label>
+        <div class="chip-group" id="mcap-chips">
+          <button class="chip active" data-val="">All</button>
+          <button class="chip" data-val="mega">Mega</button>
+          <button class="chip" data-val="large">Large</button>
+          <button class="chip" data-val="mid">Mid</button>
+          <button class="chip" data-val="small">Small</button>
+          <button class="chip" data-val="micro">Micro</button>
+          <button class="chip" data-val="nano">Nano</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label><span class="filter-icon">💧</span> Liquidity (Min Volume)</label>
+        <select id="filter-volume">
+          <option value="">Any</option>
+          <option value="10000">> 10K / day</option>
+          <option value="100000">> 100K / day</option>
+          <option value="1000000">> 1M / day</option>
+          <option value="10000000">> 10M / day</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label><span class="filter-icon">💲</span> Price Range</label>
+        <div class="range-inputs">
+          <input type="number" id="filter-price-min" placeholder="Min" min="0" step="0.01">
+          <span>—</span>
+          <input type="number" id="filter-price-max" placeholder="Max" min="0" step="0.01">
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label><span class="filter-icon">📊</span> P/E Ratio Range</label>
+        <div class="range-inputs">
+          <input type="number" id="filter-pe-min" placeholder="Min" step="0.1">
+          <span>—</span>
+          <input type="number" id="filter-pe-max" placeholder="Max" step="0.1">
+        </div>
+      </div>
+
+      <div class="filter-group quick-filters">
+        <label><span class="filter-icon">📡</span> Signals</label>
+        <label class="checkbox-label"><input type="checkbox" id="filter-52w-high"> 🏔 At 52W High</label>
+        <label class="checkbox-label"><input type="checkbox" id="filter-52w-low"> 🕳 At 52W Low</label>
+        <label class="checkbox-label"><input type="checkbox" id="filter-vol-surge"> ⚡ Volume Surge (3x+)</label>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT CONTENT: RESULTS -->
+    <section class="results-area">
+      
+      <!-- Active Filters Pills -->
+      <div class="active-filters" id="active-filters-container">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Controls Row -->
+      <div class="controls-row">
+        <div class="direction-toggle" id="direction-toggle">
+          <div class="indicator"></div>
+          <button class="active" data-dir="gainers">📈 Gainers</button>
+          <button data-dir="losers">📉 Losers</button>
+        </div>
+        
+        <div class="results-meta">
+          <span id="results-count">Showing 0 results</span>
+          <select id="sort-by">
+            <option value="pct_change">Sort by: % Change</option>
+            <option value="vs_sector">Sort by: vs Sector</option>
+            <option value="vs_country">Sort by: vs Country</option>
+            <option value="volume_ratio">Sort by: Volume Surge</option>
+            <option value="market_cap">Sort by: Market Cap</option>
+          </select>
+          <button id="export-csv" class="btn-outline">📥 Export CSV</button>
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div class="table-container glass-card">
+        <table id="results-table">
+          <thead>
+            <tr>
+              <th width="40">#</th>
+              <th>Stock</th>
+              <th>Sector</th>
+              <th width="100">Country</th>
+              <th class="text-right">% Change</th>
+              <th class="text-right">vs Sector</th>
+              <th class="text-right">Price</th>
+              <th class="text-right">Mkt Cap</th>
+              <th width="140" class="text-center">Trend</th>
+              <th width="40"></th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination">
+        <!-- Rendered by JS -->
+      </div>
+
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="app-footer">
+    <span>© 2026 TopGainers — Global Stock Intelligence</span> · 
+    <span>Data sourced from <a href="https://finance.yahoo.com" target="_blank" rel="noopener">Yahoo Finance</a></span> · 
+    <span>Not financial advice</span>
+  </footer>
+
+  <!-- STOCK DETAIL MODAL -->
+  <div id="stock-modal-overlay" class="modal-overlay hidden"></div>
+  <aside id="stock-modal" class="stock-modal glass-card hidden">
+    <div class="modal-header">
+      <div class="stock-title">
+        <h2 id="modal-name">Stock Name</h2>
+        <span id="modal-ticker" class="text-secondary font-mono">TICKER</span>
+      </div>
+      <button id="close-modal" class="btn-icon">✕</button>
+    </div>
+    
+    <div class="modal-badges">
+      <span id="modal-sector" class="badge">Sector</span>
+      <span id="modal-country" class="badge">Country</span>
+      <span id="modal-exchange" class="badge">Exchange</span>
+    </div>
+
+    <div class="chart-container">
+      <div id="tv-chart-container"></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Price</div>
+        <div class="stat-value font-mono" id="modal-price">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Market Cap</div>
+        <div class="stat-value font-mono" id="modal-mcap">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">P/E Ratio</div>
+        <div class="stat-value font-mono" id="modal-pe">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">RSI (14)</div>
+        <div class="stat-value font-mono" id="modal-rsi">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">vs Sector</div>
+        <div class="stat-value font-mono" id="modal-vs-sector">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">vs Country</div>
+        <div class="stat-value font-mono" id="modal-vs-country">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Volatility</div>
+        <div class="stat-value font-mono" id="modal-volatility">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Max Drawdown</div>
+        <div class="stat-value font-mono" id="modal-drawdown">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Gain Streak</div>
+        <div class="stat-value font-mono" id="modal-gain-streak">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">MA 50</div>
+        <div class="stat-value font-mono" id="modal-ma50">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">MA 200</div>
+        <div class="stat-value font-mono" id="modal-ma200">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Volume</div>
+        <div class="stat-value font-mono" id="modal-volume">-</div>
+      </div>
+    </div>
+    
+    <div class="range-52w">
+      <div class="range-labels">
+        <span id="modal-low52" class="font-mono text-small">-</span>
+        <span class="text-small" style="color: var(--text-tertiary);">52W Range</span>
+        <span id="modal-high52" class="font-mono text-small">-</span>
+      </div>
+      <div class="range-bar-container">
+        <div class="range-bar"></div>
+        <div id="modal-range-indicator" class="range-indicator"></div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button id="modal-btn-watchlist" class="btn-outline">⭐ Watchlist</button>
+      <button id="modal-btn-ai" class="btn-primary">🧠 Ask AI</button>
+    </div>
+    
+    <div id="modal-ai-insight" class="ai-insight-container hidden">
+      <div class="ai-header">
+        <span class="ai-icon">✨</span>
+        <h4>AI Insight</h4>
+      </div>
+      <div id="ai-insight-content" class="ai-content"></div>
+    </div>
+  </aside>
+
+  <script src="js/supabase-api.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
