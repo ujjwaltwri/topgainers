@@ -1,6 +1,6 @@
 // Supabase API wrapper to replace local server.py
-const SUPABASE_URL = 'https://oqgwwidykukkqcgvvsnm.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xZ3d3aWR5a3Vra3FjZ3Z2c25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMjc5NDEsImV4cCI6MjA5NzcwMzk0MX0.Yk8nSX_7NCvPqfv0_8I0kPmZCWhyoH7QRICaz2i_fjw';
+const SUPABASE_URL = 'https://xpmfwpqkykiqmswumoxu.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwbWZ3cHFreWtpcW1zd3Vtb3h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNTEwNjYsImV4cCI6MjA5NzcyNzA2Nn0.TAFycwI-cScW88ynt9SZNkLUqskOxdO3e7PQh-zUZyk';
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -108,13 +108,17 @@ window.SupabaseAPI = {
   
   async getStockDetail(ticker) {
     let allPrices = [];
-    let offset = 0;
-    while(true) {
-        const { data } = await supabaseClient.from('price_history').select('*').eq('ticker', ticker).order('date', { ascending: true }).range(offset, offset + 999);
-        if (!data || data.length === 0) break;
-        allPrices = allPrices.concat(data);
-        if (data.length < 1000) break;
-        offset += 1000;
+    try {
+      const { data, error } = await supabaseClient.functions.invoke('yfinance-proxy', {
+        body: { ticker }
+      });
+      if (data && Array.isArray(data)) {
+        allPrices = data;
+      } else {
+        console.error("Error from Edge Function:", data?.error || error);
+      }
+    } catch (err) {
+      console.error("Failed to invoke Edge Function:", err);
     }
 
     const [{ data: stockData }, { data: gainsData }] = await Promise.all([
