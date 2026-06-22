@@ -299,8 +299,11 @@ def get_market_cap_tier(mcap):
 class RealPipeline:
     """Fetches real market data and populates the SQLite database."""
 
-    def __init__(self, db_path: str = DB_PATH, batch_size: int = 25):
-        self.db = Database(db_path)
+    def __init__(self, supabase_url: str = None, supabase_key: str = None, batch_size: int = 25):
+        if not supabase_url or not supabase_key:
+            supabase_url = os.getenv('SUPABASE_URL')
+            supabase_key = os.getenv('SUPABASE_KEY')
+        self.supabase = create_client(supabase_url, supabase_key)
         self.batch_size = batch_size
         # Counters
         self.stats = {
@@ -333,7 +336,7 @@ class RealPipeline:
             log.error(f"Failed to download FX rates: {e}")
         log.info(f"Loaded FX rates: {self.fx_rates}")
 
-    def _resolve_tickers(self, exchange_groups, limit=None, globe=False):
+    def _resolve_tickers(self, exchange_groups, limit=None, ):
         """Return list of dicts with ticker + metadata via financedatabase."""
         log.info("Loading Equities from FinanceDatabase...")
         try:
@@ -362,62 +365,44 @@ class RealPipeline:
         }
 
         result = []
-        
-        if globe:
-            # User requested ALL stocks across the globe.
-            df = equities.select()
-            for symbol, row in df.iterrows():
-                # For globe, we don't map exchange/region properly since there are hundreds,
-                # we just use the raw data from financedatabase
-                result.append({
-                    'ticker': symbol,
-                    'name': row.get('name', symbol),
-                    'sector': row.get('sector'),
-                    'industry': row.get('industry'),
-                    'exchange': row.get('exchange', 'Unknown'),
-                    'country': row.get('country', 'Unknown'),
-                    'region': 'Global',
-                    'currency': row.get('currency', 'USD'),
-                })
-        else:
-            for grp_name in exchange_groups:
-                grp = TICKER_LISTS.get(grp_name)
-                if grp is None:
+        for grp_name in exchange_groups:
+            grp = TICKER_LISTS.get(grp_name)
+            if grp is None:
+                continue
+            country = grp['country']
+            
+            try:
+                # Fetch from financedatabase
+                df = equities.select(country=country)
+                if df.empty:
                     continue
-                country = grp['country']
                 
-                try:
-                    # Fetch from financedatabase
-                    df = equities.select(country=country)
-                    if df.empty:
-                        continue
+                # Filter by allowed exchanges
+                allowed = ALLOWED_EXCHANGES.get(country)
+                if allowed:
+                    df = df[df['exchange'].isin(allowed)]
                     
-                    # Filter by allowed exchanges
-                    allowed = ALLOWED_EXCHANGES.get(country)
-                    if allowed:
-                        df = df[df['exchange'].isin(allowed)]
-                        
-                    # Iterate and format ticker
-                    for symbol, row in df.iterrows():
-                        details = row.to_dict()
-                        suffix = EXCHANGES.get(grp['exchange'], {}).get('suffix', '')
-                        
-                        yf_ticker = f"{symbol}{suffix}"
-                        # Clean up
-                        yf_ticker = yf_ticker.replace(" ", "").split(".")[0] + suffix
-                        
-                        result.append({
-                            'ticker': yf_ticker,
-                            'name': details.get('name', yf_ticker),
-                            'sector': details.get('sector'),
-                            'industry': details.get('industry'),
-                            'exchange': grp['exchange'],
-                            'country': country,
-                            'region': grp['region'],
-                            'currency': grp['currency'],
-                        })
-                except Exception as e:
-                    print(f"Error resolving {country}: {e}")
+                # Iterate and format ticker
+                for symbol, row in df.iterrows():
+                    details = row.to_dict()
+                    suffix = EXCHANGES.get(grp['exchange'], {}).get('suffix', '')
+                    
+                    yf_ticker = f"{symbol}{suffix}"
+                    # Clean up
+                    yf_ticker = yf_ticker.replace(" ", "").split(".")[0] + suffix
+                    
+                    result.append({
+                        'ticker': yf_ticker,
+                        'name': details.get('name', yf_ticker),
+                        'sector': details.get('sector'),
+                        'industry': details.get('industry'),
+                        'exchange': grp['exchange'],
+                        'country': country,
+                        'region': grp['region'],
+                        'currency': grp['currency'],
+                    })
+            except Exception as e:
+                print(f"Error resolving {country}: {e}")
 
         # de-dup by ticker
         seen = set()
@@ -543,6 +528,14 @@ class RealPipeline:
     def _compute_gains(self, ticker: str, df: pd.DataFrame) -> list[dict]:
         """Compute gains for all TIME_PERIODS. Returns list of gain dicts."""
         gains = []
+        
+        # 0-VOLUME FILTER: Drop days where the stock did not trade
+        # This prevents stale/unadjusted ghost prices from causing massive fake returns
+        df = df[df['volume'] > 0].copy()
+        
+        if df.empty:
+            return gains
+
         prices = df['close'].astype(float)
         volumes = df['volume'].astype(float)
 
@@ -597,6 +590,18 @@ class RealPipeline:
                 pct_change = ((end_price / start_price) - 1.0) * 100.0
                 abs_change = end_price - start_price
 
+                # ANOMALY CIRCUIT BREAKER
+                # If a stock gains > 400% in a 1-day or 5-day window, it's almost certainly a data glitch 
+                # (e.g. unadjusted split or reverse split) and should be discarded to preserve platform trust.
+                if period_name in ('1D', '5D') and pct_change > 400.0:
+                    log.warning(f"  [ANOMALY] {ticker} {period_name} gain is {pct_change:.1f}%. Discarding period data.")
+                    continue
+                # For longer periods, extremely high gains can happen, but we can cap them if needed. 
+                # To be safe, anything over 2000% is also likely a split error.
+                if pct_change > 2000.0:
+                    log.warning(f"  [ANOMALY] {ticker} {period_name} gain is {pct_change:.1f}%. Discarding period data.")
+                    continue
+
                 avg_vol = float(period_df['volume'].mean())
                 vol_ratio = float(recent_vol / avg_vol) if avg_vol > 0 else 1.0
 
@@ -646,7 +651,7 @@ class RealPipeline:
         return gains
 
     # ── MAIN RUN ──────────────────────────────────────────────────────────
-    def run(self, exchange_groups: list[str], limit: int | None = None, dry_run: bool = False, globe: bool = False, resume: bool = False):
+    def run(self, exchange_groups: list[str], limit: int | None = None, dry_run: bool = False, resume: bool = False):
         t0 = time.time()
         log.info("=" * 70)
         log.info("  TopGainers Exhaustive Pipeline — Starting")
@@ -656,7 +661,7 @@ class RealPipeline:
             self._fetch_fx_rates()
 
         # 1. Resolve tickers
-        ticker_metas = self._resolve_tickers(exchange_groups, limit, globe)
+        ticker_metas = self._resolve_tickers(exchange_groups, limit)
         tickers = [m['ticker'] for m in ticker_metas]
         meta_lookup = {m['ticker']: m for m in ticker_metas}
         
@@ -751,22 +756,22 @@ class RealPipeline:
                     batch_failures.append(ticker)
                     continue
 
-                # 2c. Fetch .info (Skipped on globe runs)
+                # 2c. Fetch .info
                 try:
-                    if globe:
-                        info = {
-                            'name': meta.get('name', ticker),
-                            'sector': meta.get('sector'),
-                            'industry': meta.get('industry'),
-                            'market_cap': None, 'pe_ratio': None, 'revenue_growth': None,
-                            'earnings_growth': None, 'dividend_yield': None,
-                            'recommendation': None, 'info_country': None,
-                            'currency': meta['currency']
-                        }
-                    else:
-                        info = self._fetch_info(ticker)
-                        
-                    stock_rows.append({
+                    info = self._fetch_info(ticker)
+                except Exception as e:
+                    log.error(f"Failed to fetch info for {ticker}: {e}")
+                    info = {
+                        'name': meta.get('name', ticker),
+                        'sector': meta.get('sector'),
+                        'industry': meta.get('industry'),
+                        'market_cap': None, 'pe_ratio': None, 'revenue_growth': None,
+                        'earnings_growth': None, 'dividend_yield': None,
+                        'recommendation': None, 'info_country': None,
+                        'currency': meta['currency']
+                    }
+                
+                stock_rows.append({
                         'ticker': ticker,
                         'name': info['name'] or meta.get('name', ticker),
                         'sector': info['sector'] or meta.get('sector'),
@@ -787,9 +792,7 @@ class RealPipeline:
                         'last_updated': datetime.now().isoformat(),
                     })
                     
-                except Exception as e:
-                    log.debug(f"  ↳ info/stock_row error {ticker}: {e}")
-                    batch_failures.append(ticker)
+
 
             # Update failures
             if batch_failures:
@@ -809,6 +812,8 @@ class RealPipeline:
 
                 if all_prices:
                     prices_df = pd.concat(all_prices, ignore_index=True)
+                    if 'volume' in prices_df.columns:
+                        prices_df['volume'] = pd.to_numeric(prices_df['volume'], errors='coerce').fillna(0).astype(int)
                     # Convert dates to string, handle NaNs
                     prices_df = prices_df.replace({np.nan: None})
                     prices_records = prices_df.to_dict(orient='records')
@@ -823,6 +828,9 @@ class RealPipeline:
 
                 if all_gains:
                     gains_df = pd.DataFrame(all_gains)
+                    for col in ['avg_volume', 'recent_volume']:
+                        if col in gains_df.columns:
+                            gains_df[col] = pd.to_numeric(gains_df[col], errors='coerce').fillna(0).astype(int)
                     gains_df = gains_df.replace({np.nan: None})
                     gains_records = gains_df.to_dict(orient='records')
                     
@@ -833,7 +841,7 @@ class RealPipeline:
                 log.error(f"Supabase upsert failed for batch: {e}")
 
             # Adaptive Rate Limiting
-            if not globe and batch_idx + self.batch_size < len(tickers):
+            if batch_idx + self.batch_size < len(tickers):
                 time.sleep(0.5)
 
         # 3d. Compute sector & country averages
@@ -895,9 +903,6 @@ def main():
         '--dry-run', action='store_true',
         help='Run without downloading anything')
     parser.add_argument(
-        '--globe', action='store_true',
-        help='Fetch ALL 150k+ stocks globally without filters')
-    parser.add_argument(
         '--resume',
         action='store_true',
         help='Resume run by skipping already processed tickers in the DB')
@@ -907,12 +912,10 @@ def main():
         groups = list(TICKER_LISTS.keys())
     elif args.exchanges:
         groups = args.exchanges
-    elif args.globe:
-        groups = []
     else:
         print("Usage: python real_pipeline.py --exchanges US India")
         print(f"       Available groups: {list(TICKER_LISTS.keys())}")
-        print("       Or use --all or --globe to process everything")
+        print("       Or use --all to process everything")
         sys.exit(1)
 
     if not args.supabase_url or not args.supabase_key:
@@ -920,7 +923,7 @@ def main():
         sys.exit(1)
         
     pipeline = RealPipeline(supabase_url=args.supabase_url, supabase_key=args.supabase_key, batch_size=args.batch_size)
-    pipeline.run(exchange_groups=groups, limit=args.limit, dry_run=args.dry_run, globe=args.globe, resume=args.resume)
+    pipeline.run(exchange_groups=groups, limit=args.limit, dry_run=args.dry_run, resume=args.resume)
 
 
 if __name__ == '__main__':
