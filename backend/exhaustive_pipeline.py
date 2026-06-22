@@ -746,7 +746,7 @@ class RealPipeline:
                         continue
 
                     all_gains.extend(gains)
-                    all_prices.append(df)
+                    # all_prices.append(df.tail(260)) # Deprecated: Edge Functions handle charts now
                     ok_tickers.add(ticker)
                     self.stats['tickers_ok'] += 1
 
@@ -810,21 +810,21 @@ class RealPipeline:
                             if pd.isna(v): row[k] = None
                     self.supabase.table('stocks').upsert(stock_rows).execute()
 
-                if all_prices:
-                    prices_df = pd.concat(all_prices, ignore_index=True)
-                    if 'volume' in prices_df.columns:
-                        prices_df['volume'] = pd.to_numeric(prices_df['volume'], errors='coerce').fillna(0).astype(int)
-                    # Convert dates to string, handle NaNs
-                    prices_df = prices_df.replace({np.nan: None})
-                    prices_records = prices_df.to_dict(orient='records')
-                    self.stats['prices_inserted'] += len(prices_records)
-                    
-                    # Supabase upsert has a limit of ~1000-2000 rows per request usually. 
-                    # 100 tickers * 1250 days = 125k rows. This will crash Supabase REST API!
-                    # We must chunk the prices_records.
-                    chunk_size = 2000
-                    for i in range(0, len(prices_records), chunk_size):
-                        self.supabase.table('price_history').upsert(prices_records[i:i+chunk_size]).execute()
+                # if all_prices:
+                #     prices_df = pd.concat(all_prices, ignore_index=True)
+                #     if 'volume' in prices_df.columns:
+                #         prices_df['volume'] = pd.to_numeric(prices_df['volume'], errors='coerce').fillna(0).astype(int)
+                #     # Convert dates to string, handle NaNs
+                #     prices_df = prices_df.replace({np.nan: None})
+                #     prices_records = prices_df.to_dict(orient='records')
+                #     self.stats['prices_inserted'] += len(prices_records)
+                #     
+                #     # Supabase upsert has a limit of ~1000-2000 rows per request usually. 
+                #     # 100 tickers * 1250 days = 125k rows. This will crash Supabase REST API!
+                #     # We must chunk the prices_records.
+                #     chunk_size = 2000
+                #     for i in range(0, len(prices_records), chunk_size):
+                #         self.supabase.table('price_history').upsert(prices_records[i:i+chunk_size]).execute()
 
                 if all_gains:
                     gains_df = pd.DataFrame(all_gains)

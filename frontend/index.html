@@ -6,7 +6,7 @@
   <title>TopGainers — Global Stock Intelligence</title>
   <meta name='description' content='Find the top gaining stocks in every sector, every country, every exchange worldwide. Real-time global stock screener with AI-powered insights.'>
   <link rel='preconnect' href='https://fonts.googleapis.com'>
-  <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap' rel='stylesheet'>
+  <link href='https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap' rel='stylesheet'>
   <link rel='stylesheet' href='css/styles.css'>
   <!-- Lightweight Charts -->
   <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
@@ -16,15 +16,19 @@
 <body>
 
   <!-- HEADER -->
-  <header class="header glass-card">
-    <div class="logo">🌍 TopGainers</div>
+  <header class="header">
+    <a href="/" class="logo"><span class="logo-dot"></span> TopGainers</a>
     
     <nav class="header-nav">
       <a href="/" class="nav-link active">Dashboard</a>
-      <a href="/overview.html" class="nav-link">📊 Overview</a>
+      <a href="/overview.html" class="nav-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+        Overview
+      </a>
     </nav>
     
     <div class="search-container">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       <input type="text" id="stock-search" placeholder="Search stocks or tickers (e.g. AAPL, Reliance) [/]" autocomplete="off">
       <div id="search-results" class="search-results hidden"></div>
     </div>
@@ -35,10 +39,10 @@
         <span>Pipeline Active</span>
       </div>
       <div class="last-updated">
-        <span class="pulse-dot"></span> <span id="last-updated-time">Updating...</span>
+        <span id="last-updated-time">Updating...</span>
       </div>
       <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
-        <span class="icon moon">🌙</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
       </button>
     </div>
   </header>
@@ -47,21 +51,27 @@
   <main class="main-container">
     
     <!-- LEFT SIDEBAR: FILTERS -->
-    <aside class="sidebar glass-card">
+    <aside class="sidebar">
       <div class="sidebar-header">
         <h3>Filters</h3>
         <button id="reset-filters" class="btn-ghost text-small">Reset All</button>
       </div>
 
       <div class="filter-group">
-        <label><span class="filter-icon">⏱</span> Time Period</label>
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Time Period
+        </label>
         <div class="segmented-control" id="period-buttons">
           <!-- Populated by JS -->
         </div>
       </div>
       
       <div class="filter-group hidden" id="custom-date-group">
-        <label><span class="filter-icon">📅</span> Custom Date Range</label>
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Custom Date Range
+        </label>
         <div class="date-inputs">
           <input type="date" id="date-from">
           <span>to</span>
@@ -70,20 +80,29 @@
       </div>
 
       <div class="filter-group">
-        <label><span class="filter-icon">🌍</span> Geography</label>
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          Geography
+        </label>
         <select id="filter-region"><option value="">-- All Regions --</option></select>
         <select id="filter-country" disabled><option value="">-- All Countries --</option></select>
         <select id="filter-exchange" disabled><option value="">-- All Exchanges --</option></select>
       </div>
 
       <div class="filter-group">
-        <label><span class="filter-icon">🏢</span> Sector & Industry</label>
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16l-2 2"></path><path d="M14 2v20"></path><path d="M10 2v20"></path></svg>
+          Sector & Industry
+        </label>
         <select id="filter-sector"><option value="">-- All Sectors --</option></select>
         <select id="filter-industry" disabled><option value="">-- All Industries --</option></select>
       </div>
 
       <div class="filter-group">
-        <label><span class="filter-icon">💎</span> Market Cap</label>
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          Market Cap
+        </label>
         <div class="chip-group" id="mcap-chips">
           <button class="chip active" data-val="">All</button>
           <button class="chip" data-val="mega">Mega</button>
@@ -96,7 +115,10 @@
       </div>
 
       <div class="filter-group">
-        <label><span class="filter-icon">💧</span> Liquidity (Min Volume)</label>
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+          Liquidity (Min Volume)
+        </label>
         <select id="filter-volume">
           <option value="">Any</option>
           <option value="10000">> 10K / day</option>
@@ -107,7 +129,10 @@
       </div>
 
       <div class="filter-group">
-        <label><span class="filter-icon">💲</span> Price Range</label>
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          Price Range
+        </label>
         <div class="range-inputs">
           <input type="number" id="filter-price-min" placeholder="Min" min="0" step="0.01">
           <span>—</span>
@@ -116,7 +141,10 @@
       </div>
 
       <div class="filter-group">
-        <label><span class="filter-icon">📊</span> P/E Ratio Range</label>
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          P/E Ratio Range
+        </label>
         <div class="range-inputs">
           <input type="number" id="filter-pe-min" placeholder="Min" step="0.1">
           <span>—</span>
@@ -125,10 +153,13 @@
       </div>
 
       <div class="filter-group quick-filters">
-        <label><span class="filter-icon">📡</span> Signals</label>
-        <label class="checkbox-label"><input type="checkbox" id="filter-52w-high"> 🏔 At 52W High</label>
-        <label class="checkbox-label"><input type="checkbox" id="filter-52w-low"> 🕳 At 52W Low</label>
-        <label class="checkbox-label"><input type="checkbox" id="filter-vol-surge"> ⚡ Volume Surge (3x+)</label>
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"></circle><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path></svg>
+          Signals
+        </label>
+        <label class="checkbox-label"><input type="checkbox" id="filter-52w-high"> At 52W High</label>
+        <label class="checkbox-label"><input type="checkbox" id="filter-52w-low"> At 52W Low</label>
+        <label class="checkbox-label"><input type="checkbox" id="filter-vol-surge"> Volume Surge (3x+)</label>
       </div>
 
     </aside>
@@ -144,13 +175,18 @@
       <!-- Controls Row -->
       <div class="controls-row">
         <div class="direction-toggle" id="direction-toggle">
-          <div class="indicator"></div>
-          <button class="active" data-dir="gainers">📈 Gainers</button>
-          <button data-dir="losers">📉 Losers</button>
+          <button class="active" data-dir="gainers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+            Gainers
+          </button>
+          <button data-dir="losers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>
+            Losers
+          </button>
         </div>
         
         <div class="results-meta">
-          <span id="results-count">Showing 0 results</span>
+          <span id="results-count" class="font-mono text-small">0 results</span>
           <select id="sort-by">
             <option value="pct_change">Sort by: % Change</option>
             <option value="vs_sector">Sort by: vs Sector</option>
@@ -158,12 +194,15 @@
             <option value="volume_ratio">Sort by: Volume Surge</option>
             <option value="market_cap">Sort by: Market Cap</option>
           </select>
-          <button id="export-csv" class="btn-outline">📥 Export CSV</button>
+          <button id="export-csv" class="btn-outline">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Export
+          </button>
         </div>
       </div>
 
       <!-- Table Container -->
-      <div class="table-container glass-card">
+      <div class="table-container panel">
         <table id="results-table">
           <thead>
             <tr>
@@ -193,22 +232,17 @@
     </section>
   </main>
 
-  <!-- FOOTER -->
-  <footer class="app-footer">
-    <span>© 2026 TopGainers — Global Stock Intelligence</span> · 
-    <span>Data sourced from <a href="https://finance.yahoo.com" target="_blank" rel="noopener">Yahoo Finance</a></span> · 
-    <span>Not financial advice</span>
-  </footer>
-
   <!-- STOCK DETAIL MODAL -->
   <div id="stock-modal-overlay" class="modal-overlay hidden"></div>
-  <aside id="stock-modal" class="stock-modal glass-card hidden">
+  <aside id="stock-modal" class="stock-modal panel hidden">
     <div class="modal-header">
       <div class="stock-title">
         <h2 id="modal-name">Stock Name</h2>
         <span id="modal-ticker" class="text-secondary font-mono">TICKER</span>
       </div>
-      <button id="close-modal" class="btn-icon">✕</button>
+      <button id="close-modal" class="btn-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
     </div>
     
     <div class="modal-badges">
@@ -275,7 +309,7 @@
     <div class="range-52w">
       <div class="range-labels">
         <span id="modal-low52" class="font-mono text-small">-</span>
-        <span class="text-small" style="color: var(--text-tertiary);">52W Range</span>
+        <span class="text-small" style="color: var(--ink-tertiary);">52W Range</span>
         <span id="modal-high52" class="font-mono text-small">-</span>
       </div>
       <div class="range-bar-container">
@@ -285,13 +319,19 @@
     </div>
 
     <div class="modal-actions">
-      <button id="modal-btn-watchlist" class="btn-outline">⭐ Watchlist</button>
-      <button id="modal-btn-ai" class="btn-primary">🧠 Ask AI</button>
+      <button id="modal-btn-watchlist" class="btn-outline">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        Watchlist
+      </button>
+      <button id="modal-btn-ai" class="btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+        Ask AI
+      </button>
     </div>
     
     <div id="modal-ai-insight" class="ai-insight-container hidden">
       <div class="ai-header">
-        <span class="ai-icon">✨</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
         <h4>AI Insight</h4>
       </div>
       <div id="ai-insight-content" class="ai-content"></div>

@@ -16,7 +16,7 @@ class Table {
         <tr>
           <td colspan="10">
             <div class="empty-state">
-              <div class="empty-icon">🔍</div>
+              <div class="empty-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
               <div class="empty-text">No stocks match your filters</div>
               <div class="empty-sub">Try adjusting your criteria or reset filters</div>
             </div>
@@ -44,27 +44,27 @@ class Table {
       const vsColor = r.vs_sector > 0 ? 'text-gain' : (r.vs_sector < 0 ? 'text-loss' : 'text-neutral');
       
       let signals = '';
-      if (r.at_52w_high) signals += '<span title="At 52W High">🏔</span> ';
-      if (r.at_52w_low) signals += '<span title="At 52W Low">🕳</span> ';
-      if (r.volume_ratio >= 3.0) signals += '<span title="Volume Surge">⚡</span> ';
-      if (r.gain_streak >= 10) signals += '<span title="Gain Streak">🔥</span> ';
+      if (r.at_52w_high) signals += '<span class="badge" title="At 52W High">52W HI</span> ';
+      if (r.at_52w_low) signals += '<span class="badge" title="At 52W Low">52W LO</span> ';
+      if (r.volume_ratio >= 3.0) signals += '<span class="badge" title="Volume Surge">SURGE</span> ';
+      if (r.gain_streak >= 10) signals += '<span class="badge" title="Gain Streak">STREAK</span> ';
       
-      const watchlistIcon = localStorage.getItem('wl_' + r.ticker) ? '⭐' : '☆';
+      const watchlistIcon = localStorage.getItem('wl_' + r.ticker) ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>' : '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
       const wlClass = localStorage.getItem('wl_' + r.ticker) ? 'active' : '';
 
       tr.innerHTML = `
         <td class="text-tertiary">${offset + i + 1}</td>
         <td>
-          <div class="font-bold">${r.name || r.ticker}</div>
-          <div class="text-small text-tertiary font-mono">${r.ticker} ${signals}</div>
+          <div class="stock-cell-title font-bold">${r.name || r.ticker}</div>
+          <div class="stock-cell-ticker">${r.ticker} ${signals}</div>
         </td>
         <td class="text-secondary">${r.sector || '-'}</td>
-        <td>${this.getCountryFlag(r.country)} <span class="text-small text-secondary">${r.country || '-'}</span></td>
+        <td><span class="text-small text-secondary">${r.country || '-'}</span></td>
         <td class="text-right"><span class="${pctColor}${intensity} font-mono">${this.app.formatPercent(r.pct_change)}</span></td>
         <td class="text-right"><span class="${vsColor} font-mono">${this.app.formatPercent(r.vs_sector)}</span></td>
         <td class="text-right font-mono">${this.formatWithCommas(r.end_price, r.currency)}</td>
         <td class="text-right font-mono">${this.app.formatNumber(r.market_cap, '$')}</td>
-        <td class="text-center"><canvas width="120" height="36" class="sparkline" data-ticker="${r.ticker}" data-pct="${r.pct_change || 0}"></canvas></td>
+        <td class="text-center"><canvas width="120" height="30" class="sparkline trend-canvas" data-ticker="${r.ticker}" data-pct="${r.pct_change || 0}"></canvas></td>
         <td class="text-center watchlist-star ${wlClass}" data-ticker="${r.ticker}">${watchlistIcon}</td>
       `;
       
@@ -84,11 +84,11 @@ class Table {
         const t = e.currentTarget.dataset.ticker;
         if (localStorage.getItem('wl_' + t)) {
           localStorage.removeItem('wl_' + t);
-          e.currentTarget.textContent = '☆';
+          e.currentTarget.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
           e.currentTarget.classList.remove('active');
         } else {
           localStorage.setItem('wl_' + t, '1');
-          e.currentTarget.textContent = '⭐';
+          e.currentTarget.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
           e.currentTarget.classList.add('active');
         }
       });
@@ -163,16 +163,7 @@ class Table {
   }
 
   static getCountryFlag(country) {
-    const flags = {
-      'United States': '🇺🇸', 'India': '🇮🇳', 'South Korea': '🇰🇷', 'Japan': '🇯🇵', 
-      'China': '🇨🇳', 'Hong Kong': '🇭🇰', 'United Kingdom': '🇬🇧', 'Germany': '🇩🇪', 
-      'France': '🇫🇷', 'Netherlands': '🇳🇱', 'Canada': '🇨🇦', 'Australia': '🇦🇺', 
-      'Brazil': '🇧🇷', 'Saudi Arabia': '🇸🇦', 'Switzerland': '🇨🇭', 'Taiwan': '🇹🇼',
-      'Singapore': '🇸🇬', 'Sweden': '🇸🇪', 'Norway': '🇳🇴', 'Denmark': '🇩🇰',
-      'Spain': '🇪🇸', 'Italy': '🇮🇹', 'Mexico': '🇲🇽', 'Indonesia': '🇮🇩',
-      'Thailand': '🇹🇭', 'Malaysia': '🇲🇾', 'Israel': '🇮🇱', 'Turkey': '🇹🇷'
-    };
-    return flags[country] || '🏳';
+    return ''; // Flags removed in favor of Cortexa text-only layout
   }
   
   // --- Premium Sparklines with gradient fill and random-walk data ---
