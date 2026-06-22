@@ -38,7 +38,6 @@ class App {
     this.setupShortcuts();
     this.setupModal();
     this.setupKeyboardNav();
-    this.setupTVChart();
     
     document.getElementById('export-csv')?.addEventListener('click', () => this.exportCSV());
   }
@@ -240,13 +239,23 @@ class App {
     try {
       const data = await window.SupabaseAPI.getStockDetail(ticker);
       if (data && data.stock) {
-        this.populateModal(data);
+        // Unhide modal first so DOM elements have dimensions
         modal.classList.remove('hidden');
         overlay.classList.remove('hidden');
+        
+        this.populateModal(data);
         // brief timeout to allow display before transform animation
         requestAnimationFrame(() => {
           modal.classList.add('visible');
           overlay.classList.add('visible');
+          
+          setTimeout(() => {
+             if (this.tvChart) {
+                const container = document.getElementById('tv-chart-container');
+                this.tvChart.resize(container.clientWidth, container.clientHeight);
+                this.tvChart.timeScale().fitContent();
+             }
+          }, 300); // Wait for transition
         });
       } else {
         this.showError(`Could not load details for ${ticker}`);
@@ -375,6 +384,9 @@ class App {
         type: 'volume',
       },
       priceScaleId: '', // set as an overlay
+    });
+
+    this.tvChart.priceScale('').applyOptions({
       scaleMargins: {
         top: 0.8,
         bottom: 0,
@@ -405,45 +417,106 @@ class App {
   }
 
   updateTVChart(data) {
-    if (!this.tvSeries || !this.tvVolume) return;
+    const container = document.getElementById('tv-chart-container');
+    try {
+      if (typeof LightweightCharts === 'undefined') {
+          container.innerHTML = "<div style='color:red; padding:20px;'>ERROR: LightweightCharts library failed to load! Check your internet connection or adblocker.</div>";
+          return;
+      }
+      if (!this.tvChart) {
+          container.innerHTML = ''; // clear any old error messages
+          this.setupTVChart();
+      }
+      if (!this.tvSeries || !this.tvVolume) {
+          container.innerHTML = "<div style='color:red; padding:20px;'>ERROR: tvSeries or tvVolume were not created successfully!</div>";
+          return;
+      }
 
-    let history = data.price_history || [];
-    if (!history.length) {
-      this.tvSeries.setData([]);
-      this.tvVolume.setData([]);
-      return;
-    }
-
-    // Sort ascending by date
-    history = [...history].sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    const candleData = [];
-    const volumeData = [];
-
-    for (let i = 0; i < history.length; i++) {
-      const row = history[i];
-      // Format time as YYYY-MM-DD
-      const time = row.date.split('T')[0];
+      let history = data.price_history || [];
       
-      candleData.push({
-        time: time,
-        open: row.open,
-        high: row.high,
-        low: row.low,
-        close: row.close
-      });
+      if (!history.length) {
+        container.innerHTML = `<div style='color:orange; padding:20px;'>WARNING: No price history data found for ${data.stock?.ticker} in the database.</div>`;
+        this.tvSeries.setData([]);
+        this.tvVolume.setData([]);
+        return;
+      }
 
-      const isUp = row.close >= row.open;
-      volumeData.push({
-        time: time,
-        value: row.volume || 0,
-        color: isUp ? 'rgba(0, 245, 160, 0.5)' : 'rgba(245, 0, 79, 0.5)'
-      });
+      // Sort ascending by date
+      history = [...history].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      const candleData = [];
+      const volumeData = [];
+
+      for (let i = 0; i < history.length; i++) {
+        const row = history[i];
+        const time = row.date.split('T')[0];
+        
+        // Ensure no NaN values which crash the chart
+        const open = Number(row.open) || 0;
+        const high = Number(row.high) || open;
+        const low = Number(row.low) || open;
+        const close = Number(row.close) || open;
+        
+        candleData.push({
+          time: time,
+          open: open,
+          high: Math.max(high, open, close),
+          low: Math.min(low, open, close),
+          close: close
+        });
+
+        const isUp = close >= open;
+        volumeData.push({
+          time: time,
+          value: Number(row.volume) || 0,
+          color: isUp ? 'rgba(0, 245, 160, 0.5)' : 'rgba(245, 0, 79, 0.5)'
+        });
+      }
+
+      console.log("[CHART DEBUG] First row:", candleData[0]);
+      console.log("[CHART DEBUG] Last row:", candleData[candleData.length - 1]);
+
+      // If there are exact duplicate dates, the chart will crash.
+      // Deduplicate by time:
+      const uniqueCandles = [];
+      const uniqueVolumes = [];
+      const seenTimes = new Set();
+      for (let i = 0; i < candleData.length; i++) {
+          if (!seenTimes.has(candleData[i].time)) {
+              seenTimes.add(candleData[i].time);
+              uniqueCandles.push(candleData[i]);
+              uniqueVolumes.push(volumeData[i]);
+          }
+      }
+
+      this.tvSeries.setData(uniqueCandles);
+      this.tvVolume.setData(uniqueVolumes);
+      
+      // ensure we clear any error message
+      const errDiv = document.getElementById('chart-error-msg');
+      if (errDiv) errDiv.remove();
+
+    } catch (e) {
+      console.error("[CHART ERROR]", e);
+      // Display the error physically on the UI
+      if (container) {
+          let errDiv = document.getElementById('chart-error-msg');
+          if (!errDiv) {
+              errDiv = document.createElement('div');
+              errDiv.id = 'chart-error-msg';
+              errDiv.style.color = '#f5004f';
+              errDiv.style.padding = '20px';
+              errDiv.style.position = 'absolute';
+              errDiv.style.zIndex = '999';
+              container.appendChild(errDiv);
+          }
+          errDiv.innerHTML = `<strong>Chart Rendering Error:</strong><br/>${e.message}`;
+      }
     }
-
-    this.tvSeries.setData(candleData);
-    this.tvVolume.setData(volumeData);
-    this.tvChart.timeScale().fitContent();
+    // Only fit content if chart was actually created
+    if (this.tvChart) {
+        this.tvChart.timeScale().fitContent();
+    }
   }
 
   hideStockDetail() {
