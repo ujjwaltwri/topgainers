@@ -144,6 +144,10 @@ class App {
     }
     
     try {
+      if (!window.SupabaseAPI) {
+        throw new Error("Supabase API is not loaded. Please check your connection.");
+      }
+      
       const data = await window.SupabaseAPI.getTopMovers(this.filters);
       this.currentData = data;
       const countEl = document.getElementById('results-count');
@@ -164,7 +168,11 @@ class App {
     if (countEl) {
       countEl.textContent = 'Error: ' + message;
       countEl.style.color = 'var(--loss-primary)';
-      setTimeout(() => { countEl.style.color = ''; }, 5000);
+      console.error("UI Error Display:", message);
+      setTimeout(() => { 
+        countEl.style.color = ''; 
+        if (countEl.textContent.startsWith('Error:')) countEl.textContent = '0 results';
+      }, 5000);
     }
   }
 

@@ -156,8 +156,12 @@ class Filters {
       const el = document.getElementById(`filter-${id}`);
       if (el) {
         el.addEventListener('change', (e) => {
-          const key = id.replace('-', '_');
-          this.app.updateFilters({[key]: e.target.checked ? true : ''});
+          let key = id;
+          if (id === '52w-high') key = 'at_52w_high';
+          if (id === '52w-low') key = 'at_52w_low';
+          if (id === 'vol-surge') key = 'volume_surge';
+          
+          this.app.updateFilters({[key]: e.target.checked ? 'true' : ''});
         });
       }
     });
