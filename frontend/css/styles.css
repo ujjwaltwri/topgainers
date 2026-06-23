@@ -152,7 +152,7 @@ body {
 ══════════════════════════════════════════ */
 .header {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 32px; left: 0; right: 0;
   height: 64px;
   display: flex;
   align-items: center;
@@ -324,8 +324,8 @@ body {
 ══════════════════════════════════════════ */
 .main-container {
   display: flex;
-  margin-top: 64px;
-  height: calc(100vh - 64px);
+  margin-top: 96px;
+  height: calc(100vh - 96px);
 }
 
 .sidebar {
@@ -669,16 +669,18 @@ tr.flash-row {
 /* Global Index Marquee */
 .marquee-container {
   width: 100%;
-  background: var(--bg-secondary);
+  background: var(--bg-surface);
   border-bottom: 1px solid var(--border-medium);
   overflow: hidden;
   white-space: nowrap;
   padding: 8px 0;
   box-sizing: border-box;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  position: relative;
-  z-index: 100;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 32px;
+  z-index: 101;
 }
 
 .marquee-content {
@@ -793,8 +795,8 @@ tr.flash-row {
   /* Main Container & Sidebar */
   .main-container {
     flex-direction: column;
-    margin-top: 110px; /* Account for wrapped header */
-    height: calc(100vh - 110px);
+    margin-top: 142px; /* Account for wrapped header + marquee */
+    height: calc(100vh - 142px);
   }
   
   .mobile-only { display: flex !important; }
