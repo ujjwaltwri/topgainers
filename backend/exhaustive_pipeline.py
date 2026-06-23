@@ -499,6 +499,19 @@ class RealPipeline:
         return result
 
     # ── fetch .info fundamentals for a single ticker ──────────────────────
+    def _translate_if_foreign(self, name: str) -> str:
+        if not name: return name
+        import re
+        if re.search(r'[^\x00-\x7F]', name):
+            try:
+                from deep_translator import GoogleTranslator
+                translated = GoogleTranslator(source='auto', target='en').translate(name)
+                return translated if translated else name
+            except Exception as e:
+                log.warning(f"Translation failed for {name}: {e}")
+                return name
+        return name
+
     def _fetch_info(self, ticker: str) -> dict:
         """Fetch yf.Ticker(ticker).info — returns a dict of fields we care about."""
         defaults = {
@@ -511,7 +524,8 @@ class RealPipeline:
             info = yf.Ticker(ticker).info
             if not info or not isinstance(info, dict):
                 return defaults
-            defaults['name'] = info.get('longName') or info.get('shortName')
+            raw_name = info.get('longName') or info.get('shortName')
+            defaults['name'] = self._translate_if_foreign(raw_name)
             defaults['sector'] = info.get('sector')
             defaults['industry'] = info.get('industry')
             defaults['market_cap'] = info.get('marketCap')
