@@ -856,4 +856,25 @@ class App {
 
 document.addEventListener('DOMContentLoaded', () => {
   window.app = new App();
+
+  // Mobile Sidebar Drawer Logic
+  const mobileFilterBtn = document.getElementById('mobile-filter-btn');
+  const closeSidebarBtn = document.getElementById('close-sidebar');
+  const sidebar = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+  if (mobileFilterBtn && sidebar && sidebarOverlay) {
+    mobileFilterBtn.addEventListener('click', () => {
+      sidebar.classList.add('open');
+      sidebarOverlay.classList.remove('hidden');
+    });
+
+    const closeSidebar = () => {
+      sidebar.classList.remove('open');
+      sidebarOverlay.classList.add('hidden');
+    };
+
+    if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+  }
 });
