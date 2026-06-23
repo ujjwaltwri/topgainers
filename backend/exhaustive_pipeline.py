@@ -506,7 +506,9 @@ class RealPipeline:
             try:
                 from deep_translator import GoogleTranslator
                 translated = GoogleTranslator(source='auto', target='en').translate(name)
-                return translated if translated else name
+                if translated and "Error 500" not in translated and "That’s an error" not in translated and "There was an error" not in translated:
+                    return translated
+                return name
             except Exception as e:
                 log.warning(f"Translation failed for {name}: {e}")
                 return name
