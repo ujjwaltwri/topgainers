@@ -681,6 +681,11 @@ class App {
           container.innerHTML = "<div style='color:red; padding:20px;'>ERROR: LightweightCharts library failed to load! Check your internet connection or adblocker.</div>";
           return;
       }
+      if (this.tvChart && (container.innerHTML.includes('empty-state') || container.innerHTML.includes('ERROR:'))) {
+          try { this.tvChart.remove(); } catch(e) {}
+          this.tvChart = null;
+      }
+
       if (!this.tvChart) {
           container.innerHTML = ''; // clear any old error messages
           this.setupTVChart();
@@ -693,9 +698,11 @@ class App {
       let history = data.price_history || [];
       
       if (!history.length) {
+        if (this.tvChart) {
+            try { this.tvChart.remove(); } catch(e) {}
+            this.tvChart = null;
+        }
         container.innerHTML = `<div class='empty-state' style='height:100%; justify-content:center; padding: 20px;'><div class='empty-icon'><svg viewBox='0 0 24 24' width='48' height='48' fill='none' stroke='currentColor' stroke-width='1.5'><path d='M3 3v18h18'></path><path d='M18 9l-5-5-4 4-5-5'></path></svg></div><div class='empty-text'>No Chart Data Available</div><div class='empty-sub'>Price history for ${data.stock?.ticker || 'this stock'} was not found in the database.</div></div>`;
-        this.tvSeries.setData([]);
-        this.tvVolume.setData([]);
         return;
       }
 
