@@ -180,11 +180,9 @@ body {
   gap: 8px;
 }
 
-.logo-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--accent-primary);
-  box-shadow: 0 0 10px var(--accent-primary);
+.logo-img {
+  height: 28px;
+  width: auto;
 }
 
 .header-nav {
