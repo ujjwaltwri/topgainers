@@ -371,7 +371,7 @@ class App {
       content.innerHTML = '<div class="ai-loading"><div class="ai-loading-spinner"></div> Analyzing selected stocks...</div>';
       
       try {
-        const { data, error } = await window.supabase.functions.invoke('ai-compare', {
+        const { data, error } = await window.supabaseClient.functions.invoke('ai-compare', {
           body: { stocks: stocksData }
         });
         
@@ -417,7 +417,7 @@ class App {
     btn.disabled = true;
     
     try {
-      const { data, error } = await window.supabase.functions.invoke('ai-summary', {
+      const { data, error } = await window.supabaseClient.functions.invoke('ai-summary', {
         body: { ticker, name, pct_change }
       });
       

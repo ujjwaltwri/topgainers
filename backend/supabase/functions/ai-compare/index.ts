@@ -33,7 +33,7 @@ Data:${stocksData}`;
     const token = await getAccessToken();
     const gcpProjectId = Deno.env.get('GCP_PROJECT_ID');
     const gcpLocation = Deno.env.get('GCP_LOCATION');
-    const url = `https://${gcpLocation}-aiplatform.googleapis.com/v1/projects/${gcpProjectId}/locations/${gcpLocation}/publishers/google/models/gemini-1.5-pro:generateContent`;
+    const url = `https://${gcpLocation}-aiplatform.googleapis.com/v1/projects/${gcpProjectId}/locations/${gcpLocation}/publishers/google/models/gemini-2.5-flash:generateContent`;
     
     const res = await fetch(url, {
       method: 'POST',
