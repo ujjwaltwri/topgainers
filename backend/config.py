@@ -19,14 +19,47 @@ EXCHANGES = {
     'TSX': {'suffix': '.TO', 'country': 'Canada', 'region': 'Americas', 'currency': 'CAD', 'benchmark_index': '^GSPTSE'},
     'ASX': {'suffix': '.AX', 'country': 'Australia', 'region': 'Asia-Pacific', 'currency': 'AUD', 'benchmark_index': '^AXJO'},
     'B3': {'suffix': '.SA', 'country': 'Brazil', 'region': 'Americas', 'currency': 'BRL', 'benchmark_index': '^BVSP'},
-    'Tadawul': {'suffix': '.SR', 'country': 'Saudi Arabia', 'region': 'Middle East', 'currency': 'SAR', 'benchmark_index': None}
+    'Tadawul': {'suffix': '.SR', 'country': 'Saudi Arabia', 'region': 'Middle East / Africa', 'currency': 'SAR', 'benchmark_index': None},
+    # --- EXPANDED ASIA-PACIFIC ---
+    'TWSE': {'suffix': '.TW', 'country': 'Taiwan', 'region': 'Asia-Pacific', 'currency': 'TWD', 'benchmark_index': '^TWII'},
+    'Taipei Exchange': {'suffix': '.TWO', 'country': 'Taiwan', 'region': 'Asia-Pacific', 'currency': 'TWD', 'benchmark_index': None},
+    'SGX': {'suffix': '.SI', 'country': 'Singapore', 'region': 'Asia-Pacific', 'currency': 'SGD', 'benchmark_index': '^STI'},
+    'KLSE': {'suffix': '.KL', 'country': 'Malaysia', 'region': 'Asia-Pacific', 'currency': 'MYR', 'benchmark_index': '^KLSE'},
+    'IDX': {'suffix': '.JK', 'country': 'Indonesia', 'region': 'Asia-Pacific', 'currency': 'IDR', 'benchmark_index': '^JKSE'},
+    'SET': {'suffix': '.BK', 'country': 'Thailand', 'region': 'Asia-Pacific', 'currency': 'THB', 'benchmark_index': '^SET.BK'},
+    'PSE': {'suffix': '.PS', 'country': 'Philippines', 'region': 'Asia-Pacific', 'currency': 'PHP', 'benchmark_index': 'PSEI.PS'},
+    'NZX': {'suffix': '.NZ', 'country': 'New Zealand', 'region': 'Asia-Pacific', 'currency': 'NZD', 'benchmark_index': '^NZ50'},
+    # --- EXPANDED EUROPE ---
+    'SIX': {'suffix': '.SW', 'country': 'Switzerland', 'region': 'Europe', 'currency': 'CHF', 'benchmark_index': '^SSMI'},
+    'Borsa Italiana': {'suffix': '.MI', 'country': 'Italy', 'region': 'Europe', 'currency': 'EUR', 'benchmark_index': 'FTSEMIB.MI'},
+    'BME': {'suffix': '.MC', 'country': 'Spain', 'region': 'Europe', 'currency': 'EUR', 'benchmark_index': '^IBEX'},
+    'Nasdaq Stockholm': {'suffix': '.ST', 'country': 'Sweden', 'region': 'Europe', 'currency': 'SEK', 'benchmark_index': '^OMX'},
+    'Oslo Bors': {'suffix': '.OL', 'country': 'Norway', 'region': 'Europe', 'currency': 'NOK', 'benchmark_index': '^OSEAX'},
+    'Nasdaq Copenhagen': {'suffix': '.CO', 'country': 'Denmark', 'region': 'Europe', 'currency': 'DKK', 'benchmark_index': '^OMXC20'},
+    'Nasdaq Helsinki': {'suffix': '.HE', 'country': 'Finland', 'region': 'Europe', 'currency': 'EUR', 'benchmark_index': '^OMXH25'},
+    'GPW': {'suffix': '.WA', 'country': 'Poland', 'region': 'Europe', 'currency': 'PLN', 'benchmark_index': '^WIG'},
+    'Wiener Börse': {'suffix': '.VI', 'country': 'Austria', 'region': 'Europe', 'currency': 'EUR', 'benchmark_index': '^ATX'},
+    'Euronext Dublin': {'suffix': '.IR', 'country': 'Ireland', 'region': 'Europe', 'currency': 'EUR', 'benchmark_index': '^ISEQ'},
+    'Euronext Lisbon': {'suffix': '.LS', 'country': 'Portugal', 'region': 'Europe', 'currency': 'EUR', 'benchmark_index': '^PSI20'},
+    'Athens Exchange': {'suffix': '.AT', 'country': 'Greece', 'region': 'Europe', 'currency': 'EUR', 'benchmark_index': 'GD.AT'},
+    # --- EXPANDED AMERICAS ---
+    'BMV': {'suffix': '.MX', 'country': 'Mexico', 'region': 'Americas', 'currency': 'MXN', 'benchmark_index': '^MXX'},
+    'BCBA': {'suffix': '.BA', 'country': 'Argentina', 'region': 'Americas', 'currency': 'ARS', 'benchmark_index': '^MERV'},
+    'BCS': {'suffix': '.SN', 'country': 'Chile', 'region': 'Americas', 'currency': 'CLP', 'benchmark_index': None},
+    # --- EXPANDED MIDDLE EAST / AFRICA ---
+    'TASE': {'suffix': '.TA', 'country': 'Israel', 'region': 'Middle East / Africa', 'currency': 'ILS', 'benchmark_index': '^TA125.TA'},
+    'Borsa Istanbul': {'suffix': '.IS', 'country': 'Turkey', 'region': 'Middle East / Africa', 'currency': 'TRY', 'benchmark_index': 'XU100.IS'},
+    'EGX': {'suffix': '.CA', 'country': 'Egypt', 'region': 'Middle East / Africa', 'currency': 'EGP', 'benchmark_index': '^CASE30'},
+    'QSE': {'suffix': '.QA', 'country': 'Qatar', 'region': 'Middle East / Africa', 'currency': 'QAR', 'benchmark_index': None},
+    'DFM': {'suffix': '.AE', 'country': 'United Arab Emirates', 'region': 'Middle East / Africa', 'currency': 'AED', 'benchmark_index': None},
+    'JSE': {'suffix': '.JO', 'country': 'South Africa', 'region': 'Middle East / Africa', 'currency': 'ZAR', 'benchmark_index': '^J203.JO'}
 }
 
 REGIONS = {
-    'Americas': ['United States', 'Canada', 'Brazil'],
-    'Europe': ['United Kingdom', 'Germany', 'France', 'Netherlands'],
-    'Asia-Pacific': ['India', 'Japan', 'South Korea', 'China', 'Hong Kong', 'Australia'],
-    'Middle East': ['Saudi Arabia']
+    'Americas': ['United States', 'Canada', 'Brazil', 'Mexico', 'Argentina', 'Chile'],
+    'Europe': ['United Kingdom', 'Germany', 'France', 'Netherlands', 'Switzerland', 'Italy', 'Spain', 'Sweden', 'Norway', 'Denmark', 'Finland', 'Poland', 'Austria', 'Ireland', 'Portugal', 'Greece'],
+    'Asia-Pacific': ['India', 'Japan', 'South Korea', 'China', 'Hong Kong', 'Australia', 'Taiwan', 'Singapore', 'Malaysia', 'Indonesia', 'Thailand', 'Philippines', 'New Zealand'],
+    'Middle East / Africa': ['Saudi Arabia', 'Israel', 'Turkey', 'Egypt', 'Qatar', 'United Arab Emirates', 'South Africa']
 }
 
 TIME_PERIODS = [

@@ -30,6 +30,13 @@ class App {
         this.fetchStatsData(),
         this.fetchData()
       ]);
+
+      // Setup Realtime Live Updates
+      if (window.SupabaseAPI && window.SupabaseAPI.subscribeToUpdates) {
+        window.SupabaseAPI.subscribeToUpdates((newRecord) => this.handleRealtimeUpdate(newRecord));
+      }
+      
+      this.renderMarquee();
     } catch (e) {
       console.error("Init error", e);
       this.showError('Failed to initialize. Please refresh the page.');
@@ -37,9 +44,59 @@ class App {
     
     this.setupShortcuts();
     this.setupModal();
+    this.setupCompareAI();
     this.setupKeyboardNav();
     
     document.getElementById('export-csv')?.addEventListener('click', () => this.exportCSV());
+  }
+
+  handleRealtimeUpdate(newRecord) {
+    if (!this.currentData || !this.currentData.results) return;
+    
+    // Check if the update matches our current filter
+    if (newRecord.period !== this.filters.period) return;
+    
+    const isGainer = this.filters.direction === 'gainers';
+    if ((isGainer && newRecord.pct_change <= 0) || (!isGainer && newRecord.pct_change >= 0)) return;
+    if (this.filters.sector && newRecord.sector !== this.filters.sector) return;
+    if (this.filters.country && newRecord.country !== this.filters.country) return;
+    
+    // Add to current data
+    const existsIndex = this.currentData.results.findIndex(r => r.ticker === newRecord.ticker);
+    if (existsIndex >= 0) {
+      this.currentData.results[existsIndex] = newRecord;
+    } else {
+      this.currentData.results.push(newRecord);
+    }
+    
+    // Sort
+    const sortField = this.filters.sort || 'pct_change';
+    this.currentData.results.sort((a, b) => {
+      let valA = a[sortField];
+      let valB = b[sortField];
+      
+      if (typeof valA === 'string') valA = parseFloat(valA.replace(/[^0-9.-]+/g,"")) || 0;
+      if (typeof valB === 'string') valB = parseFloat(valB.replace(/[^0-9.-]+/g,"")) || 0;
+      
+      return isGainer ? valB - valA : valA - valB;
+    });
+    
+    // Keep it exactly at limit to prevent infinite growth
+    this.currentData.results = this.currentData.results.slice(0, this.filters.limit || 25);
+    
+    // If we're on page 1, re-render
+    if (this.filters.page === 1) {
+      if (window.Table) Table.render(this.currentData);
+      
+      // Flash animation
+      setTimeout(() => {
+        const tr = document.querySelector(`tr[data-ticker="${newRecord.ticker}"]`);
+        if (tr) {
+          tr.classList.add('flash-row');
+          setTimeout(() => tr.classList.remove('flash-row'), 1500);
+        }
+      }, 50);
+    }
   }
 
   setupTheme() {
@@ -95,14 +152,64 @@ class App {
   }
 
   updateFilters(newFilters) {
+    const periodChanged = newFilters.period && newFilters.period !== this.filters.period;
     this.filters = { ...this.filters, ...newFilters, page: 1 }; // reset page on filter change
     this.updateURL();
     if (window.Filters) Filters.renderActivePills(this.filters);
     
     // Debounce fetch
     clearTimeout(this.fetchTimeout);
-    this.fetchTimeout = setTimeout(() => this.fetchData(), 300);
+    this.fetchTimeout = setTimeout(() => {
+      this.fetchData();
+      if (periodChanged || !this.marqueeLoaded) {
+        this.renderMarquee();
+      }
+    }, 300);
   }
+
+  async renderMarquee() {
+    this.marqueeLoaded = true;
+    const container = document.getElementById('global-marquee');
+    const content = document.getElementById('marquee-content');
+    if (!container || !content) return;
+    
+    // Show container and loading state
+    container.style.display = 'block';
+    content.innerHTML = '<span class="text-secondary">Fetching Global Markets...</span>';
+    
+    try {
+      if (!window.SupabaseAPI || !window.SupabaseAPI.getMarqueeData) return;
+      
+      const data = await window.SupabaseAPI.getMarqueeData(this.filters.period);
+      if (!data || data.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+      
+      let html = '';
+      // We render two identical sets for seamless scrolling loop
+      for(let j=0; j<2; j++) {
+        for (const idx of data) {
+          const isUp = idx.pct_change >= 0;
+          const cls = isUp ? 'marquee-up' : 'marquee-down';
+          const sign = isUp ? '+' : '';
+          html += `
+            <div class="marquee-item ${cls}">
+              <span class="marquee-name">${idx.name}</span>
+              <span class="marquee-value">${idx.value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+              <span class="marquee-change">${sign}${idx.pct_change.toFixed(2)}%</span>
+            </div>
+          `;
+        }
+      }
+      content.innerHTML = html;
+      
+    } catch (e) {
+      console.error(e);
+      container.style.display = 'none';
+    }
+  }
+
   
   changePage(newPage) {
     this.filters.page = newPage;
@@ -216,6 +323,73 @@ class App {
     });
   }
 
+  setupCompareAI() {
+    const btn = document.getElementById('compare-ai-btn');
+    const countSpan = document.getElementById('compare-count');
+    const modal = document.getElementById('compare-modal');
+    const overlay = document.getElementById('compare-modal-overlay');
+    const closeBtn = document.getElementById('close-compare-modal');
+    const content = document.getElementById('compare-insight-content');
+    
+    if (closeBtn) closeBtn.addEventListener('click', () => {
+      modal.classList.add('hidden');
+      overlay.classList.add('hidden');
+    });
+    
+    if (overlay) overlay.addEventListener('click', () => {
+      modal.classList.add('hidden');
+      overlay.classList.add('hidden');
+    });
+
+    // Delegate checkbox clicks
+    document.getElementById('table-body')?.addEventListener('change', (e) => {
+      if (e.target.classList.contains('row-checkbox')) {
+        const checked = document.querySelectorAll('.row-checkbox:checked');
+        if (checked.length >= 2) {
+          btn.style.display = 'inline-flex';
+          countSpan.textContent = checked.length;
+        } else {
+          btn.style.display = 'none';
+        }
+      }
+    });
+
+    if (btn) btn.addEventListener('click', async () => {
+      const checkedBoxes = Array.from(document.querySelectorAll('.row-checkbox:checked'));
+      const stocksData = checkedBoxes.map(cb => ({
+        ticker: cb.value,
+        name: cb.dataset.name,
+        sector: cb.dataset.sector,
+        pct_change: cb.dataset.pct,
+        market_cap: cb.dataset.mcap,
+        pe_ratio: cb.dataset.pe,
+        volume_ratio: cb.dataset.vol
+      }));
+      
+      modal.classList.remove('hidden');
+      overlay.classList.remove('hidden');
+      content.innerHTML = '<div class="ai-loading"><div class="ai-loading-spinner"></div> Analyzing selected stocks...</div>';
+      
+      try {
+        const { data, error } = await window.supabase.functions.invoke('ai-compare', {
+          body: { stocks: stocksData }
+        });
+        
+        if (error) throw error;
+        
+        // Convert markdown to HTML
+        let htmlText = (data.result || 'No insight available.')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\n/g, '<br/>');
+          
+        content.innerHTML = `<p>${htmlText}</p>`;
+      } catch (err) {
+        console.error('Compare AI error:', err);
+        content.innerHTML = '<p class="text-loss">Failed to generate AI comparison.</p>';
+      }
+    });
+  }
+
   setupModal() {
     const overlay = document.getElementById('stock-modal-overlay');
     const closeBtn = document.getElementById('close-modal');
@@ -228,6 +402,9 @@ class App {
 
   async fetchAIInsight() {
     const ticker = document.getElementById('modal-ticker').textContent;
+    const name = document.getElementById('modal-name').textContent;
+    const pct_change = window.app.currentData?.results?.find(r => r.ticker === ticker)?.pct_change || 0;
+    
     const container = document.getElementById('modal-ai-insight');
     const content = document.getElementById('ai-insight-content');
     const btn = document.getElementById('modal-btn-ai');
@@ -240,10 +417,21 @@ class App {
     btn.disabled = true;
     
     try {
-      content.innerHTML = '<p class="text-secondary">AI Insight is currently offline in Serverless mode. Please integrate a cloud function.</p>';
+      const { data, error } = await window.supabase.functions.invoke('ai-summary', {
+        body: { ticker, name, pct_change }
+      });
+      
+      if (error) throw error;
+      
+      // Convert markdown bold to HTML
+      let htmlText = (data.result || 'No insight available.')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br/>');
+        
+      content.innerHTML = `<p>${htmlText}</p>`;
     } catch (e) {
       console.error('AI Insight Error:', e);
-      content.innerHTML = '<p class="text-loss">Network error while reaching AI service.</p>';
+      content.innerHTML = '<p class="text-loss">Failed to reach AI service or generate insight.</p>';
     } finally {
       btn.disabled = false;
     }

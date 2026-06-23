@@ -53,7 +53,10 @@ class Table {
       const wlClass = localStorage.getItem('wl_' + r.ticker) ? 'active' : '';
 
       tr.innerHTML = `
-        <td class="text-tertiary">${offset + i + 1}</td>
+        <td class="text-tertiary" style="display:flex; align-items:center; gap:8px;">
+          <input type="checkbox" class="row-checkbox" value="${r.ticker}" data-name="${r.name}" data-sector="${r.sector}" data-pct="${r.pct_change}" data-mcap="${this.app.formatNumber(r.market_cap, '$')}" data-pe="${r.pe_ratio}" data-vol="${r.volume_ratio}">
+          ${offset + i + 1}
+        </td>
         <td>
           <div class="stock-cell-title font-bold">${r.name || r.ticker}</div>
           <div class="stock-cell-ticker">${r.ticker} ${signals}</div>

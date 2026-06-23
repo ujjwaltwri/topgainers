@@ -217,11 +217,47 @@ TICKER_LISTS = {
         'country': 'Brazil',
         'region': 'Americas',
         'currency': 'BRL',
-        'tickers': [
-            'PETR4.SA', 'VALE3.SA', 'ITUB4.SA', 'BBDC4.SA', 'B3SA3.SA',
-            'ABEV3.SA', 'WEGE3.SA', 'RENT3.SA', 'BBAS3.SA', 'SUZB3.SA',
-        ],
+        'tickers': [],
     },
+    'France': { 'exchange': 'Euronext Paris', 'country': 'France', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
+    'Netherlands': { 'exchange': 'Euronext Amsterdam', 'country': 'Netherlands', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
+    'Saudi Arabia': { 'exchange': 'Tadawul', 'country': 'Saudi Arabia', 'region': 'Middle East / Africa', 'currency': 'SAR', 'tickers': [] },
+    
+    # --- EXPANDED ASIA-PACIFIC ---
+    'Taiwan': { 'exchange': 'TWSE', 'country': 'Taiwan', 'region': 'Asia-Pacific', 'currency': 'TWD', 'tickers': [] },
+    'Singapore': { 'exchange': 'SGX', 'country': 'Singapore', 'region': 'Asia-Pacific', 'currency': 'SGD', 'tickers': [] },
+    'Malaysia': { 'exchange': 'KLSE', 'country': 'Malaysia', 'region': 'Asia-Pacific', 'currency': 'MYR', 'tickers': [] },
+    'Indonesia': { 'exchange': 'IDX', 'country': 'Indonesia', 'region': 'Asia-Pacific', 'currency': 'IDR', 'tickers': [] },
+    'Thailand': { 'exchange': 'SET', 'country': 'Thailand', 'region': 'Asia-Pacific', 'currency': 'THB', 'tickers': [] },
+    'Philippines': { 'exchange': 'PSE', 'country': 'Philippines', 'region': 'Asia-Pacific', 'currency': 'PHP', 'tickers': [] },
+    'New Zealand': { 'exchange': 'NZX', 'country': 'New Zealand', 'region': 'Asia-Pacific', 'currency': 'NZD', 'tickers': [] },
+    
+    # --- EXPANDED EUROPE ---
+    'Switzerland': { 'exchange': 'SIX', 'country': 'Switzerland', 'region': 'Europe', 'currency': 'CHF', 'tickers': [] },
+    'Italy': { 'exchange': 'Borsa Italiana', 'country': 'Italy', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
+    'Spain': { 'exchange': 'BME', 'country': 'Spain', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
+    'Sweden': { 'exchange': 'Nasdaq Stockholm', 'country': 'Sweden', 'region': 'Europe', 'currency': 'SEK', 'tickers': [] },
+    'Norway': { 'exchange': 'Oslo Bors', 'country': 'Norway', 'region': 'Europe', 'currency': 'NOK', 'tickers': [] },
+    'Denmark': { 'exchange': 'Nasdaq Copenhagen', 'country': 'Denmark', 'region': 'Europe', 'currency': 'DKK', 'tickers': [] },
+    'Finland': { 'exchange': 'Nasdaq Helsinki', 'country': 'Finland', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
+    'Poland': { 'exchange': 'GPW', 'country': 'Poland', 'region': 'Europe', 'currency': 'PLN', 'tickers': [] },
+    'Austria': { 'exchange': 'Wiener Börse', 'country': 'Austria', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
+    'Ireland': { 'exchange': 'Euronext Dublin', 'country': 'Ireland', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
+    'Portugal': { 'exchange': 'Euronext Lisbon', 'country': 'Portugal', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
+    'Greece': { 'exchange': 'Athens Exchange', 'country': 'Greece', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
+    
+    # --- EXPANDED AMERICAS ---
+    'Mexico': { 'exchange': 'BMV', 'country': 'Mexico', 'region': 'Americas', 'currency': 'MXN', 'tickers': [] },
+    'Argentina': { 'exchange': 'BCBA', 'country': 'Argentina', 'region': 'Americas', 'currency': 'ARS', 'tickers': [] },
+    'Chile': { 'exchange': 'BCS', 'country': 'Chile', 'region': 'Americas', 'currency': 'CLP', 'tickers': [] },
+    
+    # --- EXPANDED MIDDLE EAST / AFRICA ---
+    'Israel': { 'exchange': 'TASE', 'country': 'Israel', 'region': 'Middle East / Africa', 'currency': 'ILS', 'tickers': [] },
+    'Turkey': { 'exchange': 'Borsa Istanbul', 'country': 'Turkey', 'region': 'Middle East / Africa', 'currency': 'TRY', 'tickers': [] },
+    'Egypt': { 'exchange': 'EGX', 'country': 'Egypt', 'region': 'Middle East / Africa', 'currency': 'EGP', 'tickers': [] },
+    'Qatar': { 'exchange': 'QSE', 'country': 'Qatar', 'region': 'Middle East / Africa', 'currency': 'QAR', 'tickers': [] },
+    'United Arab Emirates': { 'exchange': 'DFM', 'country': 'United Arab Emirates', 'region': 'Middle East / Africa', 'currency': 'AED', 'tickers': [] },
+    'South Africa': { 'exchange': 'JSE', 'country': 'South Africa', 'region': 'Middle East / Africa', 'currency': 'ZAR', 'tickers': [] }
 }
 
 
@@ -423,9 +459,10 @@ class RealPipeline:
         try:
             data = yf.download(
                 tickers,
-                period='5y',
+                period='1y',
                 interval='1d',
                 group_by='ticker',
+                auto_adjust=True,
                 threads=True,
                 progress=False,
             )
@@ -524,6 +561,11 @@ class RealPipeline:
             log.debug(f"  ↳ .info failed for {ticker}: {e}")
         return defaults
 
+    def _has_suspension_gap(self, period_df: pd.DataFrame, threshold_days: int = 30) -> bool:
+        dates = pd.to_datetime(period_df['date']).sort_values()
+        gaps = dates.diff().dropna()
+        return bool((gaps > pd.Timedelta(days=threshold_days)).any())
+
     # ── compute all gain metrics for a single ticker ──────────────────────
     def _compute_gains(self, ticker: str, df: pd.DataFrame) -> list[dict]:
         """Compute gains for all TIME_PERIODS. Returns list of gain dicts."""
@@ -562,10 +604,16 @@ class RealPipeline:
         at_52w_high = bool(current_price >= high_52w * 0.98)  # within 2%
         at_52w_low = bool(current_price <= low_52w * 1.02)
 
+        # Ensure date column is datetime for calendar slicing
+        if not pd.api.types.is_datetime64_any_dtype(df['date']):
+            df['date'] = pd.to_datetime(df['date'])
+            
+        latest_date = df['date'].max()
+
         for period_name, days in TIME_PERIODS:
             try:
                 if period_name == 'CUSTOM':
-                    continue  # skip CUSTOM, not applicable for pipeline
+                    continue
 
                 if period_name == 'YTD':
                     start_of_year = f"{datetime.now().year}-01-01"
@@ -573,16 +621,40 @@ class RealPipeline:
                 elif period_name == 'MAX':
                     period_df = df
                 else:
-                    period_df = df.iloc[-days:] if len(df) > days else df
+                    # Map periods to calendar time instead of trading days (to fix suspended stock bugs)
+                    if period_name == '1D': delta = pd.Timedelta(days=1)
+                    elif period_name == '5D': delta = pd.Timedelta(days=7)
+                    elif period_name == '1M': delta = pd.DateOffset(months=1)
+                    elif period_name == '3M': delta = pd.DateOffset(months=3)
+                    elif period_name == '6M': delta = pd.DateOffset(months=6)
+                    elif period_name == '1Y': delta = pd.DateOffset(years=1)
+                    elif period_name == '2Y': delta = pd.DateOffset(years=2)
+                    elif period_name == '3Y': delta = pd.DateOffset(years=3)
+                    elif period_name == '5Y': delta = pd.DateOffset(years=5)
+                    else: delta = pd.Timedelta(days=int(days * 1.45)) # fallback
+                    
+                    target_date = latest_date - delta
+                    period_df = df[df['date'] >= target_date]
 
                 if len(period_df) < 2:
+                    continue
+
+                # Sparse data check
+                expected_days = days * (5/7) * 0.85 if days else 0
+                if expected_days > 0 and len(period_df) < max(2, expected_days * 0.5):
+                    log.warning(f"  [SPARSE] {ticker} {period_name}: only {len(period_df)} days, skipping.")
+                    continue
+
+                # Suspension gap check
+                if self._has_suspension_gap(period_df):
+                    log.warning(f"  [ANOMALY] {ticker} {period_name}: suspension gap detected. Skipping.")
                     continue
 
                 p_prices = period_df['close'].astype(float)
                 start_price = float(p_prices.iloc[0])
                 end_price = float(p_prices.iloc[-1])
-                start_date = period_df['date'].iloc[0]
-                end_date = period_df['date'].iloc[-1]
+                start_date = period_df['date'].iloc[0].strftime('%Y-%m-%d')
+                end_date = period_df['date'].iloc[-1].strftime('%Y-%m-%d')
 
                 if start_price == 0:
                     continue
@@ -590,16 +662,15 @@ class RealPipeline:
                 pct_change = ((end_price / start_price) - 1.0) * 100.0
                 abs_change = end_price - start_price
 
-                # ANOMALY CIRCUIT BREAKER
-                # If a stock gains > 400% in a 1-day or 5-day window, it's almost certainly a data glitch 
-                # (e.g. unadjusted split or reverse split) and should be discarded to preserve platform trust.
-                if period_name in ('1D', '5D') and pct_change > 400.0:
-                    log.warning(f"  [ANOMALY] {ticker} {period_name} gain is {pct_change:.1f}%. Discarding period data.")
-                    continue
-                # For longer periods, extremely high gains can happen, but we can cap them if needed. 
-                # To be safe, anything over 2000% is also likely a split error.
-                if pct_change > 2000.0:
-                    log.warning(f"  [ANOMALY] {ticker} {period_name} gain is {pct_change:.1f}%. Discarding period data.")
+                # Thresholds by period — what's plausible in that window
+                MAX_PLAUSIBLE = {
+                    '1D': 25, '5D': 50, '1M': 100, '3M': 150,
+                    '6M': 200, 'YTD': 300, '1Y': 300, '2Y': 500,
+                    '3Y': 800, '5Y': 1500, 'MAX': 5000,
+                }
+                limit = MAX_PLAUSIBLE.get(period_name, 500)
+                if pct_change > limit:
+                    log.warning(f"  [ANOMALY] {ticker} {period_name}: {pct_change:.1f}% > {limit}% cap. Skipping.")
                     continue
 
                 avg_vol = float(period_df['volume'].mean())
@@ -737,8 +808,37 @@ class RealPipeline:
                 df = ticker_dfs[ticker]
                 meta = meta_lookup[ticker]
 
+                # DATA QUALITY FILTER: Liquidity (Ghost Stock Ban)
+                avg_vol = float(df['volume'].mean()) if 'volume' in df.columns else 0
+                if avg_vol < 10000:
+                    log.warning(f"  [FILTER] {ticker} discarded (Avg Vol {avg_vol:.0f} < 10k)")
+                    self.stats['tickers_failed'] += 1
+                    batch_failures.append(ticker)
+                    continue
+
+                # Fetch .info first for Market Cap filtering
                 try:
-                    # Compute gains
+                    info = self._fetch_info(ticker)
+                except Exception as e:
+                    log.error(f"Failed to fetch info for {ticker}: {e}")
+                    info = {
+                        'name': meta.get('name', ticker), 'sector': meta.get('sector'),
+                        'industry': meta.get('industry'), 'market_cap': None, 'pe_ratio': None,
+                        'revenue_growth': None, 'earnings_growth': None, 'dividend_yield': None,
+                        'recommendation': None, 'info_country': None, 'currency': meta['currency']
+                    }
+
+                mcap_usd = info['market_cap'] * self.fx_rates.get(info.get('currency') or meta['currency'], 1.0) if info.get('market_cap') else 0
+
+                # DATA QUALITY FILTER: Market Cap (Microcap Ban)
+                if mcap_usd < 10_000_000:
+                    log.warning(f"  [FILTER] {ticker} discarded (Market Cap ${mcap_usd:,.0f} < $10M)")
+                    self.stats['tickers_failed'] += 1
+                    batch_failures.append(ticker)
+                    continue
+
+                try:
+                    # Compute gains now that the stock is verified legitimate
                     gains = self._compute_gains(ticker, df)
                     if not gains:
                         self.stats['tickers_failed'] += 1
@@ -746,7 +846,6 @@ class RealPipeline:
                         continue
 
                     all_gains.extend(gains)
-                    # all_prices.append(df.tail(260)) # Deprecated: Edge Functions handle charts now
                     ok_tickers.add(ticker)
                     self.stats['tickers_ok'] += 1
 
@@ -755,25 +854,18 @@ class RealPipeline:
                     self.stats['tickers_failed'] += 1
                     batch_failures.append(ticker)
                     continue
-
-                # 2c. Fetch .info
-                try:
-                    info = self._fetch_info(ticker)
-                except Exception as e:
-                    log.error(f"Failed to fetch info for {ticker}: {e}")
-                    info = {
-                        'name': meta.get('name', ticker),
-                        'sector': meta.get('sector'),
-                        'industry': meta.get('industry'),
-                        'market_cap': None, 'pe_ratio': None, 'revenue_growth': None,
-                        'earnings_growth': None, 'dividend_yield': None,
-                        'recommendation': None, 'info_country': None,
-                        'currency': meta['currency']
-                    }
+                
+                # Filter out garbage yfinance names (e.g. '352770.KS,0P0001L88C,208430')
+                yf_name = info['name']
+                if yf_name and ',' in yf_name and ' ' not in yf_name:
+                    yf_name = None
+                    
+                # Prefer financedatabase name, then yfinance name, then fallback to ticker
+                final_name = meta.get('name') or yf_name or ticker
                 
                 stock_rows.append({
                         'ticker': ticker,
-                        'name': info['name'] or meta.get('name', ticker),
+                        'name': final_name,
                         'sector': info['sector'] or meta.get('sector'),
                         'industry': info['industry'] or meta.get('industry'),
                         'country': info.get('info_country') or meta['country'],

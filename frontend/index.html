@@ -15,7 +15,12 @@
   <script src="js/supabase.js"></script>
 </head>
 <body>
-
+  <!-- GLOBAL INDEX MARQUEE -->
+  <div class="marquee-container" id="global-marquee">
+    <div class="marquee-content" id="marquee-content">
+      <span>Loading global market data...</span>
+    </div>
+  </div>
   <!-- HEADER -->
   <header class="header">
     <a href="/" class="logo"><span class="logo-dot"></span> TopGainers</a>
@@ -195,6 +200,10 @@
             <option value="volume_ratio">Sort by: Volume Surge</option>
             <option value="market_cap">Sort by: Market Cap</option>
           </select>
+          <button id="compare-ai-btn" class="btn-primary" style="display:none;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+            Compare (<span id="compare-count">0</span>)
+          </button>
           <button id="export-csv" class="btn-outline">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             Export
@@ -336,6 +345,23 @@
         <h4>AI Insight</h4>
       </div>
       <div id="ai-insight-content" class="ai-content"></div>
+    </div>
+  </aside>
+
+  <!-- AI COMPARE MODAL -->
+  <div id="compare-modal-overlay" class="modal-overlay hidden"></div>
+  <aside id="compare-modal" class="stock-modal panel hidden" style="max-width: 800px; left: 50%; transform: translateX(-50%) translateY(100px); right: auto; top: 10%;">
+    <div class="modal-header">
+      <div class="stock-title">
+        <h2 id="compare-modal-name">AI Stock Comparison</h2>
+        <span class="text-secondary font-mono">Vertex AI</span>
+      </div>
+      <button id="close-compare-modal" class="btn-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div id="compare-insight-content" class="ai-content" style="padding: 24px; min-height: 200px; font-size: 15px; line-height: 1.6;">
+      <div class="ai-loading"><div class="ai-loading-spinner"></div> Analyzing selected stocks...</div>
     </div>
   </aside>
 

@@ -35,8 +35,7 @@ serve(async (req) => {
       })
     }
 
-    const period = url.searchParams.get('period') || '1y'
-    const interval = url.searchParams.get('interval') || '1d'
+
 
     // Fetch from Yahoo Finance
     const yfUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=${interval}&range=${period}`

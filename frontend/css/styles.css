@@ -654,3 +654,68 @@ tbody tr.keyboard-active { background: var(--accent-primary-bg); }
 .empty-icon svg { width: 64px; height: 64px; }
 .empty-text { font-size: 18px; font-weight: 600; color: var(--ink-primary); margin-bottom: 8px; }
 .empty-sub { font-size: 14px; color: var(--ink-tertiary); }
+
+/* Live Update Flash Animation */
+@keyframes rowPulse {
+  0% { background-color: rgba(16, 185, 129, 0.4); transform: scale(1.02); }
+  100% { background-color: transparent; transform: scale(1); }
+}
+
+tr.flash-row {
+  animation: rowPulse 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 10;
+  position: relative;
+}
+
+/* Global Index Marquee */
+.marquee-container {
+  width: 100%;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-medium);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 8px 0;
+  box-sizing: border-box;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  position: relative;
+  z-index: 100;
+}
+
+.marquee-content {
+  display: inline-block;
+  animation: marqueeScroll 40s linear infinite;
+}
+
+.marquee-content:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marqueeScroll {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 40px;
+  color: var(--ink-secondary);
+}
+
+.marquee-name {
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+
+.marquee-value {
+  font-weight: 500;
+}
+
+.marquee-change {
+  font-weight: 600;
+}
+
+.marquee-up .marquee-change, .marquee-up .marquee-value { color: var(--gain-primary); }
+.marquee-down .marquee-change, .marquee-down .marquee-value { color: var(--loss-primary); }
