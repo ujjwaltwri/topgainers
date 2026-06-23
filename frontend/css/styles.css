@@ -126,6 +126,7 @@ body {
 * { scrollbar-width: thin; scrollbar-color: var(--border-medium) transparent; }
 
 /* ──────────── UTILITY CLASSES ──────────── */
+.mobile-only { display: none !important; }
 .font-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .font-sans { font-family: var(--font-sans); letter-spacing: var(--track-tight); }
 .font-bold { font-weight: 600; }
@@ -796,13 +797,26 @@ tr.flash-row {
     height: calc(100vh - 110px);
   }
   
+  .mobile-only { display: flex !important; }
+  .mobile-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 998;
+    backdrop-filter: blur(2px);
+  }
   .sidebar {
-    width: 100%;
-    height: auto;
-    max-height: 250px; /* Scrollable filter box above results */
-    border-right: none;
-    border-bottom: 1px solid var(--border-subtle);
-    padding: var(--space-md);
+    position: fixed;
+    top: 0; left: -320px;
+    width: 300px;
+    height: 100vh;
+    z-index: 999;
+    transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-right: 1px solid var(--border-subtle);
+    border-bottom: none;
+  }
+  .sidebar.open {
+    left: 0;
   }
   
   .results-area {

@@ -57,9 +57,14 @@
   <main class="main-container">
     
     <!-- LEFT SIDEBAR: FILTERS -->
-    <aside class="sidebar">
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="mobile-overlay hidden"></div>
+    <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
-        <h3>Filters</h3>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <h3>Filters</h3>
+          <button id="close-sidebar" class="btn-icon mobile-only" style="width:28px; height:28px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+        </div>
         <button id="reset-filters" class="btn-ghost text-small">Reset All</button>
       </div>
 
@@ -180,6 +185,10 @@
 
       <!-- Controls Row -->
       <div class="controls-row">
+        <button id="mobile-filter-btn" class="btn-outline mobile-only" style="width:100%; justify-content:center; margin-bottom: 8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px; height:16px;"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+          Filters
+        </button>
         <div class="direction-toggle" id="direction-toggle">
           <button class="active" data-dir="gainers">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
