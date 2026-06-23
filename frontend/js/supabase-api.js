@@ -54,7 +54,7 @@ window.SupabaseAPI = {
     const direction = filters.direction || 'gainers';
     const ascending = direction === 'losers';
     
-    query = query.order(sortCol, { ascending });
+    query = query.not(sortCol, 'is', null).order(sortCol, { ascending, nullsFirst: false });
     query = query.range(offset, offset + limit - 1);
     
     const { data, error, count } = await query;
@@ -248,7 +248,9 @@ window.SupabaseAPI.getTreemap = async function(period) {
       .from('gains_with_stocks')
       .select('ticker, name, sector, market_cap, pct_change')
       .eq('period', period)
-      .order('market_cap', { ascending: false })
+      .not('market_cap', 'is', null)
+      .gt('market_cap', 0)
+      .order('market_cap', { ascending: false, nullsFirst: false })
       .limit(100);
       
     if (error) return { stocks: [] };
@@ -338,4 +340,37 @@ window.SupabaseAPI.getCountryPerformance = async function(period) {
     }).sort((a, b) => b.avg_change - a.avg_change);
 
     return { countries };
+};
+
+window.SupabaseAPI.getExchangePerformance = async function(period) {
+    let allData = [];
+    let offset = 0;
+    while(true) {
+        const { data, error } = await supabaseClient
+            .from('gains_with_stocks')
+            .select('exchange, pct_change')
+            .eq('period', period)
+            .not('exchange', 'is', null)
+            .range(offset, offset + 999);
+        if (error || !data || data.length === 0) break;
+        allData = allData.concat(data);
+        if (data.length < 1000) break;
+        offset += 1000;
+    }
+    
+    const exchangeMap = new Map();
+    allData.forEach(r => {
+        if (!r.exchange) return;
+        if (!exchangeMap.has(r.exchange)) {
+            exchangeMap.set(r.exchange, { name: r.exchange, total: 0, count: 0, positive: 0, negative: 0 });
+        }
+        const s = exchangeMap.get(r.exchange);
+        s.total += r.pct_change;
+        s.count += 1;
+        if (r.pct_change > 0) s.positive++;
+        else if (r.pct_change < 0) s.negative++;
+    });
+    
+    exchangeMap.forEach(s => { s.avg_change = s.total / s.count; });
+    return { exchanges: Array.from(exchangeMap.values()).sort((a,b) => b.avg_change - a.avg_change) };
 };

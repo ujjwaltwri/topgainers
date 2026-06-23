@@ -196,7 +196,6 @@ class App {
           html += `
             <div class="marquee-item ${cls}">
               <span class="marquee-name">${idx.name}</span>
-              <span class="marquee-value">${idx.value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
               <span class="marquee-change">${sign}${idx.pct_change.toFixed(2)}%</span>
             </div>
           `;
