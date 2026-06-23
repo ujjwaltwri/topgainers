@@ -223,6 +223,11 @@ async renderMarquee() {
 
     container.innerHTML = '';
     
+    if (stocks.length === 0) {
+      container.innerHTML = `<div style="color:red; padding:20px;">Debug: stocks is 0 after filter. Original len: ${this.data.treemap.stocks.length}. Sample: ${JSON.stringify(this.data.treemap.stocks[0])}</div>`;
+      return;
+    }
+    
     // Normalize values
     const totalMcap = stocks.reduce((sum, s) => sum + s.market_cap, 0);
     const totalArea = width * height;
@@ -281,69 +286,79 @@ async renderMarquee() {
     // Start layout (true = start with vertical split)
     divide(stocks, 0, 0, width, height, width > height);
     
+    if (rects.length === 0) {
+      container.innerHTML = `<div style="color:red; padding:20px;">Debug: rects is 0. totalMcap: ${totalMcap}, width: ${width}, height: ${height}</div>`;
+      return;
+    }
+    
     // Render DOM elements
     const tooltip = document.getElementById('tm-tooltip');
     
-    rects.forEach(r => {
-      const el = document.createElement('div');
-      el.className = 'treemap-rect';
-      
-      // Determine color based on pct_change
-      const c = r.stock.pct_change;
-      let bgColor = '';
-      if (c >= 20) bgColor = 'rgba(0, 245, 160, 0.8)';
-      else if (c >= 5) bgColor = 'rgba(0, 180, 120, 0.7)';
-      else if (c > 0) bgColor = 'rgba(0, 120, 80, 0.6)';
-      else if (c === 0) bgColor = 'rgba(100, 100, 100, 0.5)';
-      else if (c > -5) bgColor = 'rgba(150, 40, 40, 0.6)';
-      else if (c > -20) bgColor = 'rgba(200, 20, 40, 0.7)';
-      else bgColor = 'rgba(245, 0, 79, 0.8)';
-      
-      el.style.left = r.x + 'px';
-      el.style.top = r.y + 'px';
-      el.style.width = Math.max(0, r.w) + 'px';
-      el.style.height = Math.max(0, r.h) + 'px';
-      el.style.backgroundColor = bgColor;
-      
-      // Only show text if box is large enough
-      if (r.w > 40 && r.h > 30) {
-        el.innerHTML = `
-          <span class="tm-ticker">${r.stock.ticker}</span>
-          <span class="tm-change">${c > 0 ? '+' : ''}${c.toFixed(1)}%</span>
-        `;
-      } else if (r.w > 30 && r.h > 15) {
-        el.innerHTML = `<span class="tm-ticker" style="font-size: 0.6rem;">${r.stock.ticker}</span>`;
-      }
-      
-      // Interactions
-      el.addEventListener('mousemove', (e) => {
-        tooltip.classList.add('visible');
-        tooltip.style.left = (e.clientX + 15) + 'px';
-        tooltip.style.top = (e.clientY + 15) + 'px';
+    try {
+      rects.forEach(r => {
+        const el = document.createElement('div');
+        el.className = 'treemap-rect';
         
-        document.getElementById('tt-name').textContent = r.stock.name;
-        document.getElementById('tt-ticker').textContent = r.stock.ticker;
+        // Determine color based on pct_change
+        const c = r.stock.pct_change;
+        let bgColor = '';
+        if (c >= 20) bgColor = 'rgba(0, 245, 160, 0.8)';
+        else if (c >= 5) bgColor = 'rgba(0, 180, 120, 0.7)';
+        else if (c > 0) bgColor = 'rgba(0, 120, 80, 0.6)';
+        else if (c === 0) bgColor = 'rgba(100, 100, 100, 0.5)';
+        else if (c > -5) bgColor = 'rgba(150, 40, 40, 0.6)';
+        else if (c > -20) bgColor = 'rgba(200, 20, 40, 0.7)';
+        else bgColor = 'rgba(245, 0, 79, 0.8)';
         
-        const changeEl = document.getElementById('tt-change');
-        changeEl.textContent = (c > 0 ? '+' : '') + c.toFixed(2) + '%';
-        changeEl.style.color = c > 0 ? 'var(--gain-primary)' : 'var(--loss-primary)';
+        el.style.left = r.x + 'px';
+        el.style.top = r.y + 'px';
+        el.style.width = Math.max(0, r.w) + 'px';
+        el.style.height = Math.max(0, r.h) + 'px';
+        el.style.backgroundColor = bgColor;
         
-        document.getElementById('tt-mcap').textContent = this.formatNumber(r.stock.market_cap, '$');
-        document.getElementById('tt-sector').textContent = r.stock.sector || 'N/A';
-        document.getElementById('tt-volume').textContent = r.stock.volume_ratio ? r.stock.volume_ratio.toFixed(1) + 'x' : 'N/A';
+        // Only show text if box is large enough
+        if (r.w > 40 && r.h > 30) {
+          el.innerHTML = `
+            <span class="tm-ticker">${r.stock.ticker}</span>
+            <span class="tm-change">${c > 0 ? '+' : ''}${c.toFixed(1)}%</span>
+          `;
+        } else if (r.w > 30 && r.h > 15) {
+          el.innerHTML = `<span class="tm-ticker" style="font-size: 0.6rem;">${r.stock.ticker}</span>`;
+        }
+        
+        // Interactions
+        el.addEventListener('mousemove', (e) => {
+          if (!tooltip) return;
+          tooltip.classList.add('visible');
+          tooltip.style.left = (e.clientX + 15) + 'px';
+          tooltip.style.top = (e.clientY + 15) + 'px';
+          
+          document.getElementById('tt-name').textContent = r.stock.name;
+          document.getElementById('tt-ticker').textContent = r.stock.ticker;
+          
+          const changeEl = document.getElementById('tt-change');
+          changeEl.textContent = (c > 0 ? '+' : '') + c.toFixed(2) + '%';
+          changeEl.style.color = c > 0 ? 'var(--gain-primary)' : 'var(--loss-primary)';
+          
+          document.getElementById('tt-mcap').textContent = this.formatNumber(r.stock.market_cap, '$');
+          document.getElementById('tt-sector').textContent = r.stock.sector || 'N/A';
+          document.getElementById('tt-volume').textContent = r.stock.volume_ratio ? r.stock.volume_ratio.toFixed(1) + 'x' : 'N/A';
+        });
+        
+        el.addEventListener('mouseleave', () => {
+          if (tooltip) tooltip.classList.remove('visible');
+        });
+        
+        el.addEventListener('click', () => {
+          // Navigate to dashboard with this ticker
+          window.location.href = `/?search=${r.stock.ticker}`;
+        });
+        
+        container.appendChild(el);
       });
-      
-      el.addEventListener('mouseleave', () => {
-        tooltip.classList.remove('visible');
-      });
-      
-      el.addEventListener('click', () => {
-        // Navigate to dashboard with this ticker
-        window.location.href = `/?search=${r.stock.ticker}`;
-      });
-      
-      container.appendChild(el);
-    });
+    } catch (e) {
+      container.innerHTML = `<div style="color:red; padding:20px;">Exception: ${e.message}</div>`;
+    }
   }
 
   // ----------------------------------------------------------------------
