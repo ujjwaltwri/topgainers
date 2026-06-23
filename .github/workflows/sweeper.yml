@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -21,16 +21,12 @@ jobs:
           cache: 'pip'
 
       - name: Install dependencies
-        run: |
-          cd backend
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install supabase
+        working-directory: ./backend
+        run: pip install -r requirements.txt
 
-      - name: Run Live Sweeper
+      - name: Run live sweeper
+        working-directory: ./backend
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-        run: |
-          cd backend
-          python live_sweeper.py
+        run: python live_sweeper.py

@@ -54,29 +54,24 @@ def get_open_markets():
     return open_exchanges
 
 def main():
-    logger.info("Starting Live Sweeper (Global Radar)...")
+    logger.info("Starting Global Radar Sweep (GitHub Actions)...")
     pipeline = DataPipeline(db_path="../data/stocks.db", min_mcap=50_000_000)
 
-    while True:
-        open_exchanges = get_open_markets()
-        
-        if not open_exchanges:
-            logger.info("All global markets are currently closed (Weekend or after-hours). Sleeping for 1 hour...")
-            time.sleep(3600)
-            continue
+    open_exchanges = get_open_markets()
+    
+    if not open_exchanges:
+        logger.info("All global markets are currently closed (Weekend or after-hours). Exiting sweep.")
+        return
 
-        logger.info(f"Open markets detected: {open_exchanges}")
-        
-        try:
-            # We run a "fast update" for only the open exchanges
-            logger.info("Running fast hydration sweep on open markets...")
-            pipeline.run_full(exchanges=open_exchanges, limit=1000)
-            logger.info("Sweep complete. Rankings updated.")
-        except Exception as e:
-            logger.error(f"Sweep failed: {e}")
-
-        logger.info("Sleeping for 15 minutes before the next radar sweep...")
-        time.sleep(900)
+    logger.info(f"Open markets detected: {open_exchanges}")
+    
+    try:
+        # We run a "fast update" for only the open exchanges
+        logger.info("Running fast hydration sweep on open markets...")
+        pipeline.run_full(exchanges=open_exchanges, limit=1000)
+        logger.info("Sweep complete. Rankings updated.")
+    except Exception as e:
+        logger.error(f"Sweep failed: {e}")
 
 if __name__ == "__main__":
     main()
