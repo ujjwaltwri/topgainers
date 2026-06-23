@@ -116,16 +116,23 @@
 04:59:45 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
 04:59:46 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
 04:59:46 │ INFO    │ Processing batch 30/157 (100 tickers) ... [2900 successful so far]
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        04:20:10 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:20:11 │ INFO    │ Processing batch 33/157 (100 tickers) ... [3141 successful so far]
-04:21:14 │ WARNING │   [ANOMALY] NUTX 2Y gain is 2467.0%. Discarding period data.
-04:21:23 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:21:23 │ INFO    │ Processing batch 34/157 (100 tickers) ... [3235 successful so far]
-04:22:49 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:22:49 │ INFO    │ Processing batch 35/157 (100 tickers) ... [3329 successful so far]
-04:23:27 │ WARNING │   [ANOMALY] ORGS 1M gain is 3100.0%. Discarding period data.
-04:24:05 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:24:05 │ INFO    │ Processing batch 36/157 (100 tickers) ... [3424 successful so far]
+05:01:19 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:01:20 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:01:20 │ INFO    │ Processing batch 31/157 (100 tickers) ... [3000 successful so far]
+05:02:44 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:02:45 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:02:45 │ INFO    │ Processing batch 32/157 (100 tickers) ... [3099 successful so far]
+05:03:57 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:03:58 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:03:58 │ INFO    │ Processing batch 33/157 (100 tickers) ... [3193 successful so far]
+05:04:34 │ WARNING │   [ANOMALY] NUTX 2Y gain is 2467.0%. Discarding period data.
+05:05:10 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:05:12 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:05:12 │ INFO    │ Processing batch 34/157 (100 tickers) ... [3287 successful so far]
+05:06:12 │ WARNING │   [ANOMALY] ORGS 1M gain is 3100.0%. Discarding period data.
+05:06:24 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:06:25 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:06:26 │ INFO    │ Processing batch 35/157 (100 tickers) ... [3381 successful so far]
 /Users/ujjwaltiwari/.pyenv/versions/3.10.14/lib/python3.10/site-packages/pandas/core/nanops.py:1016: RuntimeWarning: invalid value encountered in subtract
   sqr = _ensure_numeric((avg - values) ** 2)
 /Users/ujjwaltiwari/.pyenv/versions/3.10.14/lib/python3.10/site-packages/pandas/core/nanops.py:1016: RuntimeWarning: invalid value encountered in subtract
@@ -150,117 +157,142 @@
   sqr = _ensure_numeric((avg - values) ** 2)
 /Users/ujjwaltiwari/.pyenv/versions/3.10.14/lib/python3.10/site-packages/pandas/core/nanops.py:1016: RuntimeWarning: invalid value encountered in subtract
   sqr = _ensure_numeric((avg - values) ** 2)
-04:25:30 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:25:30 │ INFO    │ Processing batch 37/157 (100 tickers) ... [3522 successful so far]
-04:26:39 │ WARNING │   [ANOMALY] POWL 5Y gain is 3091.7%. Discarding period data.
-04:26:39 │ WARNING │   [ANOMALY] POWL MAX gain is 3091.7%. Discarding period data.
-04:26:46 │ WARNING │   [ANOMALY] PRAX 3Y gain is 2134.9%. Discarding period data.
-04:26:53 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:26:54 │ INFO    │ Processing batch 38/157 (100 tickers) ... [3618 successful so far]
-04:28:16 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:28:16 │ INFO    │ Processing batch 39/157 (100 tickers) ... [3717 successful so far]
-04:29:33 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:29:34 │ INFO    │ Processing batch 40/157 (100 tickers) ... [3810 successful so far]
-04:30:03 │ WARNING │   [ANOMALY] RKLB 2Y gain is 2210.8%. Discarding period data.
-04:30:56 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:30:56 │ INFO    │ Processing batch 41/157 (100 tickers) ... [3906 successful so far]
-04:32:10 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:32:11 │ INFO    │ Processing batch 42/157 (100 tickers) ... [4002 successful so far]
-04:32:43 │ WARNING │   [ANOMALY] SEZL 3Y gain is 5838.1%. Discarding period data.
-04:32:43 │ WARNING │   [ANOMALY] SEZL 5Y gain is 5838.1%. Discarding period data.
-04:32:43 │ WARNING │   [ANOMALY] SEZL MAX gain is 5838.1%. Discarding period data.
-04:33:31 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:33:31 │ INFO    │ Processing batch 43/157 (100 tickers) ... [4099 successful so far]
-04:34:10 │ WARNING │   [ANOMALY] SNDK 1Y gain is 4781.3%. Discarding period data.
-04:34:10 │ WARNING │   [ANOMALY] SNDK 2Y gain is 6215.9%. Discarding period data.
-04:34:10 │ WARNING │   [ANOMALY] SNDK 3Y gain is 6215.9%. Discarding period data.
-04:34:10 │ WARNING │   [ANOMALY] SNDK 5Y gain is 6215.9%. Discarding period data.
-04:34:10 │ WARNING │   [ANOMALY] SNDK MAX gain is 6215.9%. Discarding period data.
-04:34:50 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:34:50 │ INFO    │ Processing batch 44/157 (100 tickers) ... [4194 successful so far]
-04:35:35 │ WARNING │   [ANOMALY] STRL 5Y gain is 4157.2%. Discarding period data.
-04:35:35 │ WARNING │   [ANOMALY] STRL MAX gain is 4157.2%. Discarding period data.
-04:36:00 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:36:01 │ INFO    │ Processing batch 45/157 (100 tickers) ... [4289 successful so far]
-04:36:25 │ WARNING │   [ANOMALY] SYRE 3Y gain is 2629.8%. Discarding period data.
-04:37:14 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:37:14 │ INFO    │ Processing batch 46/157 (100 tickers) ... [4384 successful so far]
-04:38:21 │ WARNING │   [ANOMALY] TRVN 5D gain is 1000.0%. Discarding period data.
-04:38:29 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:38:30 │ INFO    │ Processing batch 47/157 (100 tickers) ... [4481 successful so far]
-04:39:12 │ WARNING │   [ANOMALY] UAMY 2Y gain is 2008.1%. Discarding period data.
-04:39:12 │ WARNING │   [ANOMALY] UAMY 3Y gain is 2263.6%. Discarding period data.
-04:39:45 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:39:46 │ INFO    │ Processing batch 48/157 (100 tickers) ... [4579 successful so far]
-04:40:28 │ WARNING │   [ANOMALY] VAXX 1M gain is 14900.0%. Discarding period data.
-04:40:28 │ WARNING │   [ANOMALY] VAXX 3M gain is 7400.0%. Discarding period data.
-04:40:28 │ WARNING │   [ANOMALY] VAXX 6M gain is 14900.0%. Discarding period data.
-04:40:28 │ WARNING │   [ANOMALY] VAXX YTD gain is 3650.0%. Discarding period data.
-04:40:48 │ WARNING │   [ANOMALY] VISN 2Y gain is 2136.9%. Discarding period data.
-04:40:58 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:40:58 │ INFO    │ Processing batch 49/157 (100 tickers) ... [4675 successful so far]
-04:41:33 │ WARNING │   [ANOMALY] VRPX 5D gain is 2675.0%. Discarding period data.
-04:42:04 │ WARNING │   [ANOMALY] WDC 3Y gain is 2270.2%. Discarding period data.
-04:42:15 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:42:15 │ INFO    │ Processing batch 50/157 (100 tickers) ... [4771 successful so far]
-04:43:13 │ WARNING │   [ANOMALY] WULF 3Y gain is 2044.7%. Discarding period data.
-04:43:23 │ WARNING │   [ANOMALY] XELAP 5D gain is 670.6%. Discarding period data.
-04:43:23 │ WARNING │   [ANOMALY] XELAP 1M gain is 2356.2%. Discarding period data.
-04:43:23 │ WARNING │   [ANOMALY] XELAP 3M gain is 2356.2%. Discarding period data.
-04:43:23 │ WARNING │   [ANOMALY] XELAP YTD gain is 2356.2%. Discarding period data.
-04:43:27 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:43:28 │ INFO    │ Processing batch 51/157 (100 tickers) ... [4868 successful so far]
-04:44:24 │ WARNING │   [ANOMALY] ZPTA 1Y gain is 1189900.1%. Discarding period data.
-04:44:41 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:44:41 │ INFO    │ Processing batch 52/157 (100 tickers) ... [4964 successful so far]
-04:45:36 │ WARNING │   [ANOMALY] APARINDS.NS 5Y gain is 3189.9%. Discarding period data.
-04:45:36 │ WARNING │   [ANOMALY] APARINDS.NS MAX gain is 3189.9%. Discarding period data.
-04:45:40 │ WARNING │   [ANOMALY] APOLLO.NS 5Y gain is 3683.5%. Discarding period data.
-04:45:40 │ WARNING │   [ANOMALY] APOLLO.NS MAX gain is 3683.5%. Discarding period data.
-04:45:45 │ WARNING │   [ANOMALY] ARIHANT.NS 3M gain is 2113.5%. Discarding period data.
-04:45:45 │ WARNING │   [ANOMALY] ARIHANT.NS 6M gain is 3262.9%. Discarding period data.
-04:45:45 │ WARNING │   [ANOMALY] ARIHANT.NS 1Y gain is 3143.9%. Discarding period data.
-04:45:45 │ WARNING │   [ANOMALY] ARIHANT.NS 2Y gain is 3143.9%. Discarding period data.
-04:45:45 │ WARNING │   [ANOMALY] ARIHANT.NS 3Y gain is 3143.9%. Discarding period data.
-04:45:45 │ WARNING │   [ANOMALY] ARIHANT.NS 5Y gain is 3143.9%. Discarding period data.
-04:45:45 │ WARNING │   [ANOMALY] ARIHANT.NS MAX gain is 3143.9%. Discarding period data.
-04:46:00 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:46:01 │ INFO    │ Processing batch 53/157 (100 tickers) ... [5063 successful so far]
-04:46:46 │ WARNING │   [ANOMALY] AXISCADES.NS 5Y gain is 2188.8%. Discarding period data.
-04:46:46 │ WARNING │   [ANOMALY] AXISCADES.NS MAX gain is 2188.8%. Discarding period data.
-04:47:27 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:47:28 │ INFO    │ Processing batch 54/157 (100 tickers) ... [5163 successful so far]
-04:48:10 │ WARNING │   [ANOMALY] CCCL.NS 5Y gain is 2581.8%. Discarding period data.
-04:48:10 │ WARNING │   [ANOMALY] CCCL.NS MAX gain is 2581.8%. Discarding period data.
-04:48:43 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:48:43 │ INFO    │ Processing batch 55/157 (100 tickers) ... [5262 successful so far]
-04:49:03 │ WARNING │   [ANOMALY] CUPID.NS 3Y gain is 6697.8%. Discarding period data.
-04:49:03 │ WARNING │   [ANOMALY] CUPID.NS 5Y gain is 8205.6%. Discarding period data.
-04:49:03 │ WARNING │   [ANOMALY] CUPID.NS MAX gain is 8205.6%. Discarding period data.
-04:49:43 │ WARNING │   [ANOMALY] EASTSILK.NS 1Y gain is 2277.1%. Discarding period data.
-04:50:08 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:50:08 │ INFO    │ Processing batch 56/157 (100 tickers) ... [5362 successful so far]
-04:51:22 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:51:22 │ INFO    │ Processing batch 57/157 (100 tickers) ... [5461 successful so far]
-04:52:41 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:52:41 │ INFO    │ Processing batch 58/157 (100 tickers) ... [5561 successful so far]
-04:53:17 │ WARNING │   [ANOMALY] INDOTHAI.NS 5Y gain is 4551.1%. Discarding period data.
-04:53:17 │ WARNING │   [ANOMALY] INDOTHAI.NS MAX gain is 4551.1%. Discarding period data.
-04:53:24 │ WARNING │   [ANOMALY] INNOVATIVE.NS 2Y gain is 3329.5%. Discarding period data.
-04:54:02 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:54:03 │ INFO    │ Processing batch 59/157 (100 tickers) ... [5661 successful so far]
-04:54:23 │ WARNING │   [ANOMALY] JPOLYINVST.NS 5Y gain is 2835.5%. Discarding period data.
-04:54:23 │ WARNING │   [ANOMALY] JPOLYINVST.NS MAX gain is 2835.5%. Discarding period data.
-04:54:45 │ WARNING │   [ANOMALY] KERNEX.NS 5Y gain is 2335.4%. Discarding period data.
-04:54:45 │ WARNING │   [ANOMALY] KERNEX.NS MAX gain is 2335.4%. Discarding period data.
-04:55:14 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:55:14 │ INFO    │ Processing batch 60/157 (100 tickers) ... [5759 successful so far]
-04:56:25 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:56:25 │ INFO    │ Processing batch 61/157 (100 tickers) ... [5859 successful so far]
-04:57:50 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:57:51 │ INFO    │ Processing batch 62/157 (100 tickers) ... [5959 successful so far]
-04:59:07 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
-04:59:07 │ INFO    │ Processing batch 63/157 (100 tickers) ... [6059 successful so far]
-04:59:48 │ WARNING │   [ANOMALY] REGENCERAM.NS 5Y gain is 2516.1%. Discarding period data.
-04:59:48 │ WARNING │   [ANOMALY] REGENCERAM.NS MAX gain is 2516.1%. Discarding period data.
-05:00:23 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
+05:07:37 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:07:38 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:07:39 │ INFO    │ Processing batch 36/157 (100 tickers) ... [3478 successful so far]
+05:08:51 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:08:51 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:08:52 │ INFO    │ Processing batch 37/157 (100 tickers) ... [3575 successful so far]
+05:09:22 │ WARNING │   [ANOMALY] POWL 5Y gain is 3091.7%. Discarding period data.
+05:09:22 │ WARNING │   [ANOMALY] POWL MAX gain is 3091.7%. Discarding period data.
+05:09:29 │ WARNING │   [ANOMALY] PRAX 3Y gain is 2134.9%. Discarding period data.
+05:10:08 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:10:08 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:10:09 │ INFO    │ Processing batch 38/157 (100 tickers) ... [3674 successful so far]
+05:11:26 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:11:26 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:11:27 │ INFO    │ Processing batch 39/157 (100 tickers) ... [3768 successful so far]
+05:12:13 │ WARNING │   [ANOMALY] RKLB 2Y gain is 2210.8%. Discarding period data.
+05:12:40 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:12:41 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:12:42 │ INFO    │ Processing batch 40/157 (100 tickers) ... [3864 successful so far]
+05:13:08 │ ERROR   │ 
+1 Failed download:
+05:13:08 │ ERROR   │ ['SANA']: Timeout('Failed to perform, curl: (28) Operation timed out after 10001 milliseconds with 0 bytes received. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.')
+05:14:04 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:14:05 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:14:06 │ INFO    │ Processing batch 41/157 (100 tickers) ... [3959 successful so far]
+05:14:56 │ WARNING │   [ANOMALY] SEZL 3Y gain is 5838.1%. Discarding period data.
+05:14:56 │ WARNING │   [ANOMALY] SEZL 5Y gain is 5838.1%. Discarding period data.
+05:14:56 │ WARNING │   [ANOMALY] SEZL MAX gain is 5838.1%. Discarding period data.
+05:15:21 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:15:21 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:15:22 │ INFO    │ Processing batch 42/157 (100 tickers) ... [4056 successful so far]
+05:16:29 │ WARNING │   [ANOMALY] SNDK 1Y gain is 4781.3%. Discarding period data.
+05:16:29 │ WARNING │   [ANOMALY] SNDK 2Y gain is 6215.9%. Discarding period data.
+05:16:29 │ WARNING │   [ANOMALY] SNDK 3Y gain is 6215.9%. Discarding period data.
+05:16:29 │ WARNING │   [ANOMALY] SNDK 5Y gain is 6215.9%. Discarding period data.
+05:16:29 │ WARNING │   [ANOMALY] SNDK MAX gain is 6215.9%. Discarding period data.
+05:16:44 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:16:45 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:16:45 │ INFO    │ Processing batch 43/157 (100 tickers) ... [4153 successful so far]
+05:17:59 │ WARNING │   [ANOMALY] STRL 5Y gain is 4157.2%. Discarding period data.
+05:17:59 │ WARNING │   [ANOMALY] STRL MAX gain is 4157.2%. Discarding period data.
+05:18:03 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:18:04 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:18:05 │ INFO    │ Processing batch 44/157 (100 tickers) ... [4247 successful so far]
+05:18:51 │ WARNING │   [ANOMALY] SYRE 3Y gain is 2629.8%. Discarding period data.
+05:19:16 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:19:17 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:19:18 │ INFO    │ Processing batch 45/157 (100 tickers) ... [4339 successful so far]
+05:20:32 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:20:33 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22coun05:20:35 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
+05:20:36 │ INFO    │ Processing batch 78/157 (100 tickers) ... [7516 successful so far]
+05:22:02 │ ERROR   │ 
+28 Failed downloads:
+05:22:02 │ ERROR   │ ['ATQT.L', '353490.KS', '351340.KS', 'ASCL.L', 'ALS.L', 'AV-A.L', '68HN.L', 'ARDN.L', 'ARE.L', '349720.KS', '353070.KS', 'AAAP.L', 'APP.L', 'AFX.L', 'AMO.L', '367360.KS', '367340.KS', 'ASLR.L', 'ARW.L', 'AIR.L', '377400.KS', 'AFHP.L', '353060.KS', 'AGM.L', 'AGK.L', '373340.KS', 'APF.L', 'AUG.L']: YFPricesMissingError('possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")')
+05:22:10 │ WARNING │   [ANOMALY] 352770.KS 5D gain is 891.9%. Discarding period data.
+05:22:48 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
+05:22:49 │ INFO    │ Processing batch 79/157 (100 tickers) ... [7588 successful so far]
+05:24:02 │ ERROR   │ 
+18 Failed downloads:
+05:24:02 │ ERROR   │ ['BCN.L', 'BERM.L', 'BRW.L', 'AVO.L', 'BISI.L', 'CAY.L', 'BWNG.L', 'AVV.L', 'CIN.L', 'BBB.L', 'CALL.L', 'CAMB.L', 'CIR.L', 'AV-B.L', 'CCAP.L', 'BILB.L', 'BIFF.L', 'BEG.L']: YFPricesMissingError('possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")')
+05:24:56 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
+05:24:56 │ INFO    │ Processing batch 80/157 (100 tickers) ... [7670 successful so far]
+05:25:54 │ ERROR   │ 
+15 Failed downloads:
+05:25:54 │ ERROR   │ ['DMGT.L', 'CSP.L', 'CLP.L', 'DMTR.L', 'CYBA.L', 'EPWN.L', 'DDDD.L', 'ESC.L', 'CTNA.L', 'DCD.L', 'CLIN.L', 'CTH.L', 'EVE.L', 'CLG.L', 'DNL.L']: YFPricesMissingError('possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")')
+05:25:55 │ WARNING │   [ANOMALY] CLDN.L 1Y gain is 9733.7%. Discarding period data.
+05:25:55 │ WARNING │   [ANOMALY] CLDN.L 2Y gain is 10464.3%. Discarding period data.
+05:25:55 │ WARNING │   [ANOMALY] CLDN.L 3Y gain is 11982.9%. Discarding period data.
+05:25:55 │ WARNING │   [ANOMALY] CLDN.L 5Y gain is 12926.3%. Discarding period data.
+05:25:55 │ WARNING │   [ANOMALY] CLDN.L MAX gain is 13029.5%. Discarding period data.
+05:26:27 │ WARNING │   [ANOMALY] DSG.L 6M gain is 12011.1%. Discarding period data.
+05:26:33 │ WARNING │   [ANOMALY] EEE.L 3Y gain is 2013.4%. Discarding period data.
+05:26:43 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
+05:26:43 │ INFO    │ Processing batch 81/157 (100 tickers) ... [7755 successful so far]
+05:28:07 │ ERROR   │ 
+13 Failed downloads:
+05:28:07 │ ERROR   │ ['GLO.L', 'HNG.L', 'FLX.L', 'FCAP.L', 'HSV.L', 'GFS.L', 'GOG.L', 'FCCN.L', 'GPOR.L', 'GYS.L', 'GSS.L', 'FLTA.L']: YFPricesMissingError('possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")')
+05:28:07 │ ERROR   │ ['FEN.L']: SSLError('Failed to perform, curl: (35) TLS connect error: error:00000000:invalid library (0):OPENSSL_internal:invalid library (0). See https://curl.se/libcurl/c/libcurl-errors.html first for more details.')
+05:28:26 │ WARNING │   [ANOMALY] FTC.L 3Y gain is 2592.9%. Discarding period data.
+05:28:26 │ WARNING │   [ANOMALY] FTC.L 5Y gain is 3288.8%. Discarding period data.
+05:28:26 │ WARNING │   [ANOMALY] FTC.L MAX gain is 3288.8%. Discarding period data.
+05:28:56 │ WARNING │   [ANOMALY] HSM.L 6M gain is 7454.0%. Discarding period data.
+05:28:56 │ WARNING │   [ANOMALY] HSM.L 1Y gain is 9462.7%. Discarding period data.
+05:28:56 │ WARNING │   [ANOMALY] HSM.L 2Y gain is 9462.7%. Discarding period data.
+05:28:56 │ WARNING │   [ANOMALY] HSM.L 3Y gain is 9462.7%. Discarding period data.
+05:28:56 │ WARNING │   [ANOMALY] HSM.L 5Y gain is 9462.7%. Discarding period data.
+05:28:56 │ WARNING │   [ANOMALY] HSM.L MAX gain is 9462.7%. Discarding period data.
+05:29:02 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
+05:29:02 │ INFO    │ Processing batch 82/157 (100 tickers) ... [7842 successful so far]
+05:30:22 │ ERROR   │ 
+18 Failed downloads:
+05:30:22 │ ERROR   │ ['MBT.L', 'JKX.L', 'IMMO.L', 'INFA.L', 'KAZ.L', 'MACP.L', 'JOUL.L', 'K3C.L', 'MAST.L', 'LDSG.L', 'IDE.L', 'JUST.L', 'IDEA.L', 'LABS.L', 'IDH.L', 'LVCG.L', 'IME.L', 'IDP.L']: YFPricesMissingError('possibly delisted; no price data found  (period=5y) (Yahoo error = "No data found, symbol may be delisted")')
+05:31:11 │ ERROR   │ Supabase upsert failed for batch: [Errno 8] nodename nor servname provided, or not known
+05:31:11 │ INFO    │ Processing batch 83/157 (100 tickers) ... [7924 successful so far]
+2%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:24:25 │ INFO    │ Processing batch 49/157 (100 tickers) ... [4728 successful so far]
+05:25:01 │ WARNING │   [ANOMALY] WDC 3Y gain is 2270.2%. Discarding period data.
+05:25:40 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:25:41 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:25:42 │ INFO    │ Processing batch 50/157 (100 tickers) ... [4824 successful so far]
+05:26:10 │ WARNING │   [ANOMALY] WULF 3Y gain is 2044.7%. Discarding period data.
+05:26:21 │ WARNING │   [ANOMALY] XELAP 5D gain is 670.6%. Discarding period data.
+05:26:21 │ WARNING │   [ANOMALY] XELAP 1M gain is 2356.2%. Discarding period data.
+05:26:21 │ WARNING │   [ANOMALY] XELAP 3M gain is 2356.2%. Discarding period data.
+05:26:21 │ WARNING │   [ANOMALY] XELAP YTD gain is 2356.2%. Discarding period data.
+05:26:58 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:26:59 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:27:00 │ INFO    │ Processing batch 51/157 (100 tickers) ... [4920 successful so far]
+05:27:36 │ WARNING │   [ANOMALY] ZPTA 1Y gain is 1189900.1%. Discarding period data.
+05:28:28 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:28:28 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:28:29 │ INFO    │ Processing batch 52/157 (100 tickers) ... [5019 successful so far]
+05:28:49 │ WARNING │   [ANOMALY] APARINDS.NS 5Y gain is 3189.9%. Discarding period data.
+05:28:49 │ WARNING │   [ANOMALY] APARINDS.NS MAX gain is 3189.9%. Discarding period data.
+05:28:52 │ WARNING │   [ANOMALY] APOLLO.NS 5Y gain is 3683.5%. Discarding period data.
+05:28:52 │ WARNING │   [ANOMALY] APOLLO.NS MAX gain is 3683.5%. Discarding period data.
+05:28:58 │ WARNING │   [ANOMALY] ARIHANT.NS 3M gain is 2113.5%. Discarding period data.
+05:28:58 │ WARNING │   [ANOMALY] ARIHANT.NS 6M gain is 3262.9%. Discarding period data.
+05:28:58 │ WARNING │   [ANOMALY] ARIHANT.NS 1Y gain is 3143.9%. Discarding period data.
+05:28:58 │ WARNING │   [ANOMALY] ARIHANT.NS 2Y gain is 3143.9%. Discarding period data.
+05:28:58 │ WARNING │   [ANOMALY] ARIHANT.NS 3Y gain is 3143.9%. Discarding period data.
+05:28:58 │ WARNING │   [ANOMALY] ARIHANT.NS 5Y gain is 3143.9%. Discarding period data.
+05:28:58 │ WARNING │   [ANOMALY] ARIHANT.NS MAX gain is 3143.9%. Discarding period data.
+05:29:23 │ WARNING │   [ANOMALY] AXISCADES.NS 5Y gain is 2188.8%. Discarding period data.
+05:29:23 │ WARNING │   [ANOMALY] AXISCADES.NS MAX gain is 2188.8%. Discarding period data.
+05:29:40 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:29:41 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:29:41 │ INFO    │ Processing batch 53/157 (100 tickers) ... [5118 successful so far]
+05:30:55 │ WARNING │   [ANOMALY] CCCL.NS 5Y gain is 2581.8%. Discarding period data.
+05:30:55 │ WARNING │   [ANOMALY] CCCL.NS MAX gain is 2581.8%. Discarding period data.
+05:31:06 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:31:07 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:31:08 │ INFO    │ Processing batch 54/157 (100 tickers) ... [5218 successful so far]
+05:31:51 │ WARNING │   [ANOMALY] CUPID.NS 3Y gain is 6697.8%. Discarding period data.
+05:31:51 │ WARNING │   [ANOMALY] CUPID.NS 5Y gain is 8205.5%. Discarding period data.
+05:31:51 │ WARNING │   [ANOMALY] CUPID.NS MAX gain is 8205.5%. Discarding period data.
+05:32:25 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/stocks?columns=%22market_cap_tier%22%2C%22country%22%2C%22currency%22%2C%22region%22%2C%22industry%22%2C%22exchange%22%2C%22name%22%2C%22pe_ratio%22%2C%22revenue_growth%22%2C%22earnings_date%22%2C%22sector%22%2C%22market_cap%22%2C%22recommendation%22%2C%22dividend_yield%22%2C%22ipo_date%22%2C%22ticker%22%2C%22last_updated%22%2C%22earnings_growth%22 "HTTP/2 201 Created"
+05:32:26 │ INFO    │ HTTP Request: POST https://xpmfwpqkykiqmswumoxu.supabase.co/rest/v1/gains?columns=%22vs_country%22%2C%22end_price%22%2C%22pct_change_usd%22%2C%22ma_200%22%2C%22gain_streak%22%2C%22vs_sector%22%2C%22ticker%22%2C%22abs_change%22%2C%22volatility_30d%22%2C%22end_date%22%2C%22max_drawdown%22%2C%22recent_volume%22%2C%22country_avg_change%22%2C%22avg_volume%22%2C%22pct_change%22%2C%22sharpe_ratio%22%2C%22high_52w%22%2C%22above_ma_200%22%2C%22start_date%22%2C%22low_52w%22%2C%22period%22%2C%22at_52w_low%22%2C%22rsi_14%22%2C%22above_ma_50%22%2C%22pct_from_52w_low%22%2C%22sector_avg_change%22%2C%22at_52w_high%22%2C%22volume_ratio%22%2C%22start_price%22%2C%22ma_50%22%2C%22pct_from_52w_high%22 "HTTP/2 201 Created"
+05:32:27 │ INFO    │ Processing batch 55/157 (100 tickers) ... [5317 successful so far]

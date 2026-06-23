@@ -294,14 +294,14 @@ class App {
     
     document.getElementById('modal-name').textContent = s.name || s.ticker;
     document.getElementById('modal-ticker').textContent = s.ticker;
-    document.getElementById('modal-sector').textContent = s.sector || 'N/A';
-    document.getElementById('modal-country').textContent = s.country || 'N/A';
-    document.getElementById('modal-exchange').textContent = s.exchange || 'N/A';
+    document.getElementById('modal-sector').textContent = s.sector || '—';
+    document.getElementById('modal-country').textContent = s.country || '—';
+    document.getElementById('modal-exchange').textContent = s.exchange || '—';
     
     document.getElementById('modal-price').textContent = this.formatPrice(g.end_price, s.currency);
     document.getElementById('modal-mcap').textContent = this.formatNumber(s.market_cap, '$');
-    document.getElementById('modal-pe').textContent = s.pe_ratio ? s.pe_ratio.toFixed(2) : 'N/A';
-    document.getElementById('modal-rsi').textContent = g.rsi_14 ? g.rsi_14.toFixed(1) : 'N/A';
+    document.getElementById('modal-pe').textContent = s.pe_ratio ? s.pe_ratio.toFixed(2) : '—';
+    document.getElementById('modal-rsi').textContent = g.rsi_14 ? g.rsi_14.toFixed(1) : '—';
     
     // Colorize RSI
     const rsiEl = document.getElementById('modal-rsi');
@@ -312,38 +312,38 @@ class App {
     }
     
     const vsSecEl = document.getElementById('modal-vs-sector');
-    vsSecEl.textContent = g.vs_sector !== null && g.vs_sector !== undefined ? this.formatPercent(g.vs_sector) : 'N/A';
-    vsSecEl.className = 'stat-value font-mono ' + (g.vs_sector > 0 ? 'text-gain' : (g.vs_sector < 0 ? 'text-loss' : ''));
+    vsSecEl.textContent = g.vs_sector !== null && g.vs_sector !== undefined ? this.formatPercent(g.vs_sector) : '—';
+    vsSecEl.className = 'stat-value font-mono ' + (g.vs_sector > 0 ? 'text-gain' : (g.vs_sector < 0 ? 'text-loss' : '')) + (g.vs_sector ? '' : ' dimmed');
 
     const vsCtyEl = document.getElementById('modal-vs-country');
-    vsCtyEl.textContent = g.vs_country !== null && g.vs_country !== undefined ? this.formatPercent(g.vs_country) : 'N/A';
-    vsCtyEl.className = 'stat-value font-mono ' + (g.vs_country > 0 ? 'text-gain' : (g.vs_country < 0 ? 'text-loss' : ''));
+    vsCtyEl.textContent = g.vs_country !== null && g.vs_country !== undefined ? this.formatPercent(g.vs_country) : '—';
+    vsCtyEl.className = 'stat-value font-mono ' + (g.vs_country > 0 ? 'text-gain' : (g.vs_country < 0 ? 'text-loss' : '')) + (g.vs_country ? '' : ' dimmed');
 
     // New stats
     const volatilityEl = document.getElementById('modal-volatility');
-    if (volatilityEl) volatilityEl.textContent = g.volatility ? (g.volatility * 100).toFixed(1) + '%' : 'N/A';
+    if (volatilityEl) volatilityEl.textContent = g.volatility ? (g.volatility * 100).toFixed(1) + '%' : '—';
     
     const drawdownEl = document.getElementById('modal-drawdown');
     if (drawdownEl) {
-      drawdownEl.textContent = g.max_drawdown ? (g.max_drawdown * 100).toFixed(1) + '%' : 'N/A';
+      drawdownEl.textContent = g.max_drawdown ? (g.max_drawdown * 100).toFixed(1) + '%' : '—';
       if (g.max_drawdown) drawdownEl.classList.add('text-loss');
     }
     
     const streakEl = document.getElementById('modal-gain-streak');
     if (streakEl) {
       const streak = g.gain_streak || s.gain_streak || 0;
-      streakEl.textContent = streak > 0 ? streak + ' days' : 'N/A';
+      streakEl.textContent = streak > 0 ? streak + ' days' : '—';
       if (streak >= 5) streakEl.classList.add('text-gain');
     }
     
     const ma50El = document.getElementById('modal-ma50');
-    if (ma50El) ma50El.textContent = g.ma_50 ? this.formatPrice(g.ma_50, '') : 'N/A';
+    if (ma50El) ma50El.textContent = g.ma_50 ? this.formatPrice(g.ma_50, '') : '—';
     
     const ma200El = document.getElementById('modal-ma200');
-    if (ma200El) ma200El.textContent = g.ma_200 ? this.formatPrice(g.ma_200, '') : 'N/A';
+    if (ma200El) ma200El.textContent = g.ma_200 ? this.formatPrice(g.ma_200, '') : '—';
     
     const volEl = document.getElementById('modal-volume');
-    if (volEl) volEl.textContent = g.volume ? this.formatNumber(g.volume) : (s.avg_volume ? this.formatNumber(s.avg_volume) : 'N/A');
+    if (volEl) volEl.textContent = g.volume ? this.formatNumber(g.volume) : (s.avg_volume ? this.formatNumber(s.avg_volume) : '—');
 
     // 52-week range
     const high52 = g.high_52w || 1;
@@ -453,7 +453,7 @@ class App {
       let history = data.price_history || [];
       
       if (!history.length) {
-        container.innerHTML = `<div style='color:orange; padding:20px;'>WARNING: No price history data found for ${data.stock?.ticker} in the database.</div>`;
+        container.innerHTML = `<div class='empty-state' style='height:100%; justify-content:center; padding: 20px;'><div class='empty-icon'><svg viewBox='0 0 24 24' width='48' height='48' fill='none' stroke='currentColor' stroke-width='1.5'><path d='M3 3v18h18'></path><path d='M18 9l-5-5-4 4-5-5'></path></svg></div><div class='empty-text'>No Chart Data Available</div><div class='empty-sub'>Price history for ${data.stock?.ticker || 'this stock'} was not found in the database.</div></div>`;
         this.tvSeries.setData([]);
         this.tvVolume.setData([]);
         return;

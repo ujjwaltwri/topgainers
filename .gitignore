@@ -52,3 +52,4 @@ Thumbs.db
 backend/pipeline.log
 backend/pipeline_globe.log
 backend/*.db
+.vercel
