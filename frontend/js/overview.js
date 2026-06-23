@@ -7,6 +7,7 @@ class Overview {
   async init() {
     this.setupTheme();
     this.setupPeriodSelector();
+    this.renderMarquee();
     await this.fetchAllData();
     
     // Resize listener for treemap and charts
@@ -39,6 +40,49 @@ class Overview {
         // Re-render canvases for theme changes
         this.renderSectorChart();
       });
+    }
+  }
+
+async renderMarquee() {
+    this.marqueeLoaded = true;
+    const container = document.getElementById('global-marquee');
+    const content = document.getElementById('marquee-content');
+    if (!container || !content) return;
+    
+    // Show container and loading state
+    container.style.display = 'block';
+    content.innerHTML = '<span class="text-secondary">Fetching Global Markets...</span>';
+    
+    try {
+      if (!window.SupabaseAPI || !window.SupabaseAPI.getMarqueeData) return;
+      
+      const data = await window.SupabaseAPI.getMarqueeData(this.period);
+      if (!data || data.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+      
+      let html = '';
+      // We render two identical sets for seamless scrolling loop
+      for(let j=0; j<2; j++) {
+        for (const idx of data) {
+          const isUp = idx.pct_change >= 0;
+          const cls = isUp ? 'marquee-up' : 'marquee-down';
+          const sign = isUp ? '+' : '';
+          html += `
+            <div class="marquee-item ${cls}">
+              <span class="marquee-name">${idx.name}</span>
+              <span class="marquee-value">${idx.value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+              <span class="marquee-change">${sign}${idx.pct_change.toFixed(2)}%</span>
+            </div>
+          `;
+        }
+      }
+      content.innerHTML = html;
+      
+    } catch (e) {
+      console.error(e);
+      container.style.display = 'none';
     }
   }
 
