@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "live-quotes": {
+      "verify_jwt": false
+    }
+  }
+}

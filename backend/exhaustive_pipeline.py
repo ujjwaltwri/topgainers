@@ -372,73 +372,39 @@ class RealPipeline:
             log.error(f"Failed to download FX rates: {e}")
         log.info(f"Loaded FX rates: {self.fx_rates}")
 
-    def _resolve_tickers(self, exchange_groups, limit=None, ):
-        """Return list of dicts with ticker + metadata via financedatabase."""
-        log.info("Loading Equities from FinanceDatabase...")
+    def _resolve_tickers(self, exchange_groups, limit=None):
+        """Return list of dicts with ticker + metadata using master_tickers.json."""
+        import json
+        log.info("Loading Exhaustive Tickers from master_tickers.json...")
         try:
-            equities = fd.Equities()
+            with open('../data/master_tickers.json', 'r') as f:
+                master_tickers = json.load(f)
         except Exception as e:
-            log.error(f"Failed to load financedatabase: {e}")
+            log.error(f"Failed to load master_tickers.json: {e}. Please run discover_tickers.py first.")
             return []
-
-        # Map to specific exchanges to avoid Pink Sheets/OTC
-        # We define allowed exchanges per country
-        ALLOWED_EXCHANGES = {
-            'United States': ['NYQ', 'NMS', 'ASE'],  # NYSE, Nasdaq, Amex
-            'India': ['NSI', 'BSE'],                 # NSE, BSE
-            'United Kingdom': ['LSE'],               # London
-            'Canada': ['TOR', 'TSX', 'VAN', 'CNQ'],
-            'Australia': ['ASX'],
-            'Japan': ['TSE'],
-            'Germany': ['GER', 'FRA', 'STU', 'BER'],
-            'France': ['PAR'],
-            'South Korea': ['KOE', 'KOS'],
-            'China': ['SHG', 'SHE'],
-            'Hong Kong': ['HKG'],
-            'Brazil': ['SAO'],
-            'Netherlands': ['AMS'],
-            'Saudi Arabia': ['SAU']
-        }
 
         result = []
         for grp_name in exchange_groups:
             grp = TICKER_LISTS.get(grp_name)
             if grp is None:
                 continue
-            country = grp['country']
             
-            try:
-                # Fetch from financedatabase
-                df = equities.select(country=country)
-                if df.empty:
-                    continue
-                
-                # Filter by allowed exchanges
-                allowed = ALLOWED_EXCHANGES.get(country)
-                if allowed:
-                    df = df[df['exchange'].isin(allowed)]
-                    
-                # Iterate and format ticker
-                for symbol, row in df.iterrows():
-                    details = row.to_dict()
-                    suffix = EXCHANGES.get(grp['exchange'], {}).get('suffix', '')
-                    
-                    yf_ticker = f"{symbol}{suffix}"
-                    # Clean up
-                    yf_ticker = yf_ticker.replace(" ", "").split(".")[0] + suffix
-                    
-                    result.append({
-                        'ticker': yf_ticker,
-                        'name': details.get('name', yf_ticker),
-                        'sector': details.get('sector'),
-                        'industry': details.get('industry'),
-                        'exchange': grp['exchange'],
-                        'country': country,
-                        'region': grp['region'],
-                        'currency': grp['currency'],
-                    })
-            except Exception as e:
-                print(f"Error resolving {country}: {e}")
+            suffix = EXCHANGES.get(grp['exchange'], {}).get('suffix', '')
+            key = 'US' if suffix == '' else suffix
+            
+            tickers_for_exchange = master_tickers.get(key, [])
+            
+            for ticker in tickers_for_exchange:
+                result.append({
+                    'ticker': ticker,
+                    'name': ticker,  # Name and sector will be filled via yfinance .info later
+                    'sector': None,
+                    'industry': None,
+                    'exchange': grp['exchange'],
+                    'country': grp['country'],
+                    'region': grp['region'],
+                    'currency': grp['currency'],
+                })
 
         # de-dup by ticker
         seen = set()

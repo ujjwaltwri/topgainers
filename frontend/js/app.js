@@ -381,8 +381,29 @@ class App {
         let htmlText = (data.result || 'No insight available.')
           .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
           .replace(/\n/g, '<br/>');
+        
+        let refHtml = `
+          <div class="ai-references" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px; font-size: 13px; color: var(--text-secondary);">
+            <div style="margin-bottom: 8px; font-weight: 500; color: var(--text-primary);">Data Points Accounted For:</div>
+            <ul style="padding-left: 20px; margin-bottom: 12px; margin-top: 0; opacity: 0.85;">
+        `;
+        
+        stocksData.forEach(s => {
+          refHtml += `<li><strong>${s.name || s.ticker}</strong>: ${s.sector} | Gain: ${s.pct_change}% | Cap: ${s.market_cap || 'N/A'} | P/E: ${s.pe_ratio || 'N/A'} | Vol Ratio: ${s.volume_ratio}x</li>`;
+        });
+        
+        refHtml += `</ul>`;
+        
+        if (data.news && data.news.length > 0) {
+          refHtml += `<div style="margin-bottom: 4px; font-weight: 500; color: var(--text-primary);">Google Search References:</div>
+          <ul style="padding-left: 20px; margin-top: 0; opacity: 0.85;">
+            ${data.news.map(n => `<li><a href="${n.link}" target="_blank" style="color: var(--primary); text-decoration: none;">${n.title}</a> <span style="opacity:0.7">(${n.publisher})</span></li>`).join('')}
+          </ul>`;
+        }
+        
+        refHtml += `</div>`;
           
-        content.innerHTML = `<p>${htmlText}</p>`;
+        content.innerHTML = `<p>${htmlText}</p>${refHtml}`;
       } catch (err) {
         console.error('Compare AI error:', err);
         content.innerHTML = '<p class="text-loss">Failed to generate AI comparison.</p>';
@@ -404,6 +425,7 @@ class App {
     const ticker = document.getElementById('modal-ticker').textContent;
     const name = document.getElementById('modal-name').textContent;
     const pct_change = window.app.currentData?.results?.find(r => r.ticker === ticker)?.pct_change || 0;
+    const stock = window.app.currentData?.results?.find(r => r.ticker === ticker) || {};
     
     const container = document.getElementById('modal-ai-insight');
     const content = document.getElementById('ai-insight-content');
@@ -418,7 +440,18 @@ class App {
     
     try {
       const { data, error } = await window.supabaseClient.functions.invoke('ai-summary', {
-        body: { ticker, name, pct_change }
+        body: { 
+          ticker, 
+          name, 
+          pct_change,
+          sector: stock.sector,
+          industry: stock.industry,
+          market_cap: stock.market_cap,
+          pe_ratio: stock.pe_ratio,
+          at_52w_high: stock.at_52w_high,
+          at_52w_low: stock.at_52w_low,
+          volume_ratio: stock.volume_ratio
+        }
       });
       
       if (error) throw error;
@@ -427,8 +460,27 @@ class App {
       let htmlText = (data.result || 'No insight available.')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\n/g, '<br/>');
+      
+      let refHtml = `
+        <div class="ai-references" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px; font-size: 13px; color: var(--text-secondary);">
+          <div style="margin-bottom: 8px; font-weight: 500; color: var(--text-primary);">Data Points & Context Analyzed:</div>
+          <ul style="padding-left: 20px; margin-bottom: 12px; margin-top: 0; opacity: 0.85;">
+            <li><strong>Fundamentals:</strong> ${stock.sector || 'N/A'} / ${stock.industry || 'N/A'} | Cap: ${stock.market_cap || 'N/A'} | P/E: ${stock.pe_ratio || 'N/A'}</li>
+            <li><strong>Technicals:</strong> Volume Surge: ${stock.volume_ratio}x ${stock.at_52w_high ? '| 52W High' : ''} ${stock.at_52w_low ? '| 52W Low' : ''}</li>
+          </ul>
+      `;
+      
+      if (data.news && data.news.length > 0) {
+        refHtml += `<div style="margin-bottom: 4px; font-weight: 500; color: var(--text-primary);">News Articles Referenced:</div>
+        <ul style="padding-left: 20px; margin-top: 0; opacity: 0.85;">
+          ${data.news.map(n => `<li><a href="${n.link}" target="_blank" style="color: var(--primary); text-decoration: none;">${n.title}</a> <span style="opacity:0.7">(${n.publisher})</span></li>`).join('')}
+        </ul>`;
+      } else {
+        refHtml += `<div style="opacity: 0.7; font-style: italic;">No specific news articles referenced. Analysis based strictly on technical/fundamental data.</div>`;
+      }
+      refHtml += `</div>`;
         
-      content.innerHTML = `<p>${htmlText}</p>`;
+      content.innerHTML = `<p>${htmlText}</p>${refHtml}`;
     } catch (e) {
       console.error('AI Insight Error:', e);
       content.innerHTML = '<p class="text-loss">Failed to reach AI service or generate insight.</p>';

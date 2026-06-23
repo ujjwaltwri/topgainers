@@ -40,6 +40,7 @@ Data:${stocksData}`;
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
+        tools: [{ googleSearch: {} }],
         systemInstruction: { parts: [{ text: "You are an elite quantitative analyst." }] },
         generationConfig: { temperature: 0.3 }
       })
@@ -48,8 +49,21 @@ Data:${stocksData}`;
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "No insights generated.";
+    
+    // Extract live Google Search grounding links
+    const newsItems = [];
+    const groundingChunks = data.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+    for (const chunk of groundingChunks) {
+      if (chunk.web?.uri && chunk.web?.title) {
+        newsItems.push({
+          title: chunk.web.title,
+          link: chunk.web.uri,
+          publisher: 'Google Search'
+        });
+      }
+    }
 
-    return new Response(JSON.stringify({ result: text }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ result: text, news: newsItems }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }

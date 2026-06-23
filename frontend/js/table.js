@@ -11,6 +11,9 @@ class Table {
     this.tbody.innerHTML = '';
     this.activeRowIndex = -1;
     
+    const compareBtn = document.getElementById('compare-ai-btn');
+    if (compareBtn) compareBtn.style.display = 'none';
+
     if (!data.results || data.results.length === 0) {
       this.tbody.innerHTML = `
         <tr>
@@ -63,9 +66,9 @@ class Table {
         </td>
         <td class="text-secondary">${r.sector || '-'}</td>
         <td><span class="text-small text-secondary">${r.country || '-'}</span></td>
-        <td class="text-right"><span class="${pctColor}${intensity} font-mono">${this.app.formatPercent(r.pct_change)}</span></td>
+        <td class="text-right"><span id="pct-${r.ticker}" class="${pctColor}${intensity} font-mono">${this.app.formatPercent(r.pct_change)}</span></td>
         <td class="text-right"><span class="${vsColor} font-mono">${this.app.formatPercent(r.vs_sector)}</span></td>
-        <td class="text-right font-mono">${this.formatWithCommas(r.end_price, r.currency)}</td>
+        <td class="text-right font-mono" id="price-${r.ticker}" data-raw="${r.end_price}">${this.formatWithCommas(r.end_price, r.currency)}</td>
         <td class="text-right font-mono">${this.app.formatNumber(r.market_cap, '$')}</td>
         <td class="text-center"><canvas width="120" height="30" class="sparkline trend-canvas" data-ticker="${r.ticker}" data-pct="${r.pct_change || 0}"></canvas></td>
         <td class="text-center watchlist-star ${wlClass}" data-ticker="${r.ticker}">${watchlistIcon}</td>
@@ -99,6 +102,50 @@ class Table {
 
     this.renderPagination(data.pages, data.page);
     this.drawSparklines();
+    
+    // Hydrate live prices from Edge Function
+    const tickers = data.results.map(r => r.ticker);
+    const currencyMap = {};
+    data.results.forEach(r => currencyMap[r.ticker] = r.currency);
+    this.hydrateLiveQuotes(tickers, currencyMap);
+  }
+
+  static async hydrateLiveQuotes(tickers, currencyMap) {
+    if (!tickers || tickers.length === 0) return;
+    try {
+      const { data, error } = await window.supabaseClient.functions.invoke('live-quotes', {
+        body: { tickers }
+      });
+      if (data && data.data) {
+        Object.values(data.data).forEach(quote => {
+          const priceEl = document.getElementById(`price-${quote.ticker}`);
+          const pctEl = document.getElementById(`pct-${quote.ticker}`);
+          
+          if (priceEl && quote.price !== undefined) {
+            const oldPrice = parseFloat(priceEl.dataset.raw) || quote.price;
+            priceEl.innerHTML = this.formatWithCommas(quote.price, currencyMap[quote.ticker] || '');
+            priceEl.dataset.raw = quote.price;
+            
+            if (quote.price > oldPrice) {
+              priceEl.style.animation = 'none';
+              priceEl.offsetHeight; 
+              priceEl.style.animation = 'flashGreen 1s ease-out';
+            } else if (quote.price < oldPrice) {
+              priceEl.style.animation = 'none';
+              priceEl.offsetHeight;
+              priceEl.style.animation = 'flashRed 1s ease-out';
+            }
+          }
+          
+          if (pctEl && quote.pct_change !== undefined && this.app.filters.period === '1D') {
+            pctEl.innerHTML = this.app.formatPercent(quote.pct_change);
+            pctEl.className = 'font-mono ' + (quote.pct_change > 0 ? 'badge-gain' : (quote.pct_change < 0 ? 'badge-loss' : 'text-neutral'));
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Hydration failed:', e);
+    }
   }
 
   static formatWithCommas(num, currency) {

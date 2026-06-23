@@ -206,9 +206,9 @@ window.SupabaseAPI = {
       
     if (error) {
       console.error(error);
-      return [];
+      return { results: [] };
     }
-    return data;
+    return { results: data };
   },
 
   // Realtime Subscription
