@@ -195,10 +195,9 @@ class Table {
             }
           }
 
-          if (pctEl && quote.pct_change !== undefined && this.app.filters.period === '1D') {
-            pctEl.innerHTML = this.app.formatPercent(quote.pct_change);
-            pctEl.className = 'font-mono ' + (quote.pct_change > 0 ? 'badge-gain' : (quote.pct_change < 0 ? 'badge-loss' : 'text-neutral'));
-          }
+          // Do not overwrite pct_change from live quotes — the DB value is the
+          // authoritative session change and is what rows are sorted by.
+          // Overwriting it causes visual disorder (sorted by one value, displaying another).
         });
       }
     } catch (e) {
