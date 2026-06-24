@@ -250,6 +250,18 @@ class App {
         const total = data.total || 0;
         countEl.textContent = `${total.toLocaleString()} result${total !== 1 ? 's' : ''}`;
       }
+      // Show data-as-of date for 1D so users know which session they're seeing
+      const asOfEl = document.getElementById('data-as-of');
+      if (asOfEl && data.results && data.results.length > 0) {
+        const sample = data.results.find(r => r.end_date);
+        if (sample && this.filters.period === '1D') {
+          const d = new Date(sample.end_date);
+          asOfEl.textContent = `Session: ${d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`;
+          asOfEl.style.display = 'inline';
+        } else {
+          asOfEl.style.display = 'none';
+        }
+      }
       if (window.Table) Table.render(data);
     } catch (e) {
       console.error("FetchData Error:", e);
