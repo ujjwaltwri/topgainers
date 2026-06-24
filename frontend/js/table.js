@@ -105,10 +105,10 @@ class Table {
         </td>
         <td class="text-secondary">${r.sector || '-'}</td>
         <td><span class="text-small text-secondary">${r.country || '-'}</span></td>
-        <td class="text-right"><span id="pct-${r.ticker}" class="${pctColor}${intensity} font-mono">${this.app.formatPercent(r.pct_change)}</span></td>
-        <td class="text-right"><span class="${vsColor} font-mono">${this.app.formatPercent(r.vs_sector)}</span></td>
-        <td class="text-right"><span class="${rsiClass}">${rsiStr}</span></td>
-        <td class="text-right"><span class="${volClass}">${volStr}</span></td>
+        <td class="text-right"><span id="pct-${r.ticker}" class="${pctColor}${intensity} font-mono" data-raw="${r.pct_change}">${this.app.formatPercent(r.pct_change)}</span></td>
+        <td class="text-right col-vssector"><span class="${vsColor} font-mono">${this.app.formatPercent(r.vs_sector)}</span></td>
+        <td class="text-right col-rsi"><span class="${rsiClass}">${rsiStr}</span></td>
+        <td class="text-right col-volratio"><span class="${volClass}">${volStr}</span></td>
         <td class="text-right font-mono" id="price-${r.ticker}" data-raw="${r.end_price}">${this.formatWithCommas(r.end_price, r.currency)}</td>
         <td class="text-right font-mono">${this.app.formatNumber(r.market_cap, '$')}</td>
         <td class="text-center"><canvas width="100" height="28" class="sparkline trend-canvas" data-ticker="${r.ticker}" data-pct="${r.pct_change || 0}"></canvas></td>
@@ -195,10 +195,28 @@ class Table {
             }
           }
 
-          // Do not overwrite pct_change from live quotes — the DB value is the
-          // authoritative session change and is what rows are sorted by.
-          // Overwriting it causes visual disorder (sorted by one value, displaying another).
+          if (pctEl && quote.pct_change !== undefined) {
+            const oldPct = parseFloat(pctEl.dataset.raw);
+            const newPct = quote.pct_change;
+            const sign = newPct > 0 ? '+' : '';
+            pctEl.textContent = sign + newPct.toFixed(2) + '%';
+            pctEl.dataset.raw = newPct;
+
+            const pctColor = newPct > 0 ? 'badge-gain' : (newPct < 0 ? 'badge-loss' : 'text-neutral');
+            const pctAbs = Math.abs(newPct);
+            const intensity = pctAbs > 20 ? ' intensity-extreme' : pctAbs > 8 ? ' intensity-high' : '';
+            pctEl.className = pctColor + intensity + ' font-mono';
+
+            if (!isNaN(oldPct) && newPct !== oldPct) {
+              pctEl.style.animation = 'none';
+              pctEl.offsetHeight;
+              pctEl.style.animation = newPct > oldPct ? 'flashGreen 1s ease-out' : 'flashRed 1s ease-out';
+            }
+          }
         });
+
+        // Check price alerts on every live quote refresh
+        if (window.app && window.app.checkPriceAlerts) window.app.checkPriceAlerts(data.data);
       }
     } catch (e) {
       console.error('Hydration failed:', e);

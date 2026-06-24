@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel='stylesheet' href='css/styles.css?v=14'>
+  <link rel='stylesheet' href='css/styles.css?v=17'>
   <!-- Lightweight Charts -->
   <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
   <!-- Supabase -->
@@ -251,6 +251,16 @@
         </div>
       </div>
 
+      <!-- Preset Strip -->
+      <div class="preset-strip" id="preset-strip">
+        <span class="preset-label">Presets</span>
+        <button class="preset-btn" data-preset="value">Value</button>
+        <button class="preset-btn" data-preset="momentum">Momentum</button>
+        <button class="preset-btn" data-preset="52w-high">Near 52W High</button>
+        <button class="preset-btn" data-preset="surge">Volume Surge</button>
+        <button class="preset-btn" data-preset="smallcap">Small Cap</button>
+      </div>
+
       <!-- Table Container -->
       <div class="table-container panel">
         <table id="results-table">
@@ -261,9 +271,9 @@
               <th>Sector</th>
               <th width="100">Country</th>
               <th class="text-right">% Change</th>
-              <th class="text-right">vs Sector</th>
-              <th class="text-right">RSI</th>
-              <th class="text-right">Vol Ratio</th>
+              <th class="text-right col-vssector">vs Sector</th>
+              <th class="text-right col-rsi">RSI</th>
+              <th class="text-right col-volratio">Vol Ratio</th>
               <th class="text-right">Price</th>
               <th class="text-right">Mkt Cap</th>
               <th width="120" class="text-center">Trend</th>
@@ -306,12 +316,22 @@
       <span id="modal-sector" class="badge">Sector</span>
       <span id="modal-country" class="badge">Country</span>
       <span id="modal-exchange" class="badge">Exchange</span>
+      <span id="modal-sentiment-badge" class="badge badge-sentiment hidden"></span>
     </div>
 
     <div class="chart-container">
       <div id="tv-chart-container"></div>
     </div>
 
+    <!-- Modal Tabs -->
+    <div class="modal-tabs">
+      <button class="modal-tab active" data-tab="overview">Overview</button>
+      <button class="modal-tab" data-tab="news">News</button>
+      <button class="modal-tab" data-tab="fundamentals">Fundamentals</button>
+    </div>
+
+    <!-- Tab: Overview -->
+    <div id="modal-tab-overview" class="modal-tab-content">
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-label">Price</div>
@@ -374,6 +394,37 @@
         <div id="modal-range-indicator" class="range-indicator"></div>
       </div>
     </div>
+    </div>
+
+    <!-- Tab: News -->
+    <div id="modal-tab-news" class="modal-tab-content hidden">
+      <div id="modal-news-list" class="news-list">
+        <div class="news-loading">Loading news...</div>
+      </div>
+    </div>
+
+    <!-- Tab: Fundamentals -->
+    <div id="modal-tab-fundamentals" class="modal-tab-content hidden">
+      <div class="fundamentals-grid">
+        <div class="fund-item"><span class="fund-label">EPS (TTM)</span><span class="fund-value font-mono" id="modal-eps">—</span></div>
+        <div class="fund-item"><span class="fund-label">Revenue Growth</span><span class="fund-value font-mono" id="modal-rev-growth">—</span></div>
+        <div class="fund-item"><span class="fund-label">Earnings Growth</span><span class="fund-value font-mono" id="modal-earn-growth">—</span></div>
+        <div class="fund-item"><span class="fund-label">Debt / Equity</span><span class="fund-value font-mono" id="modal-de">—</span></div>
+        <div class="fund-item"><span class="fund-label">Free Cash Flow</span><span class="fund-value font-mono" id="modal-fcf">—</span></div>
+        <div class="fund-item"><span class="fund-label">Profit Margin</span><span class="fund-value font-mono" id="modal-margin">—</span></div>
+        <div class="fund-item"><span class="fund-label">ROE</span><span class="fund-value font-mono" id="modal-roe">—</span></div>
+        <div class="fund-item"><span class="fund-label">Dividend Yield</span><span class="fund-value font-mono" id="modal-div-yield">—</span></div>
+        <div class="fund-item"><span class="fund-label">Next Earnings</span><span class="fund-value font-mono" id="modal-earn-date">—</span></div>
+        <div class="fund-item"><span class="fund-label">Recommendation</span><span class="fund-value font-mono" id="modal-rec">—</span></div>
+      </div>
+    </div>
+
+    <!-- Price Alert Row -->
+    <div class="alert-row" id="modal-alert-row">
+      <input type="number" id="alert-price-input" class="alert-price-input" placeholder="Alert at price..." step="any" min="0">
+      <button id="alert-set-btn" class="btn-outline">Set Alert</button>
+      <span id="alert-status" class="alert-status"></span>
+    </div>
 
     <div class="modal-actions">
       <button id="modal-btn-watchlist" class="btn-outline">
@@ -412,10 +463,10 @@
     </div>
   </aside>
 
-  <script src="js/supabase-api.js?v=14"></script>
-  <script src="js/filters.js?v=14"></script>
-  <script src="js/search.js?v=14"></script>
-  <script src="js/table.js?v=14"></script>
-  <script src="js/app.js?v=14"></script>
+  <script src="js/supabase-api.js?v=17"></script>
+  <script src="js/filters.js?v=17"></script>
+  <script src="js/search.js?v=17"></script>
+  <script src="js/table.js?v=17"></script>
+  <script src="js/app.js?v=17"></script>
 </body>
 </html>

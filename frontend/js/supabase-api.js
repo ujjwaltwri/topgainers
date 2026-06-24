@@ -12,7 +12,7 @@ window.SupabaseAPI = {
     const page = parseInt(filters.page) || 1;
     const offset = (page - 1) * limit;
     
-    let query = supabaseClient.from('gains_with_stocks').select('*', { count: 'exact' });
+    let query = supabaseClient.from('gains_with_stocks').select('*', { count: 'planned' });
     query = query.eq('period', period);
     
     // Apply filters
@@ -79,6 +79,13 @@ window.SupabaseAPI = {
   },
   
   async getFilters() {
+    const CACHE_KEY = 'tg_filters_v1';
+    const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+    try {
+      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+      if (cached && (Date.now() - cached.ts) < CACHE_TTL) return cached.data;
+    } catch {}
+
     const [{data: countries}, {data: sectors}, {data: industries}, {data: exchanges}] = await Promise.all([
         supabaseClient.rpc('get_distinct_countries'),
         supabaseClient.rpc('get_distinct_sectors'),
@@ -86,7 +93,7 @@ window.SupabaseAPI = {
         supabaseClient.rpc('get_distinct_exchanges')
     ]);
 
-    return {
+    const result = {
         sectors: sectors ? sectors.map(r => r.sector) : [],
         industries: industries ? industries.map(r => r.industry) : [],
         countries: countries ? countries.map(r => r.country) : [],
@@ -101,6 +108,8 @@ window.SupabaseAPI = {
         mcap_tiers: ["Mega", "Large", "Mid", "Small", "Micro", "Nano"],
         currencies: ["USD", "INR", "JPY", "CNY", "GBP", "EUR", "CAD", "AUD", "BRL", "KRW", "HKD", "SAR"]
     };
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: result })); } catch {}
+    return result;
   },
   
   async getStats() {
@@ -152,13 +161,41 @@ window.SupabaseAPI = {
   },
   
   async getMarqueeData(period) {
+    const INDEX_LIST = [
+      { name: 'S&P 500',    ticker: '^GSPC' },
+      { name: 'NASDAQ',     ticker: '^IXIC' },
+      { name: 'Nifty 50',   ticker: '^NSEI' },
+      { name: 'SENSEX',     ticker: '^BSESN' },
+      { name: 'KOSPI',      ticker: '^KS11' },
+      { name: 'KOSDAQ',     ticker: '^KQ11' },
+      { name: 'Nikkei 225', ticker: '^N225' },
+      { name: 'Hang Seng',  ticker: '^HSI' },
+      { name: 'FTSE 100',   ticker: '^FTSE' },
+      { name: 'DAX',        ticker: '^GDAXI' },
+      { name: 'CAC 40',     ticker: '^FCHI' },
+      { name: 'ASX 200',    ticker: '^AXJO' },
+      { name: 'TSX',        ticker: '^GSPTSE' },
+      { name: 'BOVESPA',    ticker: '^BVSP' },
+      { name: 'AEX',        ticker: '^AEX' },
+      { name: 'SMI',        ticker: '^SSMI' },
+      { name: 'IBEX 35',    ticker: '^IBEX' },
+      { name: 'OMXS30',     ticker: '^OMX' },
+      { name: 'TWSE',       ticker: '^TWII' },
+      { name: 'STI',        ticker: '^STI' },
+    ];
     try {
-      const { data, error } = await supabaseClient.rpc('get_marquee_data', { period_param: period });
-      if (error) {
-        console.error('Marquee RPC error:', error);
-        return [];
-      }
-      return (data || []).map(r => ({ name: r.name, value: r.stock_count, pct_change: r.pct_change }));
+      const tickers = INDEX_LIST.map(i => i.ticker);
+      const { data, error } = await supabaseClient.functions.invoke('live-quotes', {
+        body: { tickers }
+      });
+      if (error || !data?.data) return [];
+      return INDEX_LIST
+        .map(idx => {
+          const q = data.data[idx.ticker];
+          if (!q) return null;
+          return { name: idx.name, pct_change: q.pct_change };
+        })
+        .filter(Boolean);
     } catch (e) {
       console.error('Marquee error:', e);
       return [];

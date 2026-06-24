@@ -13,9 +13,43 @@ const YF_HEADERS = {
   'Origin': 'https://finance.yahoo.com',
 }
 
-async function fetchQuote(ticker: string): Promise<{ ticker: string; price: number; pct_change: number; prev_close: number } | null> {
+// Batch fetch up to 25 tickers in a single request using the spark endpoint
+async function fetchBatchQuotes(tickers: string[]): Promise<Record<string, { ticker: string; price: number; pct_change: number; prev_close: number }>> {
+  const symbols = tickers.slice(0, 25).map(encodeURIComponent).join(',')
+  const url = `https://query1.finance.yahoo.com/v8/finance/spark?symbols=${symbols}&range=1d&interval=5m`
+
   try {
-    // v8 chart with 1d range, 1d interval — same endpoint that yfinance-proxy uses (known working)
+    const res = await fetch(url, { headers: YF_HEADERS })
+    if (!res.ok) return {}
+
+    const json = await res.json()
+    const result: Record<string, { ticker: string; price: number; pct_change: number; prev_close: number }> = {}
+
+    for (const ticker of tickers) {
+      const sym = json?.[ticker]
+      if (!sym) continue
+
+      const closes: (number | null)[] = sym.close || []
+      const validCloses = closes.filter((c): c is number => c !== null && c !== undefined)
+      if (validCloses.length === 0) continue
+
+      const price = validCloses[validCloses.length - 1]
+      const prev_close = sym.previousClose ?? validCloses[0]
+      if (!prev_close) continue
+
+      const pct_change = ((price - prev_close) / prev_close) * 100
+      result[ticker] = { ticker, price, pct_change, prev_close }
+    }
+
+    return result
+  } catch {
+    return {}
+  }
+}
+
+// Fallback: single ticker via v8 chart (used when spark returns nothing for a ticker)
+async function fetchSingleQuote(ticker: string): Promise<{ ticker: string; price: number; pct_change: number; prev_close: number } | null> {
+  try {
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=1d&range=5d`
     const res = await fetch(url, { headers: YF_HEADERS })
     if (!res.ok) return null
@@ -26,13 +60,15 @@ async function fetchQuote(ticker: string): Promise<{ ticker: string; price: numb
 
     const closes = result.indicators?.quote?.[0]?.close || []
     const meta = result.meta || {}
-
-    // Filter out nulls
     const validCloses = closes.filter((c: number | null) => c !== null && c !== undefined)
     if (validCloses.length < 2) return null
 
     const price = meta.regularMarketPrice ?? validCloses[validCloses.length - 1]
-    const prev_close = meta.chartPreviousClose ?? meta.previousClose ?? validCloses[validCloses.length - 2]
+    const lastClose = validCloses[validCloses.length - 1]
+    const isMarketClosed = lastClose && Math.abs(price - lastClose) / lastClose < 0.001
+    const prev_close = isMarketClosed
+      ? validCloses[validCloses.length - 2]
+      : lastClose ?? meta.chartPreviousClose ?? meta.previousClose
     const pct_change = prev_close ? ((price - prev_close) / prev_close) * 100 : 0
 
     return { ticker, price, pct_change, prev_close }
@@ -65,21 +101,25 @@ serve(async (req) => {
       })
     }
 
-    // Fetch all in parallel, cap at 25 (what's visible on screen)
-    const results = await Promise.all(tickers.slice(0, 25).map(fetchQuote))
+    // One batch request for all tickers
+    const batchResults = await fetchBatchQuotes(tickers)
 
-    const data: Record<string, object> = {}
-    for (const q of results) {
-      if (q) data[q.ticker] = q
+    // For any ticker the spark endpoint missed, fall back to single v8 chart calls
+    const missing = tickers.filter(t => !batchResults[t])
+    if (missing.length > 0) {
+      const fallbacks = await Promise.all(missing.map(fetchSingleQuote))
+      for (const q of fallbacks) {
+        if (q) batchResults[q.ticker] = q
+      }
     }
 
-    return new Response(JSON.stringify({ data }), {
+    return new Response(JSON.stringify({ data: batchResults }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
     })

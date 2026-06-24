@@ -42,6 +42,8 @@ class App {
 
     this.setupShortcuts();
     this.setupModal();
+    this.setupModalTabs();
+    this.setupAlerts();
     this.setupCompareAI();
     this.setupKeyboardNav();
     this.startLiveRefresh();
@@ -464,6 +466,12 @@ class App {
     });
   }
 
+  setupModalTabs() {
+    document.querySelectorAll('.modal-tab').forEach(tab => {
+      tab.addEventListener('click', () => this.switchModalTab(tab.dataset.tab));
+    });
+  }
+
   async fetchAIInsight() {
     const ticker = document.getElementById('modal-ticker').textContent;
     const name = document.getElementById('modal-name').textContent;
@@ -628,6 +636,190 @@ class App {
     }
 
     this.updateTVChart(data);
+
+    // Populate fundamentals tab
+    this.populateFundamentals(s);
+
+    // Reset tabs to Overview
+    this.switchModalTab('overview');
+
+    // Fetch news async (don't await — let it populate in background)
+    this.fetchStockNews(s.ticker);
+
+    // Load saved alert for this ticker
+    this.loadAlertForTicker(s.ticker);
+  }
+
+  switchModalTab(tabName) {
+    document.querySelectorAll('.modal-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabName));
+    document.querySelectorAll('.modal-tab-content').forEach(c => {
+      const id = c.id.replace('modal-tab-', '');
+      c.classList.toggle('hidden', id !== tabName);
+    });
+  }
+
+  async fetchStockNews(ticker) {
+    const listEl = document.getElementById('modal-news-list');
+    if (!listEl) return;
+    listEl.innerHTML = '<div class="news-loading">Loading news...</div>';
+
+    try {
+      const { data, error } = await window.supabaseClient.functions.invoke('stock-news', { body: { ticker } });
+      if (error) throw error;
+      const items = data?.news || [];
+      this.renderNews(items);
+      this.renderSentimentBadge(items);
+    } catch (e) {
+      listEl.innerHTML = '<div class="news-empty">Could not load news.</div>';
+    }
+  }
+
+  renderNews(items) {
+    const listEl = document.getElementById('modal-news-list');
+    if (!listEl) return;
+    if (!items.length) {
+      listEl.innerHTML = '<div class="news-empty">No recent news found.</div>';
+      return;
+    }
+    listEl.innerHTML = items.map(n => {
+      const ts = n.providerPublishTime ? new Date(n.providerPublishTime * 1000) : null;
+      const ago = ts ? this.timeAgo(ts.toISOString()) : '';
+      const safeTitle = n.title.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const safePublisher = (n.publisher || '').replace(/</g, '&lt;');
+      return `<a class="news-item" href="${n.link}" target="_blank" rel="noopener noreferrer">
+        <div class="news-title">${safeTitle}</div>
+        <div class="news-meta">${safePublisher}${ago ? ' · ' + ago : ''}</div>
+      </a>`;
+    }).join('');
+  }
+
+  renderSentimentBadge(items) {
+    const badge = document.getElementById('modal-sentiment-badge');
+    if (!badge) return;
+    if (!items.length) { badge.classList.add('hidden'); return; }
+
+    const POSITIVE = ['surge', 'rally', 'gain', 'beat', 'record', 'growth', 'profit', 'upgrade', 'buy', 'rise', 'jump', 'soar', 'boost', 'strong'];
+    const NEGATIVE = ['drop', 'fall', 'miss', 'loss', 'downgrade', 'sell', 'crash', 'cut', 'decline', 'weak', 'sink', 'plunge', 'concern', 'warn'];
+
+    let score = 0;
+    items.forEach(n => {
+      const text = (n.title || '').toLowerCase();
+      POSITIVE.forEach(w => { if (text.includes(w)) score++; });
+      NEGATIVE.forEach(w => { if (text.includes(w)) score--; });
+    });
+
+    badge.classList.remove('hidden', 'bullish', 'bearish', 'neutral');
+    if (score > 0) { badge.classList.add('bullish'); badge.textContent = 'BULLISH'; }
+    else if (score < 0) { badge.classList.add('bearish'); badge.textContent = 'BEARISH'; }
+    else { badge.classList.add('neutral'); badge.textContent = 'NEUTRAL'; }
+  }
+
+  populateFundamentals(s) {
+    const fmt = (v, suffix = '') => (v !== null && v !== undefined) ? (typeof v === 'number' ? v.toFixed(2) + suffix : v) : '—';
+    const fmtPct = v => (v !== null && v !== undefined) ? (v * 100).toFixed(1) + '%' : '—';
+    const fmtB = v => (v !== null && v !== undefined) ? this.formatNumber(v, '$') : '—';
+
+    const set = (id, val, cls = '') => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = val;
+      if (cls) el.className = 'fund-value font-mono ' + cls;
+    };
+
+    set('modal-eps', fmt(s.trailing_eps));
+    set('modal-rev-growth', fmtPct(s.revenue_growth), s.revenue_growth > 0 ? 'text-gain' : (s.revenue_growth < 0 ? 'text-loss' : ''));
+    set('modal-earn-growth', fmtPct(s.earnings_growth), s.earnings_growth > 0 ? 'text-gain' : (s.earnings_growth < 0 ? 'text-loss' : ''));
+    set('modal-de', fmt(s.debt_to_equity));
+    set('modal-fcf', fmtB(s.free_cashflow));
+    set('modal-margin', fmtPct(s.profit_margin), s.profit_margin > 0 ? 'text-gain' : '');
+    set('modal-roe', fmtPct(s.return_on_equity), s.return_on_equity > 0 ? 'text-gain' : (s.return_on_equity < 0 ? 'text-loss' : ''));
+    set('modal-div-yield', s.dividend_yield ? fmtPct(s.dividend_yield) : '—');
+    set('modal-rec', s.recommendation ? s.recommendation.toUpperCase() : '—');
+
+    const earnEl = document.getElementById('modal-earn-date');
+    if (earnEl) {
+      if (s.earnings_date) {
+        const d = new Date(typeof s.earnings_date === 'number' ? s.earnings_date * 1000 : s.earnings_date);
+        earnEl.textContent = isNaN(d) ? '—' : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+      } else {
+        earnEl.textContent = '—';
+      }
+    }
+  }
+
+  loadAlertForTicker(ticker) {
+    const input = document.getElementById('alert-price-input');
+    const statusEl = document.getElementById('alert-status');
+    if (!input || !statusEl) return;
+
+    const alerts = JSON.parse(localStorage.getItem('price_alerts') || '[]');
+    const existing = alerts.find(a => a.ticker === ticker);
+    if (existing) {
+      input.value = existing.price;
+      statusEl.textContent = 'Alert set at ' + existing.price;
+    } else {
+      input.value = '';
+      statusEl.textContent = '';
+    }
+  }
+
+  setupAlerts() {
+    const btn = document.getElementById('alert-set-btn');
+    const input = document.getElementById('alert-price-input');
+    const statusEl = document.getElementById('alert-status');
+    if (!btn || !input) return;
+
+    btn.addEventListener('click', async () => {
+      const ticker = document.getElementById('modal-ticker')?.textContent?.trim();
+      const price = parseFloat(input.value);
+      if (!ticker || isNaN(price) || price <= 0) {
+        if (statusEl) { statusEl.textContent = 'Enter a valid price.'; statusEl.style.color = 'var(--loss-primary)'; }
+        return;
+      }
+
+      if (Notification.permission === 'default') {
+        await Notification.requestPermission();
+      }
+
+      const alerts = JSON.parse(localStorage.getItem('price_alerts') || '[]');
+      const filtered = alerts.filter(a => a.ticker !== ticker);
+      const currentPrice = parseFloat(document.getElementById('modal-price')?.textContent?.replace(/[^0-9.]/g, '') || '0');
+      const direction = price > currentPrice ? 'above' : 'below';
+      filtered.push({ ticker, price, direction });
+      localStorage.setItem('price_alerts', JSON.stringify(filtered));
+
+      if (statusEl) {
+        statusEl.textContent = `Alert set: notify when ${ticker} goes ${direction} ${price}`;
+        statusEl.style.color = 'var(--gain-primary)';
+      }
+    });
+  }
+
+  checkPriceAlerts(quotes) {
+    const alerts = JSON.parse(localStorage.getItem('price_alerts') || '[]');
+    if (!alerts.length) return;
+    const remaining = [];
+    let changed = false;
+
+    alerts.forEach(alert => {
+      const quote = quotes[alert.ticker];
+      if (!quote) { remaining.push(alert); return; }
+      const currentPrice = quote.price;
+      const triggered = (alert.direction === 'above' && currentPrice >= alert.price) ||
+                        (alert.direction === 'below' && currentPrice <= alert.price);
+      if (triggered) {
+        changed = true;
+        if (Notification.permission === 'granted') {
+          new Notification(`TopGainers Alert: ${alert.ticker}`, {
+            body: `Price ${alert.direction === 'above' ? 'reached' : 'dropped to'} ${currentPrice.toFixed(2)} (target: ${alert.price})`,
+          });
+        }
+      } else {
+        remaining.push(alert);
+      }
+    });
+
+    if (changed) localStorage.setItem('price_alerts', JSON.stringify(remaining));
   }
 
   setupTVChart() {
@@ -845,11 +1037,15 @@ class App {
       const currencyMap = {};
       this.currentData.results.forEach(r => currencyMap[r.ticker] = r.currency);
       if (window.Table) Table.hydrateLiveQuotes(tickers, currencyMap);
-    }, 60000);
+    }, 5000);
 
     this._fullRefreshInterval = setInterval(() => {
       if (this.filters.period === '1D') this.fetchData();
     }, 300000);
+
+    this._marqueeInterval = setInterval(() => {
+      this.renderMarquee();
+    }, 5000);
   }
 
   async fetchStatsData() {

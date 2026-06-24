@@ -10,6 +10,7 @@ class Overview {
     this.renderMarquee();
     this.renderMarketClocks();
     setInterval(() => this.renderMarketClocks(), 60000);
+    setInterval(() => this.renderMarquee(), 5000);
     await this.fetchAllData();
 
     window.addEventListener('resize', this.debounce(() => {
