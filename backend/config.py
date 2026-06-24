@@ -52,7 +52,9 @@ EXCHANGES = {
     'EGX': {'suffix': '.CA', 'country': 'Egypt', 'region': 'Middle East / Africa', 'currency': 'EGP', 'benchmark_index': '^CASE30'},
     'QSE': {'suffix': '.QA', 'country': 'Qatar', 'region': 'Middle East / Africa', 'currency': 'QAR', 'benchmark_index': None},
     'DFM': {'suffix': '.AE', 'country': 'United Arab Emirates', 'region': 'Middle East / Africa', 'currency': 'AED', 'benchmark_index': None},
-    'JSE': {'suffix': '.JO', 'country': 'South Africa', 'region': 'Middle East / Africa', 'currency': 'ZAR', 'benchmark_index': '^J203.JO'}
+    'JSE': {'suffix': '.JO', 'country': 'South Africa', 'region': 'Middle East / Africa', 'currency': 'ZAR', 'benchmark_index': '^J203.JO'},
+    'FWB': {'suffix': '.F', 'country': 'Germany', 'region': 'Europe', 'currency': 'EUR', 'benchmark_index': '^GDAXI'},
+    'TSXV': {'suffix': '.V', 'country': 'Canada', 'region': 'Americas', 'currency': 'CAD', 'benchmark_index': '^GSPTSE'}
 }
 
 REGIONS = {

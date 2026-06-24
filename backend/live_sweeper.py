@@ -1,77 +1,77 @@
-import time
 import datetime
 import logging
-from database import Database
-from exhaustive_pipeline import DataPipeline
-import config
-from supabase import create_client
+import os
+from exhaustive_pipeline import RealPipeline
 
-# Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)-7s | %(message)s')
 logger = logging.getLogger(__name__)
 
-SUPABASE_URL = "https://xpmfwpqkykiqmswumoxu.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." # Replace with service role key if needed. We'll use the anon key for now or rely on the pipeline pushing.
-# Wait, the exhaustive pipeline actually uses environment variables for Supabase. Let's rely on the environment variables just like the main pipeline.
+# Market hours in UTC (rough approximation — good enough for scheduling)
+MARKET_HOURS_UTC = {
+    'US':       (13, 20, ['US']),
+    'Europe':   (8,  16, ['UK', 'Germany', 'France', 'Netherlands', 'Switzerland', 'Italy', 'Spain', 'Sweden', 'Norway', 'Denmark', 'Finland', 'Poland', 'Austria']),
+    'Japan':    (0,  6,  ['Japan']),
+    'China':    (1,  8,  ['China', 'HongKong']),
+    'India':    (3,  10, ['India']),
+    'Australia':(23, 6,  ['Australia']),
+    'Korea':    (0,  6,  ['SouthKorea']),
+}
 
-def get_open_markets():
-    """Determine which markets are currently open based on UTC time."""
+# Map to actual TICKER_LISTS keys (from exhaustive_pipeline.py)
+REGION_TO_GROUPS = {
+    'US':          ['US'],
+    'Europe':      ['UK', 'Germany', 'France', 'Netherlands', 'Switzerland', 'Italy', 'Spain',
+                    'Sweden', 'Norway', 'Denmark', 'Finland', 'Poland', 'Austria', 'Ireland',
+                    'Portugal', 'Greece', 'Frankfurt'],
+    'Japan':       ['Japan'],
+    'China':       [],  # China tickers not in master_tickers yet
+    'India':       ['India'],
+    'Australia':   ['Australia'],
+    'Korea':       ['Korea'],
+    'HongKong':    ['HongKong'],
+}
+
+
+def get_open_market_groups():
     now_utc = datetime.datetime.utcnow()
-    current_hour_utc = now_utc.hour
-    current_day = now_utc.weekday()
+    h = now_utc.hour
+    weekday = now_utc.weekday()
 
-    open_exchanges = []
-
-    # Weekends (Saturday=5, Sunday=6) - No markets are open
-    if current_day >= 5:
+    if weekday >= 5:  # Saturday=5, Sunday=6
         return []
 
-    # Extremely rough market hours approximation (UTC):
-    # US (NYSE/NASDAQ): 13:30 - 20:00 UTC
-    if 13 <= current_hour_utc <= 20:
-        open_exchanges.extend(["NYSE", "NASDAQ", "TSX", "B3"])
+    open_groups = []
+    for region, (start, end, _) in MARKET_HOURS_UTC.items():
+        if start > end:  # wraps midnight (e.g. Australia 23-06)
+            is_open = h >= start or h <= end
+        else:
+            is_open = start <= h <= end
+        if is_open:
+            open_groups.extend(REGION_TO_GROUPS.get(region, []))
 
-    # Europe (LSE, XETRA, Paris, Amsterdam): 08:00 - 16:30 UTC
-    if 8 <= current_hour_utc <= 16:
-        open_exchanges.extend(["LSE", "XETRA", "Euronext Paris", "Euronext Amsterdam"])
+    return list(dict.fromkeys(open_groups))  # deduplicate, preserve order
 
-    # Asia (TSE, KOSPI, KOSDAQ): 00:00 - 06:00 UTC
-    if 0 <= current_hour_utc <= 6:
-        open_exchanges.extend(["TSE", "KOSPI", "KOSDAQ"])
-
-    # China/HK (SSE, SZSE, HKEX): 01:30 - 08:00 UTC
-    if 1 <= current_hour_utc <= 8:
-        open_exchanges.extend(["SSE", "SZSE", "HKEX"])
-
-    # India (NSE, BSE): 03:45 - 10:00 UTC
-    if 3 <= current_hour_utc <= 10:
-        open_exchanges.extend(["NSE", "BSE"])
-
-    # Australia (ASX): 23:00 (prev day) - 06:00 UTC
-    if current_hour_utc >= 23 or current_hour_utc <= 6:
-        open_exchanges.extend(["ASX"])
-
-    return open_exchanges
 
 def main():
-    logger.info("Starting Global Radar Sweep (GitHub Actions)...")
-    pipeline = DataPipeline(db_path="../data/stocks.db", min_mcap=50_000_000)
+    logger.info("Starting TopGainers Live Sweep …")
 
-    open_exchanges = get_open_markets()
-    
-    if not open_exchanges:
-        logger.info("All global markets are currently closed (Weekend or after-hours). Exiting sweep.")
+    open_groups = get_open_market_groups()
+    if not open_groups:
+        logger.info("All markets closed. Nothing to sweep.")
         return
 
-    logger.info(f"Open markets detected: {open_exchanges}")
-    
-    try:
-        # We run a "fast update" for only the open exchanges
-        logger.info("Running fast hydration sweep on open markets...")
-        pipeline.run_full(exchanges=open_exchanges, limit=1000)
-        logger.info("Sweep complete. Rankings updated.")
-    except Exception as e:
-        logger.error(f"Sweep failed: {e}")
+    logger.info(f"Open market groups: {open_groups}")
 
-if __name__ == "__main__":
+    supabase_url = os.getenv('SUPABASE_URL')
+    supabase_key = os.getenv('SUPABASE_KEY')
+    if not supabase_url or not supabase_key:
+        logger.error("SUPABASE_URL / SUPABASE_KEY not set. Exiting.")
+        return
+
+    pipeline = RealPipeline(supabase_url=supabase_url, supabase_key=supabase_key, batch_size=50)
+    pipeline.run(exchange_groups=open_groups, limit=500, resume=True)
+    logger.info("Sweep complete.")
+
+
+if __name__ == '__main__':
     main()

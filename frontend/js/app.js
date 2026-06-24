@@ -46,7 +46,8 @@ class App {
     this.setupModal();
     this.setupCompareAI();
     this.setupKeyboardNav();
-    
+    this.startLiveRefresh();
+
     document.getElementById('export-csv')?.addEventListener('click', () => this.exportCSV());
   }
 
@@ -222,18 +223,6 @@ class App {
     try {
       const data = await window.SupabaseAPI.getFilters();
       if (window.Filters) Filters.populateAll(data);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async fetchStatsData() {
-    try {
-      const data = await window.SupabaseAPI.getStats();
-      const el = document.getElementById('last-updated-time');
-      if (el && data.last_updated) {
-        el.textContent = 'Updated ' + this.timeAgo(data.last_updated);
-      }
     } catch (e) {
       console.error(e);
     }
@@ -560,7 +549,7 @@ class App {
 
     // New stats
     const volatilityEl = document.getElementById('modal-volatility');
-    if (volatilityEl) volatilityEl.textContent = g.volatility ? (g.volatility * 100).toFixed(1) + '%' : '—';
+    if (volatilityEl) volatilityEl.textContent = g.volatility_30d ? (g.volatility_30d * 100).toFixed(1) + '%' : '—';
     
     const drawdownEl = document.getElementById('modal-drawdown');
     if (drawdownEl) {
@@ -850,6 +839,43 @@ class App {
     if (diff < 3600) return Math.floor(diff/60) + 'm ago';
     if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
     return Math.floor(diff/86400) + 'd ago';
+  }
+
+  startLiveRefresh() {
+    // Tick the staleness clock every 60s
+    this._stalenessInterval = setInterval(() => {
+      const el = document.getElementById('last-updated-time');
+      if (el && this._lastUpdatedAt) {
+        el.textContent = 'Updated ' + this.timeAgo(this._lastUpdatedAt);
+      }
+    }, 60000);
+
+    // Hydrate live prices every 60s for the visible table rows
+    this._liveQuoteInterval = setInterval(() => {
+      if (!this.currentData || !this.currentData.results) return;
+      const tickers = this.currentData.results.map(r => r.ticker);
+      const currencyMap = {};
+      this.currentData.results.forEach(r => currencyMap[r.ticker] = r.currency);
+      if (window.Table) Table.hydrateLiveQuotes(tickers, currencyMap);
+    }, 60000);
+
+    // On 1D period, also refresh the full table every 5min to catch rank changes
+    this._fullRefreshInterval = setInterval(() => {
+      if (this.filters.period === '1D') this.fetchData();
+    }, 300000);
+  }
+
+  async fetchStatsData() {
+    try {
+      const data = await window.SupabaseAPI.getStats();
+      const el = document.getElementById('last-updated-time');
+      if (el && data.last_updated) {
+        this._lastUpdatedAt = data.last_updated;
+        el.textContent = 'Updated ' + this.timeAgo(data.last_updated);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 

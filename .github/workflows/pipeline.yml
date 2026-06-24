@@ -33,5 +33,5 @@ jobs:
         SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       run: |
         cd backend
-        # Using --resume to quickly update existing tickers and add new ones
-        python exhaustive_pipeline.py --globe --resume
+        python exhaustive_pipeline.py --all --resume 2>&1 | tee pipeline_ci.log
+        echo "Exit code: $?"

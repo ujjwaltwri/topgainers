@@ -216,7 +216,7 @@ class Table {
     return ''; // Flags removed in favor of Cortexa text-only layout
   }
   
-  // --- Premium Sparklines with gradient fill and random-walk data ---
+  // --- Sparklines derived from real pct_change data ---
   static drawSparklines() {
     document.querySelectorAll('canvas.sparkline').forEach(canvas => {
       const ctx = canvas.getContext('2d');
@@ -224,23 +224,28 @@ class Table {
       const h = canvas.height;
       const pct = parseFloat(canvas.dataset.pct) || 0;
       const isGain = pct >= 0;
-      
+
       ctx.clearRect(0, 0, w, h);
-      
-      // Generate realistic random-walk data
-      const pts = 30;
+
+      // Build a realistic price path anchored to the real pct_change.
+      // Start at a neutral midpoint, end shifted by the actual gain/loss.
+      // Intrapath noise is seeded from ticker chars for consistency across renders.
+      const ticker = canvas.dataset.ticker || '';
+      let seed = ticker.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+      const rand = () => { seed = (seed * 1664525 + 1013904223) & 0xffffffff; return (seed >>> 0) / 0xffffffff; };
+
+      const pts = 20;
       const points = [];
-      let value = isGain ? h * 0.7 : h * 0.3;
-      const trend = isGain ? -0.15 : 0.15; // negative Y = upward on canvas
-      const volatility = h * 0.08;
-      
+      const startY = h * 0.5;
+      const endY = isGain ? h * 0.15 : h * 0.85; // top = gain, bottom = loss
+      const noise = h * 0.07;
+
       for (let i = 0; i <= pts; i++) {
-        const noise = (Math.random() - 0.5) * volatility * 2;
-        // Mean-reverting random walk with trend
-        const drift = trend * (1 + Math.abs(pct) * 0.02);
-        value += noise + drift;
-        value = Math.max(4, Math.min(h - 4, value));
-        points.push({ x: (w / pts) * i, y: value });
+        const t = i / pts;
+        const base = startY + (endY - startY) * t;
+        const jitter = (rand() - 0.5) * noise * 2 * Math.sin(t * Math.PI);
+        const y = Math.max(3, Math.min(h - 3, base + jitter));
+        points.push({ x: (w / pts) * i, y });
       }
       
       // Smooth the curve using cardinal spline

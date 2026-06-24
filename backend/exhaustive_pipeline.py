@@ -199,6 +199,24 @@ TICKER_LISTS = {
         ],
     },
 
+    # ── Canada Venture (TSX Venture Exchange) ─────────────────────────────
+    'CanadaVenture': {
+        'exchange': 'TSXV',
+        'country': 'Canada',
+        'region': 'Americas',
+        'currency': 'CAD',
+        'tickers': [],
+    },
+
+    # ── Germany Frankfurt (FWB) ────────────────────────────────────────────
+    'Frankfurt': {
+        'exchange': 'FWB',
+        'country': 'Germany',
+        'region': 'Europe',
+        'currency': 'EUR',
+        'tickers': [],
+    },
+
     # ── Australia (ASX) ────────────────────────────────────────────────────
     'Australia': {
         'exchange': 'ASX',
@@ -307,17 +325,6 @@ def compute_gain_streak(prices: pd.Series) -> int:
     return streak
 
 
-def compute_sharpe(prices: pd.Series, risk_free_annual: float = 0.05):
-    """Annualised Sharpe ratio (excess return / volatility)."""
-    if len(prices) < 30:
-        return None
-    rets = prices.pct_change().dropna()
-    daily_rf = (1 + risk_free_annual) ** (1/252) - 1
-    excess = rets - daily_rf
-    if excess.std() == 0:
-        return None
-    return float((excess.mean() / excess.std()) * np.sqrt(252))
-
 
 def get_market_cap_tier(mcap):
     if mcap is None or (isinstance(mcap, float) and np.isnan(mcap)):
@@ -425,12 +432,13 @@ class RealPipeline:
         try:
             data = yf.download(
                 tickers,
-                period='1y',
+                period='5y',
                 interval='1d',
                 group_by='ticker',
                 auto_adjust=True,
-                threads=True,
+                threads=False,
                 progress=False,
+                timeout=30,
             )
             if data is None or data.empty:
                 return result
@@ -572,8 +580,6 @@ class RealPipeline:
         rsi_14 = compute_rsi(prices)
         ma_50 = float(prices.rolling(50).mean().iloc[-1]) if len(prices) >= 50 else None
         ma_200 = float(prices.rolling(200).mean().iloc[-1]) if len(prices) >= 200 else None
-        above_ma_50 = bool(current_price >= ma_50) if ma_50 is not None else None
-        above_ma_200 = bool(current_price >= ma_200) if ma_200 is not None else None
         streak = compute_gain_streak(prices)
         recent_vol = float(volumes.iloc[-5:].mean()) if len(volumes) >= 5 else float(volumes.mean())
 
@@ -621,8 +627,12 @@ class RealPipeline:
                 if len(period_df) < 2:
                     continue
 
-                # Sparse data check
-                expected_days = days * (5/7) * 0.85 if days else 0
+                # Sparse data check — require at least 50% of expected trading days,
+                # but cap the expectation at what's actually available in the full history.
+                # This prevents discarding all long-period gains for markets where
+                # yfinance has limited history (e.g. KOSPI returns ~250 days max).
+                available_days = len(df)
+                expected_days = min(days * (5/7) * 0.85, available_days * 0.95) if days else 0
                 if expected_days > 0 and len(period_df) < max(2, expected_days * 0.5):
                     log.warning(f"  [SPARSE] {ticker} {period_name}: only {len(period_df)} days, skipping.")
                     continue
@@ -642,13 +652,14 @@ class RealPipeline:
                     continue
 
                 pct_change = ((end_price / start_price) - 1.0) * 100.0
-                abs_change = end_price - start_price
 
                 # Thresholds by period — what's plausible in that window
+                # Raised 1Y/2Y/3Y caps: legitimate multi-baggers (e.g. Samsung, NVDA)
+                # were being incorrectly discarded at the old 300% limit.
                 MAX_PLAUSIBLE = {
-                    '1D': 25, '5D': 50, '1M': 100, '3M': 150,
-                    '6M': 200, 'YTD': 300, '1Y': 300, '2Y': 500,
-                    '3Y': 800, '5Y': 1500, 'MAX': 5000,
+                    '1D': 25, '5D': 50, '1M': 100, '3M': 200,
+                    '6M': 500, 'YTD': 1000, '1Y': 1000, '2Y': 2000,
+                    '3Y': 5000, '5Y': 10000, 'MAX': 100000,
                 }
                 limit = MAX_PLAUSIBLE.get(period_name, 500)
                 if pct_change > limit:
@@ -660,19 +671,16 @@ class RealPipeline:
 
                 drawdown = compute_max_drawdown(p_prices)
                 volatility = compute_volatility(p_prices)
-                sharpe = compute_sharpe(p_prices)
 
                 gains.append({
                     'ticker': ticker,
                     'period': period_name,
                     'pct_change': round(pct_change, 4),
-                    'abs_change': round(abs_change, 4),
                     'start_price': round(start_price, 4),
                     'end_price': round(end_price, 4),
                     'start_date': start_date,
                     'end_date': end_date,
                     'avg_volume': round(avg_vol, 0),
-                    'recent_volume': round(recent_vol, 0),
                     'volume_ratio': round(vol_ratio, 4),
                     'high_52w': round(high_52w, 4),
                     'low_52w': round(low_52w, 4),
@@ -682,13 +690,9 @@ class RealPipeline:
                     'at_52w_low': at_52w_low,
                     'volatility_30d': round(volatility, 4) if volatility is not None else None,
                     'max_drawdown': round(drawdown, 4) if drawdown is not None else None,
-                    'sharpe_ratio': round(sharpe, 4) if sharpe is not None else None,
-                    'pct_change_usd': None,  # filled later for non-USD
                     'rsi_14': round(rsi_14, 4) if rsi_14 is not None else None,
                     'ma_50': round(ma_50, 4) if ma_50 is not None else None,
                     'ma_200': round(ma_200, 4) if ma_200 is not None else None,
-                    'above_ma_50': above_ma_50,
-                    'above_ma_200': above_ma_200,
                     'gain_streak': streak,
                     # placeholders — filled in bulk after all tickers
                     'sector_avg_change': None,
@@ -718,27 +722,53 @@ class RealPipeline:
         tickers = [m['ticker'] for m in ticker_metas]
         meta_lookup = {m['ticker']: m for m in ticker_metas}
         
-        # 1b. Handle Failed Tickers
+        # 1b. Handle Failed Tickers (with 30-day expiry)
         failed_tickers = set()
+        failed_tickers_ts = {}  # ticker -> ISO timestamp of failure
+        FAILED_EXPIRY_DAYS = 30
         if os.path.exists(self.failed_file):
             try:
                 with open(self.failed_file, 'r') as f:
-                    failed_tickers = set(json.load(f))
-                log.info(f"Loaded {len(failed_tickers)} known failed tickers to skip.")
-            except:
-                pass
+                    raw = json.load(f)
+                # Support both old list format and new dict format
+                if isinstance(raw, list):
+                    now_ts = datetime.now().isoformat()
+                    failed_tickers_ts = {t: now_ts for t in raw}
+                else:
+                    failed_tickers_ts = raw
+                cutoff = datetime.now() - timedelta(days=FAILED_EXPIRY_DAYS)
+                for t, ts in failed_tickers_ts.items():
+                    try:
+                        if datetime.fromisoformat(ts) > cutoff:
+                            failed_tickers.add(t)
+                    except Exception:
+                        failed_tickers.add(t)
+                log.info(f"Loaded {len(failed_tickers_ts)} failed tickers; {len(failed_tickers)} still within {FAILED_EXPIRY_DAYS}-day blacklist.")
+            except Exception as e:
+                log.warning(f"Could not load failed tickers: {e}")
 
         # 1c. Handle Resume Logic
         processed_tickers = set()
         if resume:
             log.info("Resume flag passed. Querying database for recently processed tickers...")
             try:
-                # Get date 24h ago
                 yesterday = (datetime.now() - timedelta(days=1)).isoformat()
-                # We can't easily fetch 150k rows in one go with Supabase without pagination, 
-                # but we can fetch them in chunks if needed. For resume, let's just fetch tickers updated recently.
-                response = self.supabase.table('stocks').select('ticker').gte('last_updated', yesterday).execute()
-                processed_tickers = {row['ticker'] for row in response.data}
+                page_size = 1000
+                offset = 0
+                while True:
+                    response = (
+                        self.supabase.table('stocks')
+                        .select('ticker')
+                        .gte('last_updated', yesterday)
+                        .range(offset, offset + page_size - 1)
+                        .execute()
+                    )
+                    batch = response.data or []
+                    for row in batch:
+                        processed_tickers.add(row['ticker'])
+                    if len(batch) < page_size:
+                        break
+                    offset += page_size
                 log.info(f"Found {len(processed_tickers)} recently processed tickers to skip.")
             except Exception as e:
                 log.warning(f"Failed to query processed tickers from Supabase: {e}")
@@ -871,9 +901,12 @@ class RealPipeline:
             # Update failures
             if batch_failures:
                 self.stats['failures'].extend(batch_failures)
-                failed_tickers.update(batch_failures)
+                now_ts = datetime.now().isoformat()
+                for t in batch_failures:
+                    failed_tickers.add(t)
+                    failed_tickers_ts[t] = now_ts
                 with open(self.failed_file, 'w') as f:
-                    json.dump(list(failed_tickers), f)
+                    json.dump(failed_tickers_ts, f)
 
             # ── 3. Write to Supabase (Incremental) ─────────────────────────────
             try:
@@ -902,7 +935,7 @@ class RealPipeline:
 
                 if all_gains:
                     gains_df = pd.DataFrame(all_gains)
-                    for col in ['avg_volume', 'recent_volume']:
+                    for col in ['avg_volume']:
                         if col in gains_df.columns:
                             gains_df[col] = pd.to_numeric(gains_df[col], errors='coerce').fillna(0).astype(int)
                     gains_df = gains_df.replace({np.nan: None})
@@ -925,8 +958,6 @@ class RealPipeline:
             log.info("✓ Relative strength computed")
         except Exception as e:
             log.error(f"Failed to compute relative strength (Make sure RPC exists!): {e}")
-        except Exception as e:
-            log.error(f"Failed to compute relative strength: {e}")
 
         # 3e. Pipeline metadata
         try:

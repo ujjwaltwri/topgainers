@@ -22,7 +22,12 @@ window.SupabaseAPI = {
     
     if (filters.region) {
       // server.py maps region to a list of countries
-      const regionsMap = {"Americas": ["United States", "Canada", "Brazil"], "Europe": ["United Kingdom", "Germany", "France", "Netherlands", "Switzerland"], "Asia-Pacific": ["India", "Japan", "China", "South Korea", "Hong Kong", "Australia", "Taiwan"], "Middle East": ["Saudi Arabia"]};
+      const regionsMap = {
+        "Americas": ["United States", "Canada", "Brazil", "Mexico", "Argentina", "Chile"],
+        "Europe": ["United Kingdom", "Germany", "France", "Netherlands", "Switzerland", "Italy", "Spain", "Sweden", "Norway", "Denmark", "Finland", "Poland", "Austria", "Ireland", "Portugal", "Greece"],
+        "Asia-Pacific": ["India", "Japan", "South Korea", "China", "Hong Kong", "Australia", "Taiwan", "Singapore", "Malaysia", "Indonesia", "Thailand", "Philippines", "New Zealand"],
+        "Middle East / Africa": ["Saudi Arabia", "Israel", "Turkey", "Egypt", "Qatar", "United Arab Emirates", "South Africa"]
+      };
       const countriesInRegion = regionsMap[filters.region];
       if (countriesInRegion && countriesInRegion.length > 0) {
         query = query.in('country', countriesInRegion);
@@ -86,7 +91,12 @@ window.SupabaseAPI = {
         industries: industries ? industries.map(r => r.industry) : [],
         countries: countries ? countries.map(r => r.country) : [],
         exchanges: exchanges ? exchanges.map(r => r.exchange) : [],
-        regions: {"Americas": ["United States", "Canada", "Brazil"], "Europe": ["United Kingdom", "Germany", "France", "Netherlands", "Switzerland"], "Asia-Pacific": ["India", "Japan", "China", "South Korea", "Hong Kong", "Australia", "Taiwan"], "Middle East": ["Saudi Arabia"]},
+        regions: {
+          "Americas": ["United States", "Canada", "Brazil", "Mexico", "Argentina", "Chile"],
+          "Europe": ["United Kingdom", "Germany", "France", "Netherlands", "Switzerland", "Italy", "Spain", "Sweden", "Norway", "Denmark", "Finland", "Poland", "Austria", "Ireland", "Portugal", "Greece"],
+          "Asia-Pacific": ["India", "Japan", "South Korea", "China", "Hong Kong", "Australia", "Taiwan", "Singapore", "Malaysia", "Indonesia", "Thailand", "Philippines", "New Zealand"],
+          "Middle East / Africa": ["Saudi Arabia", "Israel", "Turkey", "Egypt", "Qatar", "United Arab Emirates", "South Africa"]
+        },
         periods: ["1D", "5D", "1M", "3M", "6M", "1Y", "2Y", "3Y", "5Y", "YTD", "MAX"],
         mcap_tiers: ["Mega", "Large", "Mid", "Small", "Micro", "Nano"],
         currencies: ["USD", "INR", "JPY", "CNY", "GBP", "EUR", "CAD", "AUD", "BRL", "KRW", "HKD", "SAR"]
@@ -143,56 +153,14 @@ window.SupabaseAPI = {
   
   async getMarqueeData(period) {
     try {
-      // Fetch gains for the current period joined with stocks to get exchange names
-      // Due to PostgREST limitations on aggregates without RPCs, we fetch minimal necessary data and aggregate locally.
-      const { data, error } = await supabaseClient
-        .from('gains')
-        .select('pct_change, stocks!inner(exchange)')
-        .eq('period', period)
-        .not('stocks.exchange', 'is', null)
-        .not('stocks.exchange', 'eq', '')
-        .limit(10000); // Fetch up to 10k rows (should be enough for global snapshot)
-
+      const { data, error } = await supabaseClient.rpc('get_marquee_data', { period_param: period });
       if (error) {
-        console.error('Marquee Fetch Error:', error);
+        console.error('Marquee RPC error:', error);
         return [];
       }
-
-      // Aggregate by exchange
-      const sums = {};
-      const counts = {};
-      for (const row of data) {
-        const ex = row.stocks?.exchange;
-        if (ex) {
-          sums[ex] = (sums[ex] || 0) + (row.pct_change || 0);
-          counts[ex] = (counts[ex] || 0) + 1;
-        }
-      }
-
-      const results = [];
-      for (const [ex, sum] of Object.entries(sums)) {
-        if (counts[ex] > 5) { // Only show exchanges with >5 stocks
-          const avg = sum / counts[ex];
-          results.push({ name: ex, value: counts[ex], pct_change: avg });
-        }
-      }
-
-      // Sort by best performing
-      results.sort((a, b) => b.pct_change - a.pct_change);
-      
-      // If none, provide fallbacks
-      if (results.length === 0) {
-        return [
-           { name: 'S&P 500', value: 500, pct_change: 1.2 },
-           { name: 'NIFTY 50', value: 50, pct_change: 0.8 },
-           { name: 'SENSEX', value: 30, pct_change: 0.75 },
-           { name: 'NASDAQ', value: 100, pct_change: 1.5 },
-        ];
-      }
-
-      return results;
+      return (data || []).map(r => ({ name: r.name, value: r.stock_count, pct_change: r.pct_change }));
     } catch (e) {
-      console.error('Marquee aggregation error:', e);
+      console.error('Marquee error:', e);
       return [];
     }
   },
@@ -259,118 +227,19 @@ window.SupabaseAPI.getTreemap = async function(period) {
 };
 
 window.SupabaseAPI.getSectorPerformance = async function(period) {
-    let allData = [];
-    let offset = 0;
-    while(true) {
-        const { data, error } = await supabaseClient
-            .from('gains_with_stocks')
-            .select('sector, pct_change')
-            .eq('period', period)
-            .range(offset, offset + 999);
-            
-        if (error || !data || data.length === 0) break;
-        allData = allData.concat(data);
-        if (data.length < 1000) break;
-        offset += 1000;
-    }
-
-    const sectorsMap = {};
-    allData.forEach(row => {
-        if (!row.sector) return;
-        if (!sectorsMap[row.sector]) {
-            sectorsMap[row.sector] = { sector: row.sector, stock_count: 0, sum_change: 0, positive: 0, negative: 0 };
-        }
-        const s = sectorsMap[row.sector];
-        s.stock_count++;
-        s.sum_change += row.pct_change;
-        if (row.pct_change > 0) s.positive++;
-        else s.negative++;
-    });
-
-    const sectors = Object.values(sectorsMap).map(s => {
-        return {
-            sector: s.sector,
-            stock_count: s.stock_count,
-            avg_change: s.sum_change / s.stock_count,
-            positive: s.positive,
-            negative: s.negative
-        };
-    }).sort((a, b) => b.avg_change - a.avg_change);
-
-    return { sectors };
+    const { data, error } = await supabaseClient.rpc('get_sector_performance', { period_param: period });
+    if (error) { console.error('getSectorPerformance error:', error); return { sectors: [] }; }
+    return { sectors: data || [] };
 };
 
 window.SupabaseAPI.getCountryPerformance = async function(period) {
-    let allData = [];
-    let offset = 0;
-    while(true) {
-        const { data, error } = await supabaseClient
-            .from('gains_with_stocks')
-            .select('country, pct_change')
-            .eq('period', period)
-            .range(offset, offset + 999);
-            
-        if (error || !data || data.length === 0) break;
-        allData = allData.concat(data);
-        if (data.length < 1000) break;
-        offset += 1000;
-    }
-
-    const countriesMap = {};
-    allData.forEach(row => {
-        if (!row.country) return;
-        if (!countriesMap[row.country]) {
-            countriesMap[row.country] = { country: row.country, stock_count: 0, sum_change: 0, positive: 0, negative: 0 };
-        }
-        const c = countriesMap[row.country];
-        c.stock_count++;
-        c.sum_change += row.pct_change;
-        if (row.pct_change > 0) c.positive++;
-        else c.negative++;
-    });
-
-    const countries = Object.values(countriesMap).map(c => {
-        return {
-            country: c.country,
-            stock_count: c.stock_count,
-            avg_change: c.sum_change / c.stock_count,
-            positive: c.positive,
-            negative: c.negative
-        };
-    }).sort((a, b) => b.avg_change - a.avg_change);
-
-    return { countries };
+    const { data, error } = await supabaseClient.rpc('get_country_performance', { period_param: period });
+    if (error) { console.error('getCountryPerformance error:', error); return { countries: [] }; }
+    return { countries: data || [] };
 };
 
 window.SupabaseAPI.getExchangePerformance = async function(period) {
-    let allData = [];
-    let offset = 0;
-    while(true) {
-        const { data, error } = await supabaseClient
-            .from('gains_with_stocks')
-            .select('exchange, pct_change')
-            .eq('period', period)
-            .not('exchange', 'is', null)
-            .range(offset, offset + 999);
-        if (error || !data || data.length === 0) break;
-        allData = allData.concat(data);
-        if (data.length < 1000) break;
-        offset += 1000;
-    }
-    
-    const exchangeMap = new Map();
-    allData.forEach(r => {
-        if (!r.exchange) return;
-        if (!exchangeMap.has(r.exchange)) {
-            exchangeMap.set(r.exchange, { name: r.exchange, total: 0, count: 0, positive: 0, negative: 0 });
-        }
-        const s = exchangeMap.get(r.exchange);
-        s.total += r.pct_change;
-        s.count += 1;
-        if (r.pct_change > 0) s.positive++;
-        else if (r.pct_change < 0) s.negative++;
-    });
-    
-    exchangeMap.forEach(s => { s.avg_change = s.total / s.count; });
-    return { exchanges: Array.from(exchangeMap.values()).sort((a,b) => b.avg_change - a.avg_change) };
+    const { data, error } = await supabaseClient.rpc('get_exchange_performance', { period_param: period });
+    if (error) { console.error('getExchangePerformance error:', error); return { exchanges: [] }; }
+    return { exchanges: (data || []).map(r => ({ ...r, count: r.stock_count })) };
 };
