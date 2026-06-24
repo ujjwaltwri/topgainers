@@ -786,7 +786,7 @@ class RealPipeline:
         if resume:
             log.info("Resume flag passed. Querying database for recently processed tickers...")
             try:
-                yesterday = (datetime.now() - timedelta(days=1)).isoformat()
+                yesterday = (datetime.now() - timedelta(hours=11)).isoformat()
                 page_size = 1000
                 offset = 0
                 while True:
