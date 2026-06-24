@@ -146,8 +146,37 @@ TICKER_LISTS = {
         'region': 'Asia-Pacific',
         'currency': 'KRW',
         'tickers': [
-            '005930.KS', '000660.KS', '373220.KS', '005490.KS', '035420.KS',
-            '035720.KS', '051910.KS', '006400.KS', '005380.KS',
+            # KOSPI Blue Chips
+            '005930.KS',  # Samsung Electronics
+            '000660.KS',  # SK Hynix
+            '373220.KS',  # LG Energy Solution
+            '005490.KS',  # POSCO Holdings
+            '035420.KS',  # NAVER
+            '035720.KS',  # Kakao
+            '051910.KS',  # LG Chem
+            '006400.KS',  # Samsung SDI
+            '005380.KS',  # Hyundai Motor
+            '000270.KS',  # Kia
+            '068270.KS',  # Celltrion
+            '105560.KS',  # KB Financial
+            '055550.KS',  # Shinhan Financial
+            '086790.KS',  # Hana Financial
+            '015760.KS',  # Korea Electric Power (KEPCO)
+            '096770.KS',  # SK Innovation
+            '017670.KS',  # SK Telecom
+            '030200.KS',  # KT Corp
+            '032830.KS',  # Samsung Life Insurance
+            '009150.KS',  # Samsung Electro-Mechanics
+            '003550.KS',  # LG Corp
+            '066570.KS',  # LG Electronics
+            '034730.KS',  # SK Inc
+            '010130.KS',  # Korea Zinc
+            '329180.KS',  # HD Hyundai Heavy Industries
+            '042660.KS',  # Hanwha Ocean
+            '012330.KS',  # Hyundai Mobis
+            '000810.KS',  # Samsung Fire & Marine
+            '028260.KS',  # Samsung C&T
+            '207940.KS',  # Samsung Biologics
         ],
     },
 
@@ -664,6 +693,11 @@ class RealPipeline:
                 limit = MAX_PLAUSIBLE.get(period_name, 500)
                 if pct_change > limit:
                     log.warning(f"  [ANOMALY] {ticker} {period_name}: {pct_change:.1f}% > {limit}% cap. Skipping.")
+                    continue
+                # A stock cannot lose more than 100% — anything below -100% is
+                # a data artifact (currency mismatch, stale OTC price, bad tick).
+                if pct_change < -100.0:
+                    log.warning(f"  [ANOMALY] {ticker} {period_name}: {pct_change:.1f}% below -100% floor. Skipping.")
                     continue
 
                 avg_vol = float(period_df['volume'].mean())

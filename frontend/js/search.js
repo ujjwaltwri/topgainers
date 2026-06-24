@@ -45,17 +45,19 @@ class Search {
         div.className = 'search-result-item';
         div.innerHTML = `
           <div>
-            <strong>${r.ticker}</strong> - ${r.name}
-            <div class="text-small text-tertiary">${r.sector || ''}</div>
-          </div>
-          <div class="text-right">
-            ${Table.getCountryFlag(r.country)}
+            <strong>${r.ticker}</strong> - ${r.name || r.ticker}
+            <div class="text-small text-tertiary">${r.sector || ''} ${r.country ? '· ' + r.country : ''}</div>
           </div>
         `;
         div.addEventListener('click', () => {
-          this.app.showStockDetail(r.ticker);
           this.hideResults();
           this.input.value = '';
+          // On main page: open modal. On overview: navigate to main page with ticker param.
+          if (this.app && typeof this.app.showStockDetail === 'function') {
+            this.app.showStockDetail(r.ticker);
+          } else {
+            window.location.href = '/?ticker=' + encodeURIComponent(r.ticker);
+          }
         });
         this.resultsContainer.appendChild(div);
       });
