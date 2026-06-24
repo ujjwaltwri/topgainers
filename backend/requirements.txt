@@ -9,3 +9,4 @@ requests>=2.31
 google-cloud-aiplatform>=1.38.0
 supabase>=2.31.0
 websockets>=15.0.0
+python-dotenv>=1.0.0

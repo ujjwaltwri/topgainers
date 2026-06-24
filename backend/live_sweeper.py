@@ -14,7 +14,7 @@ MARKET_HOURS_UTC = {
     'China':    (1,  8,  ['China', 'HongKong']),
     'India':    (3,  10, ['India']),
     'Australia':(23, 6,  ['Australia']),
-    'Korea':    (0,  6,  ['SouthKorea']),
+    'Korea':    (0,  6,  ['Korea']),
 }
 
 # Map to actual TICKER_LISTS keys (from exhaustive_pipeline.py)
