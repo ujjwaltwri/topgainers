@@ -198,22 +198,27 @@ class App {
   }
 
   async renderMarquee() {
-    this.marqueeLoaded = true;
     const container = document.getElementById('global-marquee');
     const content = document.getElementById('marquee-content');
     if (!container || !content) return;
 
-    container.style.display = 'block';
-    content.innerHTML = '<span class="text-secondary">Fetching Global Markets...</span>';
+    // Only show loading placeholder on very first render
+    if (!this.marqueeLoaded) {
+      container.style.display = 'block';
+      content.innerHTML = '<span class="text-secondary">Fetching Global Markets...</span>';
+    }
 
     try {
       if (!window.SupabaseAPI || !window.SupabaseAPI.getMarqueeData) return;
 
       const data = await window.SupabaseAPI.getMarqueeData(this.filters.period);
       if (!data || data.length === 0) {
-        container.style.display = 'none';
+        if (!this.marqueeLoaded) container.style.display = 'none';
         return;
       }
+
+      this.marqueeLoaded = true;
+      container.style.display = 'block';
 
       let html = '';
       for (let j = 0; j < 2; j++) {
@@ -232,7 +237,7 @@ class App {
       content.innerHTML = html;
     } catch (e) {
       console.error(e);
-      container.style.display = 'none';
+      if (!this.marqueeLoaded) container.style.display = 'none';
     }
   }
 
@@ -262,8 +267,8 @@ class App {
       this.currentData = data;
       const countEl = document.getElementById('results-count');
       if (countEl) {
-        const total = data.total || 0;
-        countEl.textContent = `${total.toLocaleString()} result${total !== 1 ? 's' : ''}`;
+        const shown = data.results ? data.results.length : 0;
+        countEl.textContent = shown > 0 ? `Showing ${shown}` : 'No results';
       }
 
       // Show session label for 1D

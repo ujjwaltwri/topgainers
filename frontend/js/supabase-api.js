@@ -12,7 +12,7 @@ window.SupabaseAPI = {
     const page = parseInt(filters.page) || 1;
     const offset = (page - 1) * limit;
     
-    let query = supabaseClient.from('gains_with_stocks').select('*', { count: 'planned' });
+    let query = supabaseClient.from('gains_with_stocks').select('*');
     query = query.eq('period', period);
     
     // Apply filters
@@ -62,17 +62,21 @@ window.SupabaseAPI = {
     query = query.not(sortCol, 'is', null).order(sortCol, { ascending, nullsFirst: false });
     query = query.range(offset, offset + limit - 1);
     
-    const { data, error, count } = await query;
+    const { data, error } = await query;
     if (error) {
         console.error('Supabase query error:', error);
         throw error;
     }
-    
+
+    // No count query — infer pagination from whether we got a full page
+    const hasMore = data && data.length === limit;
+    const pages = hasMore ? page + 1 : page;
+
     return {
-        results: data,
-        total: count,
+        results: data || [],
+        total: null,
         page,
-        pages: Math.ceil(count / limit),
+        pages,
         period,
         direction
     };
