@@ -19,7 +19,7 @@ import sys
 import time
 import argparse
 import sqlite3
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from collections import OrderedDict
 import pandas as pd
 import numpy as np
@@ -95,6 +95,34 @@ TICKER_LISTS = {
             'LUV', 'DAL', 'UAL', 'AAL',
             # Autos / EV
             'F', 'GM', 'RIVN', 'LCID', 'NIO', 'XPEV', 'LI',
+            # Storage / Semiconductors (recent spinoffs / additions)
+            'SNDK', 'WOLF', 'ENVX', 'ALAB', 'RELY',
+            # 2023-2025 IPOs & spinoffs
+            'ARM',   # Arm Holdings (Nasdaq, Sep 2023) - $378B mcap
+            'CHYM',  # Chime Financial (Nasdaq, Jun 2025)
+            'RDDT',  # Reddit (NYSE, Mar 2024)
+            'ALAB',  # Astera Labs (Nasdaq, Mar 2024)
+            'CRWV',  # CoreWeave (Nasdaq, 2025) - largest tech IPO since 2021
+            'KLAR',  # Klarna (NYSE, Sep 2025)
+            'SAIL',  # SailPoint (NYSE, Feb 2025)
+            'ETOR',  # eToro (Nasdaq, 2025)
+            'BIRK',  # Birkenstock (NYSE, 2023)
+            'CAVA',  # CAVA Group (NYSE, 2023)
+            'LINE',  # Lineage Inc (Nasdaq, 2024)
+            'VIK',   # Viking Holdings (NYSE, 2024)
+            'SARO',  # StandardAero (NYSE, 2024)
+            'MRP',   # Millrose Properties (spinoff from Lennar, 2025)
+            'GEV',   # GE Vernova (spinoff from GE, 2024) - +163% since spinoff
+            # High-momentum / high-beta names
+            'VRT',   # Vertiv Holdings (data center power)
+            'AXON',  # Axon Enterprise
+            'CELH',  # Celsius Holdings
+            'MNDY',  # Monday.com
+            'DKNG',  # DraftKings
+            'RBLX',  # Roblox
+            'BROS',  # Dutch Bros
+            'ACHR',  # Archer Aviation
+            'RXRX',  # Recursion Pharma
             # (FSR delisted, skip)
         ],
     },
@@ -117,7 +145,7 @@ TICKER_LISTS = {
             'GRASIM.NS', 'HEROMOTOCO.NS', 'HINDALCO.NS', 'INDUSINDBK.NS',
             'M&M.NS', 'NESTLEIND.NS', 'SBILIFE.NS', 'TATACONSUM.NS',
             'APOLLOHOSP.NS', 'BPCL.NS', 'BRITANNIA.NS', 'HDFCLIFE.NS',
-            'VEDL.NS', 'ZOMATO.NS', 'PAYTM.NS', 'NYKAA.NS', 'POLICYBZR.NS',
+            'VEDL.NS', 'ETERNAL.NS', 'PAYTM.NS', 'NYKAA.NS', 'POLICYBZR.NS',
             'DELHIVERY.NS', 'YESBANK.NS', 'IDEA.NS', 'IRCTC.NS', 'HAL.NS',
             'BEL.NS', 'BHEL.NS', 'IRFC.NS', 'RVNL.NS', 'NHPC.NS', 'SJVN.NS',
             'RECLTD.NS', 'PFC.NS', 'TATAPOWER.NS', 'ADANIGREEN.NS',
@@ -136,6 +164,14 @@ TICKER_LISTS = {
             '7203.T', '6758.T', '6861.T', '9984.T', '6902.T', '7741.T',
             '8306.T', '8316.T', '9432.T', '6501.T', '6594.T', '7974.T',
             '4502.T', '4661.T', '6367.T',
+            # Recent IPOs / notable additions
+            '285A.T',   # Kioxia Holdings (NAND flash, IPO Dec 2024)
+            '4385.T',   # Mercari
+            '9434.T',   # SoftBank Corp
+            '6920.T',   # Lasertec
+            '6146.T',   # Disco (semiconductor dicing)
+            '6857.T',   # Advantest
+            '8035.T',   # Tokyo Electron
         ],
     },
 
@@ -243,7 +279,11 @@ TICKER_LISTS = {
         'country': 'Germany',
         'region': 'Europe',
         'currency': 'EUR',
-        'tickers': [],
+        'tickers': [
+            'SAP.DE', 'SIE.DE', 'ALV.DE', 'DTE.DE', 'BAYN.DE',
+            'BMW.DE', 'MBG.DE', 'BAS.DE', 'VOW3.DE', 'ADS.DE',
+            'DBK.DE', 'MUV2.DE', 'DHL.DE', 'RWE.DE', 'EOAN.DE',
+        ],
     },
 
     # ── Australia (ASX) ────────────────────────────────────────────────────
@@ -264,47 +304,172 @@ TICKER_LISTS = {
         'country': 'Brazil',
         'region': 'Americas',
         'currency': 'BRL',
-        'tickers': [],
+        'tickers': [
+            'PETR4.SA', 'VALE3.SA', 'ITUB4.SA', 'BBDC4.SA', 'BBAS3.SA',
+            'B3SA3.SA', 'ABEV3.SA', 'WEGE3.SA', 'RENT3.SA', 'RADL3.SA',
+            'SUZB3.SA', 'VIVT3.SA', 'GGBR4.SA', 'CMIG4.SA', 'ELET3.SA',
+        ],
     },
-    'France': { 'exchange': 'Euronext Paris', 'country': 'France', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
-    'Netherlands': { 'exchange': 'Euronext Amsterdam', 'country': 'Netherlands', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
-    'Saudi Arabia': { 'exchange': 'Tadawul', 'country': 'Saudi Arabia', 'region': 'Middle East / Africa', 'currency': 'SAR', 'tickers': [] },
-    
+    'France': {
+        'exchange': 'Euronext Paris', 'country': 'France', 'region': 'Europe', 'currency': 'EUR',
+        'tickers': [
+            'AI.PA', 'AIR.PA', 'BN.PA', 'BNP.PA', 'CAP.PA',
+            'CS.PA', 'DG.PA', 'EN.PA', 'ENGI.PA', 'GLE.PA',
+            'HO.PA', 'KER.PA', 'LHN.PA', 'MC.PA', 'OR.PA',
+            'ORA.PA', 'RMS.PA', 'SAF.PA', 'SAN.PA', 'SGO.PA',
+        ],
+    },
+    'Netherlands': {
+        'exchange': 'Euronext Amsterdam', 'country': 'Netherlands', 'region': 'Europe', 'currency': 'EUR',
+        'tickers': ['ASML.AS', 'HEIA.AS', 'INGA.AS', 'PHIA.AS', 'REN.AS', 'NN.AS', 'ABN.AS', 'AKZA.AS', 'MT.AS', 'RAND.AS'],
+    },
+    'Saudi Arabia': {
+        'exchange': 'Tadawul', 'country': 'Saudi Arabia', 'region': 'Middle East / Africa', 'currency': 'SAR',
+        'tickers': [
+            '2222.SR', '1180.SR', '2010.SR', '1211.SR', '2350.SR',
+            '4280.SR', '2330.SR', '1120.SR', '1150.SR', '2050.SR',
+            '4200.SR', '1010.SR', '1020.SR', '2382.SR', '4030.SR',
+        ],
+    },
+
     # --- EXPANDED ASIA-PACIFIC ---
-    'Taiwan': { 'exchange': 'TWSE', 'country': 'Taiwan', 'region': 'Asia-Pacific', 'currency': 'TWD', 'tickers': [] },
-    'Singapore': { 'exchange': 'SGX', 'country': 'Singapore', 'region': 'Asia-Pacific', 'currency': 'SGD', 'tickers': [] },
-    'Malaysia': { 'exchange': 'KLSE', 'country': 'Malaysia', 'region': 'Asia-Pacific', 'currency': 'MYR', 'tickers': [] },
-    'Indonesia': { 'exchange': 'IDX', 'country': 'Indonesia', 'region': 'Asia-Pacific', 'currency': 'IDR', 'tickers': [] },
-    'Thailand': { 'exchange': 'SET', 'country': 'Thailand', 'region': 'Asia-Pacific', 'currency': 'THB', 'tickers': [] },
-    'Philippines': { 'exchange': 'PSE', 'country': 'Philippines', 'region': 'Asia-Pacific', 'currency': 'PHP', 'tickers': [] },
-    'New Zealand': { 'exchange': 'NZX', 'country': 'New Zealand', 'region': 'Asia-Pacific', 'currency': 'NZD', 'tickers': [] },
-    
+    'Taiwan': {
+        'exchange': 'TWSE', 'country': 'Taiwan', 'region': 'Asia-Pacific', 'currency': 'TWD',
+        'tickers': [
+            '2330.TW', '2317.TW', '2454.TW', '2382.TW', '2308.TW',
+            '2881.TW', '2882.TW', '2886.TW', '2891.TW', '2412.TW',
+            '2303.TW', '2379.TW', '3711.TW', '2357.TW', '2327.TW',
+        ],
+    },
+    'Singapore': {
+        'exchange': 'SGX', 'country': 'Singapore', 'region': 'Asia-Pacific', 'currency': 'SGD',
+        'tickers': [
+            'D05.SI', 'O39.SI', 'U11.SI', 'BN4.SI', 'C6L.SI',
+            'Z74.SI', 'V03.SI', 'Y92.SI', 'S68.SI', 'A17U.SI',
+            'C38U.SI', 'ME8U.SI', 'N2IU.SI', 'BUOU.SI', 'SK6U.SI',
+        ],
+    },
+    'Malaysia': {
+        'exchange': 'KLSE', 'country': 'Malaysia', 'region': 'Asia-Pacific', 'currency': 'MYR',
+        'tickers': [
+            '1155.KL', '1295.KL', '5819.KL', '5347.KL', '6888.KL',
+            '1023.KL', '5681.KL', '3182.KL', '4863.KL', '6012.KL',
+        ],
+    },
+    'Indonesia': {
+        'exchange': 'IDX', 'country': 'Indonesia', 'region': 'Asia-Pacific', 'currency': 'IDR',
+        'tickers': [
+            'BBCA.JK', 'BBRI.JK', 'BMRI.JK', 'TLKM.JK', 'ASII.JK',
+            'UNVR.JK', 'HMSP.JK', 'GGRM.JK', 'BBNI.JK', 'ARTO.JK',
+        ],
+    },
+    'Thailand': {
+        'exchange': 'SET', 'country': 'Thailand', 'region': 'Asia-Pacific', 'currency': 'THB',
+        'tickers': [
+            'PTT.BK', 'ADVANC.BK', 'CPALL.BK', 'KBANK.BK', 'SCB.BK',
+            'AOT.BK', 'BBL.BK', 'BDMS.BK', 'BEM.BK', 'DELTA.BK',
+        ],
+    },
+    'Philippines': {
+        'exchange': 'PSE', 'country': 'Philippines', 'region': 'Asia-Pacific', 'currency': 'PHP',
+        'tickers': [
+            'SM.PS', 'ALI.PS', 'BPI.PS', 'MBT.PS', 'TEL.PS',
+            'JFC.PS', 'AC.PS', 'GTCAP.PS', 'URC.PS', 'ICT.PS',
+        ],
+    },
+    'New Zealand': {
+        'exchange': 'NZX', 'country': 'New Zealand', 'region': 'Asia-Pacific', 'currency': 'NZD',
+        'tickers': ['FPH.NZ', 'ATM.NZ', 'SPK.NZ', 'MEL.NZ', 'CEN.NZ', 'AIA.NZ', 'MFT.NZ', 'HGH.NZ'],
+    },
+    'Vietnam': {
+        'exchange': 'HOSE', 'country': 'Vietnam', 'region': 'Asia-Pacific', 'currency': 'VND',
+        'tickers': [
+            'VIC.VN', 'VHM.VN', 'VNM.VN', 'HPG.VN', 'MSN.VN',
+            'FPT.VN', 'MBB.VN', 'TCB.VN', 'ACB.VN', 'BID.VN',
+            'CTG.VN', 'VCB.VN', 'GAS.VN', 'PLX.VN', 'POW.VN',
+        ],
+    },
+
     # --- EXPANDED EUROPE ---
-    'Switzerland': { 'exchange': 'SIX', 'country': 'Switzerland', 'region': 'Europe', 'currency': 'CHF', 'tickers': [] },
-    'Italy': { 'exchange': 'Borsa Italiana', 'country': 'Italy', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
-    'Spain': { 'exchange': 'BME', 'country': 'Spain', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
-    'Sweden': { 'exchange': 'Nasdaq Stockholm', 'country': 'Sweden', 'region': 'Europe', 'currency': 'SEK', 'tickers': [] },
-    'Norway': { 'exchange': 'Oslo Bors', 'country': 'Norway', 'region': 'Europe', 'currency': 'NOK', 'tickers': [] },
-    'Denmark': { 'exchange': 'Nasdaq Copenhagen', 'country': 'Denmark', 'region': 'Europe', 'currency': 'DKK', 'tickers': [] },
-    'Finland': { 'exchange': 'Nasdaq Helsinki', 'country': 'Finland', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
-    'Poland': { 'exchange': 'GPW', 'country': 'Poland', 'region': 'Europe', 'currency': 'PLN', 'tickers': [] },
-    'Austria': { 'exchange': 'Wiener Börse', 'country': 'Austria', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
-    'Ireland': { 'exchange': 'Euronext Dublin', 'country': 'Ireland', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
-    'Portugal': { 'exchange': 'Euronext Lisbon', 'country': 'Portugal', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
-    'Greece': { 'exchange': 'Athens Exchange', 'country': 'Greece', 'region': 'Europe', 'currency': 'EUR', 'tickers': [] },
-    
+    'Switzerland': {
+        'exchange': 'SIX', 'country': 'Switzerland', 'region': 'Europe', 'currency': 'CHF',
+        'tickers': ['NESN.SW', 'NOVN.SW', 'ROG.SW', 'UBSG.SW', 'ABBN.SW', 'CSGN.SW', 'ZURN.SW', 'LONN.SW', 'SREN.SW', 'CFR.SW'],
+    },
+    'Italy': {
+        'exchange': 'Borsa Italiana', 'country': 'Italy', 'region': 'Europe', 'currency': 'EUR',
+        'tickers': ['ENI.MI', 'ENEL.MI', 'ISP.MI', 'UCG.MI', 'STM.MI', 'TIT.MI', 'RACE.MI', 'G.MI', 'MB.MI', 'PRY.MI'],
+    },
+    'Spain': {
+        'exchange': 'BME', 'country': 'Spain', 'region': 'Europe', 'currency': 'EUR',
+        'tickers': ['SAN.MC', 'BBVA.MC', 'IBE.MC', 'ITX.MC', 'REP.MC', 'TEF.MC', 'AMS.MC', 'FER.MC', 'GRF.MC', 'MAP.MC'],
+    },
+    'Sweden': {
+        'exchange': 'Nasdaq Stockholm', 'country': 'Sweden', 'region': 'Europe', 'currency': 'SEK',
+        'tickers': ['VOLV-B.ST', 'ERIC-B.ST', 'ATCO-A.ST', 'SEB-A.ST', 'SWED-A.ST', 'INVE-B.ST', 'ABB.ST', 'SAND.ST', 'SKF-B.ST', 'ASSA-B.ST'],
+    },
+    'Norway': {
+        'exchange': 'Oslo Bors', 'country': 'Norway', 'region': 'Europe', 'currency': 'NOK',
+        'tickers': ['EQNR.OL', 'DNB.OL', 'MOWI.OL', 'ORK.OL', 'YAR.OL', 'TGS.OL', 'AKRBP.OL', 'SCATC.OL', 'SUBC.OL', 'NEL.OL'],
+    },
+    'Denmark': {
+        'exchange': 'Nasdaq Copenhagen', 'country': 'Denmark', 'region': 'Europe', 'currency': 'DKK',
+        'tickers': ['NOVO-B.CO', 'CARL-B.CO', 'MAERSK-B.CO', 'VWS.CO', 'DSV.CO', 'ORSTED.CO', 'TRYG.CO', 'GMAB.CO', 'PNDORA.CO', 'DEMANT.CO', 'NZYM-B.CO'],
+    },
+    'Finland': {
+        'exchange': 'Nasdaq Helsinki', 'country': 'Finland', 'region': 'Europe', 'currency': 'EUR',
+        'tickers': ['NOKIA.HE', 'NESTE.HE', 'OUT1V.HE', 'KNEBV.HE', 'STERV.HE', 'TYRES.HE', 'WRT1V.HE', 'FORTUM.HE'],
+    },
+    'Poland': {
+        'exchange': 'GPW', 'country': 'Poland', 'region': 'Europe', 'currency': 'PLN',
+        'tickers': ['PKN.WA', 'PKO.WA', 'PZU.WA', 'LPP.WA', 'CDR.WA', 'ALE.WA', 'DNP.WA', 'MBK.WA', 'OPL.WA', 'KGH.WA'],
+    },
+    'Austria': {
+        'exchange': 'Wiener Börse', 'country': 'Austria', 'region': 'Europe', 'currency': 'EUR',
+        'tickers': ['EBS.VI', 'OMV.VI', 'VOE.VI', 'RBI.VI', 'ANDR.VI', 'TKA.VI', 'SBO.VI', 'ATS.VI'],
+    },
+    'Ireland': { 'exchange': 'Euronext Dublin', 'country': 'Ireland', 'region': 'Europe', 'currency': 'EUR', 'tickers': ['CRH.IR', 'RYANAIR.IR', 'AIB.IR', 'BOI.IR', 'INM.IR'] },
+    'Portugal': { 'exchange': 'Euronext Lisbon', 'country': 'Portugal', 'region': 'Europe', 'currency': 'EUR', 'tickers': ['EDP.LS', 'EDPR.LS', 'GALP.LS', 'NOS.LS', 'BCP.LS', 'JMT.LS'] },
+    'Greece': { 'exchange': 'Athens Exchange', 'country': 'Greece', 'region': 'Europe', 'currency': 'EUR', 'tickers': ['ALPHA.AT', 'ETE.AT', 'EUROB.AT', 'OPAP.AT', 'PPC.AT', 'MYTIL.AT'] },
+
     # --- EXPANDED AMERICAS ---
-    'Mexico': { 'exchange': 'BMV', 'country': 'Mexico', 'region': 'Americas', 'currency': 'MXN', 'tickers': [] },
-    'Argentina': { 'exchange': 'BCBA', 'country': 'Argentina', 'region': 'Americas', 'currency': 'ARS', 'tickers': [] },
-    'Chile': { 'exchange': 'BCS', 'country': 'Chile', 'region': 'Americas', 'currency': 'CLP', 'tickers': [] },
-    
+    'Mexico': {
+        'exchange': 'BMV', 'country': 'Mexico', 'region': 'Americas', 'currency': 'MXN',
+        'tickers': ['AMXL.MX', 'FEMSAUBD.MX', 'GFNORTEO.MX', 'WALMEX.MX', 'CEMEXCPO.MX', 'GMEXICOB.MX', 'BIMBOA.MX', 'ALFAA.MX'],
+    },
+    'Argentina': {
+        'exchange': 'BCBA', 'country': 'Argentina', 'region': 'Americas', 'currency': 'ARS',
+        'tickers': ['GGAL.BA', 'YPF.BA', 'BMA.BA', 'PAMP.BA', 'TGSU2.BA', 'SUPV.BA', 'CEPU.BA', 'LOMA.BA'],
+    },
+    'Chile': {
+        'exchange': 'BCS', 'country': 'Chile', 'region': 'Americas', 'currency': 'CLP',
+        'tickers': ['SQM-B.SN', 'ENELCHILE.SN', 'FALABELLA.SN', 'CMPC.SN', 'CENCOSUD.SN', 'BCI.SN', 'CHILE.SN', 'COPEC.SN'],
+    },
+
     # --- EXPANDED MIDDLE EAST / AFRICA ---
-    'Israel': { 'exchange': 'TASE', 'country': 'Israel', 'region': 'Middle East / Africa', 'currency': 'ILS', 'tickers': [] },
-    'Turkey': { 'exchange': 'Borsa Istanbul', 'country': 'Turkey', 'region': 'Middle East / Africa', 'currency': 'TRY', 'tickers': [] },
-    'Egypt': { 'exchange': 'EGX', 'country': 'Egypt', 'region': 'Middle East / Africa', 'currency': 'EGP', 'tickers': [] },
-    'Qatar': { 'exchange': 'QSE', 'country': 'Qatar', 'region': 'Middle East / Africa', 'currency': 'QAR', 'tickers': [] },
-    'United Arab Emirates': { 'exchange': 'DFM', 'country': 'United Arab Emirates', 'region': 'Middle East / Africa', 'currency': 'AED', 'tickers': [] },
-    'South Africa': { 'exchange': 'JSE', 'country': 'South Africa', 'region': 'Middle East / Africa', 'currency': 'ZAR', 'tickers': [] }
+    'Israel': {
+        'exchange': 'TASE', 'country': 'Israel', 'region': 'Middle East / Africa', 'currency': 'ILS',
+        'tickers': ['CHKP', 'CYBR', 'NICE', 'CEVA', 'MNDO', 'GILT.TA', 'ICL.TA', 'LUMI.TA'],
+    },
+    'Turkey': {
+        'exchange': 'Borsa Istanbul', 'country': 'Turkey', 'region': 'Middle East / Africa', 'currency': 'TRY',
+        'tickers': ['THYAO.IS', 'GARAN.IS', 'EREGL.IS', 'AKBNK.IS', 'ISCTR.IS', 'SISE.IS', 'TOASO.IS', 'TUPRS.IS', 'KCHOL.IS', 'PETKM.IS'],
+    },
+    'Egypt': {
+        'exchange': 'EGX', 'country': 'Egypt', 'region': 'Middle East / Africa', 'currency': 'EGP',
+        'tickers': ['COMI.CA', 'HRHO.CA', 'ETEL.CA', 'EAST.CA', 'AMOC.CA', 'SWDY.CA', 'ESRS.CA', 'PHDC.CA'],
+    },
+    'Qatar': {
+        'exchange': 'QSE', 'country': 'Qatar', 'region': 'Middle East / Africa', 'currency': 'QAR',
+        'tickers': ['QNBK.QA', 'IQCD.QA', 'QEWC.QA', 'MARK.QA', 'CBQK.QA', 'ORDS.QA', 'QFLS.QA', 'GISS.QA'],
+    },
+    'United Arab Emirates': {
+        'exchange': 'DFM', 'country': 'United Arab Emirates', 'region': 'Middle East / Africa', 'currency': 'AED',
+        'tickers': ['ENBD.DU', 'DIB.DU', 'DANA.DU', 'EMIRATES.DU', 'EMAAR.DU', 'DU.DU', 'DEWA.DU', 'FAB.AD'],
+    },
+    'South Africa': {
+        'exchange': 'JSE', 'country': 'South Africa', 'region': 'Middle East / Africa', 'currency': 'ZAR',
+        'tickers': ['NPN.JO', 'AGL.JO', 'SOL.JO', 'FSR.JO', 'SBK.JO', 'CPI.JO', 'REM.JO', 'MTN.JO', 'VOD.JO', 'BTI.JO'],
+    }
 }
 
 
@@ -558,6 +723,9 @@ class RealPipeline:
             'market_cap': None, 'pe_ratio': None, 'revenue_growth': None,
             'earnings_growth': None, 'dividend_yield': None,
             'recommendation': None, 'info_country': None,
+            'trailing_eps': None, 'debt_to_equity': None,
+            'free_cashflow': None, 'profit_margin': None,
+            'return_on_equity': None, 'earnings_date': None,
         }
         try:
             info = yf.Ticker(ticker).info
@@ -575,6 +743,17 @@ class RealPipeline:
             defaults['recommendation'] = info.get('recommendationKey')
             defaults['info_country'] = info.get('country')
             defaults['currency'] = info.get('currency')
+            defaults['trailing_eps'] = info.get('trailingEps')
+            defaults['debt_to_equity'] = info.get('debtToEquity')
+            defaults['free_cashflow'] = info.get('freeCashflow')
+            defaults['profit_margin'] = info.get('profitMargins')
+            defaults['return_on_equity'] = info.get('returnOnEquity')
+            # earningsTimestamps is a list; take the next upcoming one
+            earn_ts = info.get('earningsTimestamps') or []
+            if earn_ts:
+                now_ts = datetime.now(timezone.utc).timestamp()
+                future = [t for t in earn_ts if t > now_ts]
+                defaults['earnings_date'] = min(future) if future else earn_ts[-1]
             self.stats['info_fetched'] += 1
         except Exception as e:
             log.debug(f"  ↳ .info failed for {ticker}: {e}")
@@ -682,13 +861,14 @@ class RealPipeline:
 
                 pct_change = ((end_price / start_price) - 1.0) * 100.0
 
-                # Thresholds by period — what's plausible in that window
-                # Raised 1Y/2Y/3Y caps: legitimate multi-baggers (e.g. Samsung, NVDA)
-                # were being incorrectly discarded at the old 300% limit.
+                # Thresholds by period — what's plausible in that window.
+                # Kept intentionally high for longer periods: legitimate multi-baggers
+                # (e.g. SNDK +694% in 6M, NVDA +1000%+ in 1Y) must not be discarded.
+                # Only use these caps to catch data artifacts (bad splits, OTC ghost prices).
                 MAX_PLAUSIBLE = {
-                    '1D': 25, '5D': 50, '1M': 100, '3M': 200,
-                    '6M': 500, 'YTD': 1000, '1Y': 1000, '2Y': 2000,
-                    '3Y': 5000, '5Y': 10000, 'MAX': 100000,
+                    '1D': 50, '5D': 100, '1M': 200, '3M': 500,
+                    '6M': 2000, 'YTD': 5000, '1Y': 5000, '2Y': 10000,
+                    '3Y': 20000, '5Y': 50000, 'MAX': 100000,
                 }
                 limit = MAX_PLAUSIBLE.get(period_name, 500)
                 if pct_change > limit:
@@ -874,10 +1054,14 @@ class RealPipeline:
                         'recommendation': None, 'info_country': None, 'currency': meta['currency']
                     }
 
-                mcap_usd = info['market_cap'] * self.fx_rates.get(info.get('currency') or meta['currency'], 1.0) if info.get('market_cap') else 0
+                mcap_raw = info.get('market_cap')
+                mcap_usd = mcap_raw * self.fx_rates.get(info.get('currency') or meta['currency'], 1.0) if mcap_raw else None
 
                 # DATA QUALITY FILTER: Market Cap (Microcap Ban)
-                if mcap_usd < 10_000_000:
+                # Only reject when we have a confirmed non-zero market cap below the floor.
+                # If yfinance returns None/0 (transient API gap), skip the filter rather
+                # than blacklisting a legitimate stock as a $0 company.
+                if mcap_usd is not None and mcap_usd < 10_000_000:
                     log.warning(f"  [FILTER] {ticker} discarded (Market Cap ${mcap_usd:,.0f} < $10M)")
                     self.stats['tickers_failed'] += 1
                     batch_failures.append(ticker)
@@ -926,7 +1110,12 @@ class RealPipeline:
                         'earnings_growth': info['earnings_growth'],
                         'dividend_yield': info['dividend_yield'],
                         'recommendation': info['recommendation'],
-                        'earnings_date': None,
+                        'earnings_date': info.get('earnings_date'),
+                        'trailing_eps': info.get('trailing_eps'),
+                        'debt_to_equity': info.get('debt_to_equity'),
+                        'free_cashflow': info.get('free_cashflow'),
+                        'profit_margin': info.get('profit_margin'),
+                        'return_on_equity': info.get('return_on_equity'),
                         'last_updated': datetime.now().isoformat(),
                     })
                     
@@ -985,13 +1174,13 @@ class RealPipeline:
             if batch_idx + self.batch_size < len(tickers):
                 time.sleep(0.5)
 
-        # 3d. Compute sector & country averages
-        log.info("Computing sector & country relative strength via Supabase RPC …")
+        # 3d. Compute sector & country relative strength in Python
+        log.info("Computing sector & country relative strength …")
         try:
-            self.supabase.rpc('compute_relative_strength').execute()
+            self._compute_relative_strength()
             log.info("✓ Relative strength computed")
         except Exception as e:
-            log.error(f"Failed to compute relative strength (Make sure RPC exists!): {e}")
+            log.error(f"Failed to compute relative strength: {e}")
 
         # 3e. Pipeline metadata
         try:
@@ -1016,6 +1205,57 @@ class RealPipeline:
             log.info(f"  Failed tickers  : {self.stats['failures'][:20]}"
                      f"{'…' if len(self.stats['failures']) > 20 else ''}")
         log.info("=" * 70)
+
+    def _compute_relative_strength(self):
+        """Compute vs_sector and vs_country for every gain row in Python."""
+        import pandas as pd
+
+        # Fetch all gains — only what we need
+        rows = self.supabase.from_('gains_with_stocks').select(
+            'ticker, period, pct_change, sector, country'
+        ).execute().data
+
+        if not rows:
+            return
+
+        df = pd.DataFrame(rows)
+        df['pct_change'] = pd.to_numeric(df['pct_change'], errors='coerce')
+
+        # Compute averages per (period, sector) and (period, country)
+        sector_avg = df.groupby(['period', 'sector'])['pct_change'].mean().reset_index()
+        sector_avg.rename(columns={'pct_change': 'sector_avg'}, inplace=True)
+        country_avg = df.groupby(['period', 'country'])['pct_change'].mean().reset_index()
+        country_avg.rename(columns={'pct_change': 'country_avg'}, inplace=True)
+
+        df = df.merge(sector_avg, on=['period', 'sector'], how='left')
+        df = df.merge(country_avg, on=['period', 'country'], how='left')
+        df['vs_sector'] = df['pct_change'] - df['sector_avg']
+        df['vs_country'] = df['pct_change'] - df['country_avg']
+
+        # Upsert in batches of 500
+        updates = df[['ticker', 'period', 'vs_sector', 'vs_country',
+                       'sector_avg', 'country_avg']].dropna(subset=['vs_sector'])
+        rows_list = updates.to_dict('records')
+
+        BATCH = 500
+        for i in range(0, len(rows_list), BATCH):
+            batch = rows_list[i:i + BATCH]
+            payload = [
+                {
+                    'ticker': r['ticker'],
+                    'period': r['period'],
+                    'vs_sector': round(r['vs_sector'], 4),
+                    'vs_country': round(r['vs_country'], 4),
+                    'sector_avg_change': round(r['sector_avg'], 4),
+                    'country_avg_change': round(r['country_avg'], 4),
+                }
+                for r in batch
+            ]
+            self.supabase.table('gains').upsert(
+                payload, on_conflict='ticker,period'
+            ).execute()
+
+        log.info(f"  Updated {len(rows_list)} gain rows with vs_sector/vs_country")
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 4.  CLI

@@ -29,6 +29,7 @@ REGION_TO_GROUPS = {
     'Australia':   ['Australia'],
     'Korea':       ['Korea'],
     'HongKong':    ['HongKong'],
+    'Vietnam':     ['Vietnam'],
 }
 
 

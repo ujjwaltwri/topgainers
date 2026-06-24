@@ -12,6 +12,7 @@ class Filters {
     
     document.getElementById('reset-filters')?.addEventListener('click', () => this.resetAll());
     document.getElementById('sort-by')?.addEventListener('change', (e) => this.app.updateFilters({sort: e.target.value}));
+    this.setupPresets();
   }
 
   static populateAll(data) {
@@ -365,6 +366,9 @@ class Filters {
       mcapContainer.querySelector('.chip[data-val=""]')?.classList.add('active');
     }
     
+    // Reset preset active states
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+
     // Reset direction indicator
     const dirContainer = document.getElementById('direction-toggle');
     if (dirContainer) dirContainer.classList.remove('losers-active');
@@ -373,5 +377,29 @@ class Filters {
     this.app.updateFilters(defaultFilters);
     this.syncUI(defaultFilters);
   }
+  static setupPresets() {
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const preset = Filters.PRESETS[btn.dataset.preset];
+        if (!preset) return;
+        // Clear active state on all presets
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // Apply preset filters on top of defaults
+        const base = { direction: 'gainers', period: '6M', sort: 'pct_change', limit: 25, page: 1 };
+        this.app.updateFilters({ ...base, ...preset });
+        this.syncUI({ ...base, ...preset });
+      });
+    });
+  }
 }
+
+Filters.PRESETS = {
+  value:      { max_pe: '15', sort: 'pct_change', direction: 'gainers' },
+  momentum:   { period: '1M', sort: 'pct_change', direction: 'gainers' },
+  '52w-high': { at_52w_high: 'true' },
+  surge:      { volume_surge: 'true' },
+  smallcap:   { mcap: 'small,micro,nano' },
+};
+
 window.Filters = Filters;
