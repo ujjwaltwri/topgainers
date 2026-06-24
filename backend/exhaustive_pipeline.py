@@ -404,7 +404,7 @@ class RealPipeline:
             for ticker in tickers_for_exchange:
                 result.append({
                     'ticker': ticker,
-                    'name': ticker,  # Name and sector will be filled via yfinance .info later
+                    'name': None,
                     'sector': None,
                     'industry': None,
                     'exchange': grp['exchange'],
@@ -872,8 +872,8 @@ class RealPipeline:
                 if yf_name and ',' in yf_name and ' ' not in yf_name:
                     yf_name = None
                     
-                # Prefer financedatabase name, then yfinance name, then fallback to ticker
-                final_name = meta.get('name') or yf_name or ticker
+                # Prefer yfinance name (real company name), then meta name, then ticker
+                final_name = yf_name or meta.get('name') or ticker
                 
                 stock_rows.append({
                         'ticker': ticker,
