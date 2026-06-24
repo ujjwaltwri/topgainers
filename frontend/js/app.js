@@ -1036,7 +1036,7 @@ class App {
       const tickers = this.currentData.results.map(r => r.ticker);
       const currencyMap = {};
       this.currentData.results.forEach(r => currencyMap[r.ticker] = r.currency);
-      if (window.Table) Table.hydrateLiveQuotes(tickers, currencyMap);
+      if (window.Table) Table.hydrateLiveQuotes(tickers, currencyMap, this.filters.period);
     }, 5000);
 
     this._fullRefreshInterval = setInterval(() => {

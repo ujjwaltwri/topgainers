@@ -168,7 +168,7 @@ class Table {
     container.style.display = 'flex';
   }
 
-  static async hydrateLiveQuotes(tickers, currencyMap) {
+  static async hydrateLiveQuotes(tickers, currencyMap, period) {
     if (!tickers || tickers.length === 0) return;
     try {
       const { data, error } = await window.supabaseClient.functions.invoke('live-quotes', {
@@ -195,7 +195,7 @@ class Table {
             }
           }
 
-          if (pctEl && quote.pct_change !== undefined) {
+          if (pctEl && quote.pct_change !== undefined && period === '1D') {
             const oldPct = parseFloat(pctEl.dataset.raw);
             const newPct = quote.pct_change;
             const sign = newPct > 0 ? '+' : '';
