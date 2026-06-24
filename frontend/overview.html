@@ -17,7 +17,6 @@
        OVERVIEW PAGE — ADDITIONAL STYLES
        ═══════════════════════════════════════════════════════════════ */
 
-
     /* ──────────── OVERVIEW LAYOUT ──────────── */
     .overview-container {
       margin-top: 96px;
@@ -47,10 +46,7 @@
       font-size: 1.6rem;
       font-weight: 700;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--text-primary);
     }
     .page-title .subtitle {
       font-size: 0.82rem;
@@ -119,8 +115,7 @@
     .summary-card::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       width: 100%;
       height: 3px;
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
@@ -130,11 +125,7 @@
     .summary-card:nth-child(3)::before { background: linear-gradient(90deg, var(--gain-primary), #00d4aa); }
     .summary-card:nth-child(4)::before { background: linear-gradient(90deg, var(--loss-primary), #ff4488); }
 
-    .summary-card .card-icon {
-      font-size: 1.5rem;
-      margin-bottom: var(--space-sm);
-      opacity: 0.8;
-    }
+    .summary-card .card-icon { font-size: 1.5rem; margin-bottom: var(--space-sm); opacity: 0.8; }
     .summary-card .card-label {
       font-size: 0.7rem;
       color: var(--text-tertiary);
@@ -151,10 +142,7 @@
       line-height: 1.1;
       margin-bottom: 4px;
     }
-    .summary-card .card-sub {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
+    .summary-card .card-sub { font-size: 0.75rem; color: var(--text-secondary); }
 
     /* ──────────── SECTION CONTAINERS ──────────── */
     .viz-section {
@@ -170,6 +158,8 @@
     }
     .viz-section:nth-child(2) { animation-delay: 0.1s; }
     .viz-section:nth-child(3) { animation-delay: 0.2s; }
+    .viz-section:nth-child(4) { animation-delay: 0.3s; }
+    .viz-section:nth-child(5) { animation-delay: 0.4s; }
 
     .viz-header {
       display: flex;
@@ -197,9 +187,7 @@
       font-weight: 500;
     }
 
-    .viz-body {
-      padding: var(--space-lg);
-    }
+    .viz-body { padding: var(--space-lg); }
 
     /* ──────────── TREEMAP ──────────── */
     .treemap-container {
@@ -264,47 +252,17 @@
       transform: translateY(4px);
       transition: opacity 0.15s ease, transform 0.15s ease;
     }
-    .tm-tooltip.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .tm-tooltip .tt-name {
-      font-weight: 600;
-      font-size: 0.9rem;
-      margin-bottom: 2px;
-      color: var(--text-primary);
-    }
-    .tm-tooltip .tt-ticker {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-tertiary);
-      margin-bottom: 8px;
-    }
-    .tm-tooltip .tt-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.8rem;
-      padding: 3px 0;
-      border-top: 1px solid var(--border-subtle);
-    }
+    .tm-tooltip.visible { opacity: 1; transform: translateY(0); }
+    .tm-tooltip .tt-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 2px; color: var(--text-primary); }
+    .tm-tooltip .tt-ticker { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 8px; }
+    .tm-tooltip .tt-row { display: flex; justify-content: space-between; font-size: 0.8rem; padding: 3px 0; border-top: 1px solid var(--border-subtle); }
     .tm-tooltip .tt-row:first-of-type { border-top: none; }
-    .tm-tooltip .tt-label {
-      color: var(--text-secondary);
-    }
-    .tm-tooltip .tt-val {
-      font-family: var(--font-mono);
-      font-weight: 600;
-    }
+    .tm-tooltip .tt-label { color: var(--text-secondary); }
+    .tm-tooltip .tt-val { font-family: var(--font-mono); font-weight: 600; }
 
     /* ──────────── SECTOR BAR CHART ──────────── */
-    .sector-chart-container {
-      width: 100%;
-      position: relative;
-    }
-    .sector-chart-container canvas {
-      width: 100%;
-      display: block;
-    }
+    .sector-chart-container { width: 100%; position: relative; }
+    .sector-chart-container canvas { width: 100%; display: block; }
 
     /* ──────────── COUNTRY HEATMAP ──────────── */
     .country-grid {
@@ -322,58 +280,58 @@
       transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
       animation: fadeIn 0.4s ease-out both;
     }
-    .country-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-lg);
-      border-color: var(--border-medium);
+    .country-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--border-medium); }
+    .country-card .cc-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm); }
+    .country-card .cc-code { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; background: var(--bg-tertiary); border: 1px solid var(--border-subtle); border-radius: 3px; padding: 2px 5px; color: var(--text-secondary); flex-shrink: 0; }
+    .country-card .cc-name { font-weight: 600; font-size: 0.88rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .country-card .cc-change { font-family: var(--font-mono); font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .country-card .cc-meta { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-secondary); }
+    .country-card .cc-meta span { font-family: var(--font-mono); }
+    .country-card .cc-breadth-bar { margin-top: 8px; height: 4px; border-radius: 2px; background: rgba(245, 0, 79, 0.3); overflow: hidden; }
+    .country-card .cc-breadth-fill { height: 100%; border-radius: 2px; background: var(--gain-primary); transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    /* ──────────── EXCHANGE PERFORMANCE ──────────── */
+    .exchange-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
     }
-    .country-card .cc-header {
+    .exchange-card {
+      padding: 14px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      cursor: default;
+      transition: transform var(--transition-fast), border-color var(--transition-fast);
+    }
+    .exchange-card:hover { transform: translateY(-2px); border-color: var(--border-medium); }
+    .exchange-card .ex-name { font-weight: 700; font-size: 0.82rem; color: var(--text-primary); margin-bottom: 6px; }
+    .exchange-card .ex-change { font-family: var(--font-mono); font-size: 1.15rem; font-weight: 700; }
+    .exchange-card .ex-count { font-size: 0.7rem; color: var(--text-tertiary); margin-top: 4px; }
+
+    /* ──────────── TOP MOVERS WIDGET ──────────── */
+    .top-movers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+    }
+    .top-movers-col h3 { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+    .mover-item {
       display: flex;
       align-items: center;
-      gap: var(--space-sm);
-      margin-bottom: var(--space-sm);
-    }
-    .country-card .cc-flag {
-      font-size: 1.5rem;
-      line-height: 1;
-    }
-    .country-card .cc-name {
-      font-weight: 600;
-      font-size: 0.88rem;
-      color: var(--text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .country-card .cc-change {
-      font-family: var(--font-mono);
-      font-size: 1.3rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      margin-bottom: 6px;
-    }
-    .country-card .cc-meta {
-      display: flex;
       justify-content: space-between;
-      font-size: 0.72rem;
-      color: var(--text-secondary);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 6px;
+      background: var(--bg-secondary);
+      cursor: pointer;
+      transition: border-color var(--transition-fast);
     }
-    .country-card .cc-meta span {
-      font-family: var(--font-mono);
-    }
-    .country-card .cc-breadth-bar {
-      margin-top: 8px;
-      height: 4px;
-      border-radius: 2px;
-      background: rgba(245, 0, 79, 0.3);
-      overflow: hidden;
-    }
-    .country-card .cc-breadth-fill {
-      height: 100%;
-      border-radius: 2px;
-      background: var(--gain-primary);
-      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    .mover-item:hover { border-color: var(--border-medium); }
+    .mover-ticker { font-family: var(--font-mono); font-weight: 700; font-size: 0.82rem; color: var(--text-primary); }
+    .mover-name { font-size: 0.75rem; color: var(--text-tertiary); }
+    .mover-pct { font-family: var(--font-mono); font-weight: 700; font-size: 0.9rem; }
 
     /* ──────────── LOADING STATES ──────────── */
     .loading-overlay {
@@ -393,9 +351,7 @@
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ──────────── RESPONSIVE ──────────── */
     @media (max-width: 1024px) {
@@ -411,6 +367,7 @@
       .country-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
       .header-nav { margin-left: var(--space-sm); }
       .nav-link { padding: 5px 10px; font-size: 0.75rem; }
+      .top-movers-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 480px) {
       .summary-cards { grid-template-columns: 1fr; }
@@ -429,7 +386,7 @@
   <!-- HEADER -->
   <header class="header">
     <a href="/" class="logo"><img src="images/logo.png" alt="TopGainers Logo" class="logo-img"> TopGainers</a>
-    
+
     <nav class="header-nav">
       <a href="/" class="nav-link">Dashboard</a>
       <a href="/overview.html" class="nav-link active">
@@ -437,14 +394,19 @@
         Overview
       </a>
     </nav>
-    
-    
+
+    <div class="search-container">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="stock-search" placeholder="Search stocks or tickers…" autocomplete="off">
+      <div id="search-results" class="search-results hidden"></div>
     </div>
-    
+
+    <div id="market-clocks" class="market-clocks"></div>
+
     <div class="header-actions">
       <div class="pipeline-status">
         <span class="status-dot"></span>
-        <span>Pipeline Active</span>
+        <span>Live</span>
       </div>
       <div class="last-updated">
         <span id="last-updated-time">Updating...</span>
@@ -478,35 +440,51 @@
     <!-- Summary Cards -->
     <div class="summary-cards">
       <div class="summary-card">
-        <div class="card-icon">📡</div>
         <div class="card-label">Total Stocks Tracked</div>
         <div class="card-value" id="card-total">—</div>
         <div class="card-sub" id="card-total-sub">across all exchanges</div>
       </div>
       <div class="summary-card">
-        <div class="card-icon">📊</div>
         <div class="card-label">Market Breadth</div>
         <div class="card-value" id="card-breadth">—</div>
         <div class="card-sub" id="card-breadth-sub">stocks positive</div>
       </div>
       <div class="summary-card">
-        <div class="card-icon">🏆</div>
         <div class="card-label">Best Sector</div>
         <div class="card-value text-gain" id="card-best-sector">—</div>
         <div class="card-sub" id="card-best-sector-sub"></div>
       </div>
       <div class="summary-card">
-        <div class="card-icon">📉</div>
         <div class="card-label">Worst Sector</div>
         <div class="card-value text-loss" id="card-worst-sector">—</div>
         <div class="card-sub" id="card-worst-sector-sub"></div>
       </div>
     </div>
 
+    <!-- Section 0: Top Movers -->
+    <div class="viz-section">
+      <div class="viz-header">
+        <h2>Today's Top Movers</h2>
+        <span class="viz-badge" id="movers-badge">Loading…</span>
+      </div>
+      <div class="viz-body">
+        <div class="top-movers-grid">
+          <div class="top-movers-col">
+            <h3 style="color: var(--gain-primary);">▲ Top Gainers</h3>
+            <div id="movers-gainers"></div>
+          </div>
+          <div class="top-movers-col">
+            <h3 style="color: var(--loss-primary);">▼ Top Losers</h3>
+            <div id="movers-losers"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Section 1: Market Treemap -->
     <div class="viz-section">
       <div class="viz-header">
-        <h2>🗺️ Market Treemap</h2>
+        <h2>Market Treemap</h2>
         <span class="viz-badge" id="treemap-badge">Loading…</span>
       </div>
       <div class="viz-body">
@@ -519,7 +497,7 @@
     <!-- Section 2: Sector Performance -->
     <div class="viz-section">
       <div class="viz-header">
-        <h2>📊 Sector Performance</h2>
+        <h2>Sector Performance</h2>
         <span class="viz-badge" id="sector-badge">Loading…</span>
       </div>
       <div class="viz-body">
@@ -529,10 +507,23 @@
       </div>
     </div>
 
-    <!-- Section 3: Country Heatmap -->
+    <!-- Section 3: Exchange Performance -->
     <div class="viz-section">
       <div class="viz-header">
-        <h2>🌍 Country Heatmap</h2>
+        <h2>Exchange Performance</h2>
+        <span class="viz-badge" id="exchange-badge">Loading…</span>
+      </div>
+      <div class="viz-body">
+        <div class="exchange-grid" id="exchange-grid">
+          <div class="loading-overlay"><div class="spinner"></div>Loading exchanges…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Country Heatmap -->
+    <div class="viz-section">
+      <div class="viz-header">
+        <h2>Country Performance</h2>
         <span class="viz-badge" id="country-badge">Loading…</span>
       </div>
       <div class="viz-body">
@@ -546,8 +537,8 @@
 
   <!-- FOOTER -->
   <footer class="app-footer">
-    <span>© 2026 TopGainers — Global Stock Intelligence</span> · 
-    <span>Data sourced from <a href="https://finance.yahoo.com" target="_blank" rel="noopener">Yahoo Finance</a></span> · 
+    <span>© 2026 TopGainers — Global Stock Intelligence</span> ·
+    <span>Data sourced from <a href="https://finance.yahoo.com" target="_blank" rel="noopener">Yahoo Finance</a></span> ·
     <span>Not financial advice</span>
   </footer>
 
@@ -562,6 +553,7 @@
   </div>
 
   <script src="js/supabase-api.js?v=3"></script>
+  <script src="js/search.js?v=12"></script>
   <script src="js/overview.js"></script>
 </body>
 </html>

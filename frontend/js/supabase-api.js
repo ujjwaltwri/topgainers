@@ -214,7 +214,7 @@ window.SupabaseAPI.getMarketBreadth = async function(period) {
 window.SupabaseAPI.getTreemap = async function(period) {
     const { data, error } = await supabaseClient
       .from('gains_with_stocks')
-      .select('ticker, name, sector, market_cap, pct_change')
+      .select('ticker, name, sector, market_cap, pct_change, volume_ratio')
       .eq('period', period)
       .not('market_cap', 'is', null)
       .gt('market_cap', 0)
