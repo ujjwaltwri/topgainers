@@ -5,12 +5,14 @@ class Overview {
   }
 
   async init() {
+    this.fxRates = {};
     this.setupTheme();
     this.setupPeriodSelector();
     this.renderMarquee();
     this.renderMarketClocks();
     setInterval(() => this.renderMarketClocks(), 60000);
     setInterval(() => this.renderMarquee(), 5000);
+    await this.loadFxRates();
     await this.fetchAllData();
     window.addEventListener('resize', this.debounce(() => {
       this.renderTreemap();
@@ -182,6 +184,40 @@ class Overview {
     return Math.floor(diff / 86400) + 'd ago';
   }
 
+  async loadFxRates() {
+    const CACHE_KEY = 'tg_fx_v1';
+    const CACHE_TTL = 24 * 60 * 60 * 1000;
+    try {
+      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+      if (cached && (Date.now() - cached.ts) < CACHE_TTL) { this.fxRates = cached.rates; return; }
+      const res = await fetch('https://open.er-api.com/v6/latest/USD');
+      const json = await res.json();
+      if (json.rates) {
+        this.fxRates = json.rates;
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), rates: json.rates }));
+      }
+    } catch (e) {
+      console.warn('FX rates fetch failed', e);
+    }
+  }
+
+  toUSD(amount, currency) {
+    if (!amount) return 0;
+    if (!currency || currency === 'USD') return amount;
+    const rate = this.fxRates[currency];
+    return rate ? amount / rate : amount;
+  }
+
+  formatMarketCap(n, currency) {
+    const usd = this.toUSD(n, currency);
+    if (!usd) return '—';
+    if (usd >= 1e12) return '$' + (usd / 1e12).toFixed(2) + 'T';
+    if (usd >= 1e9)  return '$' + (usd / 1e9).toFixed(2) + 'B';
+    if (usd >= 1e6)  return '$' + (usd / 1e6).toFixed(2) + 'M';
+    if (usd >= 1e3)  return '$' + (usd / 1e3).toFixed(2) + 'K';
+    return '$' + usd.toFixed(2);
+  }
+
   formatNumber(n, prefix = '') {
     if (n === null || n === undefined) return '—';
     if (n >= 1e12) return prefix + (n / 1e12).toFixed(2) + 'T';
@@ -342,7 +378,8 @@ class Overview {
 
     let stocks = this.data.treemap.stocks
       .filter(s => s.market_cap > 0 && s.pct_change !== null)
-      .sort((a, b) => b.market_cap - a.market_cap)
+      .map(s => ({ ...s, _mcap_usd: this.toUSD(s.market_cap, s.currency) }))
+      .sort((a, b) => b._mcap_usd - a._mcap_usd)
       .slice(0, 100);
 
     const width = container.clientWidth;
@@ -351,9 +388,9 @@ class Overview {
 
     container.innerHTML = '';
 
-    const totalMcap = stocks.reduce((sum, s) => sum + s.market_cap, 0);
+    const totalMcap = stocks.reduce((sum, s) => sum + s._mcap_usd, 0);
     const totalArea = width * height;
-    stocks.forEach(s => { s._area = (s.market_cap / totalMcap) * totalArea; });
+    stocks.forEach(s => { s._area = (s._mcap_usd / totalMcap) * totalArea; });
 
     const rects = [];
     function divide(items, x, y, w, h, isVert) {
@@ -403,7 +440,7 @@ class Overview {
         const chEl = document.getElementById('tt-change');
         chEl.textContent = (c > 0 ? '+' : '') + c.toFixed(2) + '%';
         chEl.style.color = c > 0 ? 'var(--gain-primary)' : 'var(--loss-primary)';
-        document.getElementById('tt-mcap').textContent = this.formatNumber(r.stock.market_cap, '$');
+        document.getElementById('tt-mcap').textContent = this.formatMarketCap(r.stock.market_cap, r.stock.currency);
         document.getElementById('tt-sector').textContent = r.stock.sector || 'N/A';
         document.getElementById('tt-volume').textContent = r.stock.volume_ratio ? r.stock.volume_ratio.toFixed(1) + 'x' : 'N/A';
       });
