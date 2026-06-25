@@ -16,6 +16,8 @@ class App {
 
   async init() {
     this.setupTheme();
+    this.fxRates = {};
+    this.loadFxRates(); // fire-and-forget, table re-renders when ready
 
     if (window.Filters) Filters.init(this);
     if (window.Search) Search.init(this);
@@ -582,7 +584,7 @@ class App {
     document.getElementById('modal-exchange').textContent = s.exchange || '—';
 
     document.getElementById('modal-price').textContent = this.formatPrice(g.end_price, s.currency);
-    document.getElementById('modal-mcap').textContent = this.formatNumber(s.market_cap, s.currency ? s.currency + ' ' : '');
+    document.getElementById('modal-mcap').textContent = this.formatMarketCap(s.market_cap, s.currency);
     document.getElementById('modal-pe').textContent = s.pe_ratio ? s.pe_ratio.toFixed(2) : '—';
     document.getElementById('modal-rsi').textContent = g.rsi_14 ? g.rsi_14.toFixed(1) : '—';
 
@@ -722,8 +724,7 @@ class App {
   populateFundamentals(s) {
     const fmt = (v, suffix = '') => (v !== null && v !== undefined) ? (typeof v === 'number' ? v.toFixed(2) + suffix : v) : '—';
     const fmtPct = v => (v !== null && v !== undefined) ? (v * 100).toFixed(1) + '%' : '—';
-    const cur = s.currency ? s.currency + ' ' : '';
-    const fmtB = v => (v !== null && v !== undefined) ? this.formatNumber(v, cur) : '—';
+    const fmtB = v => (v !== null && v !== undefined) ? this.formatMarketCap(v, s.currency) : '—';
 
     const set = (id, val, cls = '') => {
       const el = document.getElementById(id);
@@ -992,6 +993,47 @@ class App {
     a.download = `topgainers_${this.filters.period}_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
+  }
+
+  async loadFxRates() {
+    const CACHE_KEY = 'tg_fx_v1';
+    const CACHE_TTL = 24 * 60 * 60 * 1000;
+    try {
+      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+      if (cached && (Date.now() - cached.ts) < CACHE_TTL) {
+        this.fxRates = cached.rates;
+        return;
+      }
+      const res = await fetch('https://open.er-api.com/v6/latest/USD');
+      const json = await res.json();
+      if (json.rates) {
+        this.fxRates = json.rates;
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), rates: json.rates }));
+        // Re-render table so market caps show converted values
+        if (this.currentData && window.Table) Table.render(this.currentData);
+      }
+    } catch (e) {
+      console.warn('FX rates fetch failed, showing local currency for market cap', e);
+    }
+  }
+
+  toUSD(amount, currency) {
+    if (!amount) return null;
+    if (!currency || currency === 'USD') return amount;
+    const rate = this.fxRates[currency];
+    if (!rate) return amount; // unknown currency — show as-is
+    return amount / rate;
+  }
+
+  formatMarketCap(n, currency) {
+    const usd = this.toUSD(n, currency);
+    if (!usd) return '—';
+    const prefix = '$';
+    if (usd >= 1e12) return prefix + (usd / 1e12).toFixed(2) + 'T';
+    if (usd >= 1e9)  return prefix + (usd / 1e9).toFixed(2) + 'B';
+    if (usd >= 1e6)  return prefix + (usd / 1e6).toFixed(2) + 'M';
+    if (usd >= 1e3)  return prefix + (usd / 1e3).toFixed(2) + 'K';
+    return prefix + usd.toFixed(2);
   }
 
   formatNumber(n, prefix = '') {

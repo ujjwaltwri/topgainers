@@ -96,7 +96,7 @@ class Table {
 
       tr.innerHTML = `
         <td class="text-tertiary" style="display:flex; align-items:center; gap:8px;">
-          <input type="checkbox" class="row-checkbox" value="${r.ticker}" data-name="${r.name}" data-sector="${r.sector}" data-pct="${r.pct_change}" data-mcap="${this.app.formatNumber(r.market_cap, r.currency ? r.currency + ' ' : '')}" data-pe="${r.pe_ratio}" data-vol="${r.volume_ratio}">
+          <input type="checkbox" class="row-checkbox" value="${r.ticker}" data-name="${r.name}" data-sector="${r.sector}" data-pct="${r.pct_change}" data-mcap="${this.app.formatMarketCap(r.market_cap, r.currency)}" data-pe="${r.pe_ratio}" data-vol="${r.volume_ratio}">
           ${offset + i + 1}
         </td>
         <td>
@@ -110,7 +110,7 @@ class Table {
         <td class="text-right col-rsi"><span class="${rsiClass}">${rsiStr}</span></td>
         <td class="text-right col-volratio"><span class="${volClass}">${volStr}</span></td>
         <td class="text-right font-mono" id="price-${r.ticker}" data-raw="${r.end_price}">${this.formatWithCommas(r.end_price, r.currency)}</td>
-        <td class="text-right font-mono">${this.app.formatNumber(r.market_cap, r.currency ? r.currency + ' ' : '')}</td>
+        <td class="text-right font-mono">${this.app.formatMarketCap(r.market_cap, r.currency)}</td>
         <td class="text-center"><canvas width="100" height="28" class="sparkline trend-canvas" data-ticker="${r.ticker}" data-pct="${r.pct_change || 0}"></canvas></td>
         <td class="text-center watchlist-star ${wlClass}" data-ticker="${r.ticker}">${watchlistIcon}</td>
       `;
