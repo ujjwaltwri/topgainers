@@ -62,7 +62,14 @@ window.SupabaseAPI = {
     query = query.not(sortCol, 'is', null).order(sortCol, { ascending, nullsFirst: false });
     query = query.range(offset, offset + limit - 1);
     
-    const { data, error } = await query;
+    let { data, error } = await query;
+    // Retry once on timeout — the index may not be warm
+    if (error && error.message && error.message.includes('timeout')) {
+      console.warn('Query timed out, retrying once...');
+      const retry = await query;
+      data = retry.data;
+      error = retry.error;
+    }
     if (error) {
         console.error('Supabase query error:', error);
         throw error;
