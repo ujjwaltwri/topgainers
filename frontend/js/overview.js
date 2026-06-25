@@ -169,8 +169,8 @@ class Overview {
   updateTimestamp() {
     if (this.data.stats && this.data.stats.last_updated) {
       const date = new Date(this.data.stats.last_updated);
-      document.getElementById('last-updated-time').textContent = 'Updated ' + this.timeAgo(date);
-      document.getElementById('data-timestamp').textContent = 'As of ' + date.toLocaleString();
+      const ts = document.getElementById('data-timestamp');
+      if (ts) ts.textContent = 'As of ' + date.toLocaleString();
     }
   }
 
