@@ -731,7 +731,12 @@ class RealPipeline:
             info = yf.Ticker(ticker).info
             if not info or not isinstance(info, dict):
                 return defaults
-            raw_name = info.get('longName') or info.get('shortName')
+            long_name = info.get('longName')
+            short_name = info.get('shortName')
+            # Reject shortName if it looks like a raw ticker (no spaces, all caps/digits)
+            if short_name and re.match(r'^[A-Z0-9.\-]+$', short_name) and ' ' not in short_name:
+                short_name = None
+            raw_name = long_name or short_name
             defaults['name'] = self._translate_if_foreign(raw_name)
             defaults['sector'] = info.get('sector')
             defaults['industry'] = info.get('industry')
@@ -1089,9 +1094,13 @@ class RealPipeline:
                 yf_name = info['name']
                 if yf_name and ',' in yf_name and ' ' not in yf_name:
                     yf_name = None
-                    
-                # Prefer yfinance name (real company name), then meta name, then ticker
-                final_name = yf_name or meta.get('name') or ticker
+                # Also reject names that look like raw tickers (no spaces, all caps/digits)
+                if yf_name and re.match(r'^[A-Z0-9.\-]+$', yf_name) and ' ' not in yf_name:
+                    yf_name = None
+
+                # Use yfinance name if we got one; otherwise leave name as NULL so the
+                # existing DB value is preserved on upsert rather than overwriting with ticker
+                final_name = yf_name or None
                 
                 stock_rows.append({
                         'ticker': ticker,
@@ -1101,8 +1110,8 @@ class RealPipeline:
                         'country': info.get('info_country') or meta['country'],
                         'exchange': meta['exchange'],
                         'region': meta['region'],
-                        'market_cap': info['market_cap'] * self.fx_rates.get(info.get('currency') or meta['currency'], 1.0) if info['market_cap'] else None,
-                        'market_cap_tier': get_market_cap_tier(info['market_cap'] * self.fx_rates.get(info.get('currency') or meta['currency'], 1.0) if info['market_cap'] else None) if info.get('market_cap') else None,
+                        'market_cap': info['market_cap'],
+                        'market_cap_tier': get_market_cap_tier(mcap_usd) if info.get('market_cap') else None,
                         'currency': meta['currency'],
                         'ipo_date': None,
                         'pe_ratio': info['pe_ratio'],
@@ -1136,9 +1145,11 @@ class RealPipeline:
                 if stock_rows:
                     # Clean NaNs to None for JSON serialization
                     for row in stock_rows:
-                        for k, v in row.items():
+                        for k, v in list(row.items()):
                             if pd.isna(v): row[k] = None
-                    self.supabase.table('stocks').upsert(stock_rows).execute()
+                    # Strip None values so upsert doesn't overwrite existing good data with NULL
+                    cleaned = [{k: v for k, v in row.items() if v is not None} for row in stock_rows]
+                    self.supabase.table('stocks').upsert(cleaned).execute()
 
                 # if all_prices:
                 #     prices_df = pd.concat(all_prices, ignore_index=True)
