@@ -8,16 +8,9 @@
   <link rel='preconnect' href='https://fonts.googleapis.com'>
   <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap' rel='stylesheet'>
   <link rel='stylesheet' href='css/styles.css'>
-  <!-- Lightweight Charts -->
   <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
-  <!-- Supabase -->
   <script src="js/supabase.js"></script>
   <style>
-    /* ═══════════════════════════════════════════════════════════════
-       OVERVIEW PAGE — ADDITIONAL STYLES
-       ═══════════════════════════════════════════════════════════════ */
-
-    /* ──────────── OVERVIEW LAYOUT ──────────── */
     .overview-container {
       margin-top: 96px;
       padding: var(--space-xl) var(--space-lg);
@@ -28,7 +21,7 @@
       z-index: 1;
     }
 
-    /* ──────────── PAGE TITLE ROW ──────────── */
+    /* ── Page title row ── */
     .page-title-row {
       display: flex;
       align-items: center;
@@ -37,62 +30,36 @@
       flex-wrap: wrap;
       gap: var(--space-md);
     }
-    .page-title {
-      display: flex;
-      align-items: center;
-      gap: var(--space-md);
-    }
-    .page-title h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--text-primary);
-    }
+    .page-title { display: flex; align-items: center; gap: var(--space-md); }
+    .page-title h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; color: var(--text-primary); }
     .page-title .subtitle {
-      font-size: 0.82rem;
-      color: var(--text-tertiary);
-      padding: 4px 12px;
-      background: var(--bg-secondary);
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-subtle);
+      font-size: 0.82rem; color: var(--text-tertiary);
+      padding: 4px 12px; background: var(--bg-secondary);
+      border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);
     }
 
-    /* ──────────── PERIOD SELECTOR ──────────── */
+    /* ── Period selector ── */
     .period-selector {
-      display: flex;
-      gap: 4px;
-      padding: 3px;
-      background: var(--bg-secondary);
-      border-radius: var(--radius-md);
+      display: flex; gap: 4px; padding: 3px;
+      background: var(--bg-secondary); border-radius: var(--radius-md);
       border: 1px solid var(--border-subtle);
     }
     .period-btn {
-      padding: 7px 14px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      font-family: var(--font-mono);
-      background: transparent;
-      border: none;
-      border-radius: var(--radius-sm);
-      color: var(--text-tertiary);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-      letter-spacing: 0.3px;
+      padding: 7px 14px; font-size: 0.78rem; font-weight: 600;
+      font-family: var(--font-mono); background: transparent; border: none;
+      border-radius: var(--radius-sm); color: var(--text-tertiary);
+      cursor: pointer; transition: all var(--transition-fast); letter-spacing: 0.3px;
     }
-    .period-btn:hover {
-      color: var(--text-primary);
-      background: var(--bg-tertiary);
-    }
+    .period-btn:hover { color: var(--text-primary); background: var(--bg-tertiary); }
     .period-btn.active {
-      background: var(--accent-purple);
-      color: #fff;
-      box-shadow: 0 0 12px var(--accent-purple-glow), 0 2px 8px rgba(123, 97, 255, 0.2);
+      background: var(--accent-purple); color: #fff;
+      box-shadow: 0 0 12px var(--accent-purple-glow), 0 2px 8px rgba(123,97,255,0.2);
     }
 
-    /* ──────────── SUMMARY CARDS ──────────── */
+    /* ── Summary cards ── */
     .summary-cards {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       gap: var(--space-md);
       margin-bottom: var(--space-xl);
     }
@@ -103,48 +70,44 @@
       border: 1px solid var(--glass-border);
       border-radius: var(--radius-lg);
       padding: var(--space-lg);
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
       transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
     }
-    .summary-card:hover {
-      border-color: var(--border-medium);
-      box-shadow: var(--shadow-lg);
-      transform: translateY(-2px);
-    }
+    .summary-card:hover { border-color: var(--border-medium); box-shadow: var(--shadow-lg); transform: translateY(-2px); }
     .summary-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 3px;
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 3px;
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     }
     .summary-card:nth-child(1)::before { background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); }
     .summary-card:nth-child(2)::before { background: linear-gradient(90deg, var(--gain-primary), var(--accent-cyan)); }
     .summary-card:nth-child(3)::before { background: linear-gradient(90deg, var(--gain-primary), #00d4aa); }
     .summary-card:nth-child(4)::before { background: linear-gradient(90deg, var(--loss-primary), #ff4488); }
+    .summary-card:nth-child(5)::before { background: linear-gradient(90deg, #7b61ff, #00d4aa); }
+    .summary-card:nth-child(6)::before { background: linear-gradient(90deg, #f5c842, var(--loss-primary)); }
 
-    .summary-card .card-icon { font-size: 1.5rem; margin-bottom: var(--space-sm); opacity: 0.8; }
     .summary-card .card-label {
-      font-size: 0.7rem;
-      color: var(--text-tertiary);
-      text-transform: uppercase;
-      letter-spacing: 0.7px;
-      font-weight: 600;
-      margin-bottom: 6px;
+      font-size: 0.68rem; color: var(--text-tertiary); text-transform: uppercase;
+      letter-spacing: 0.7px; font-weight: 600; margin-bottom: 8px;
     }
     .summary-card .card-value {
-      font-family: var(--font-mono);
-      font-size: 1.6rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      line-height: 1.1;
-      margin-bottom: 4px;
+      font-family: var(--font-mono); font-size: 1.45rem; font-weight: 700;
+      letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .summary-card .card-sub { font-size: 0.75rem; color: var(--text-secondary); }
+    .summary-card .card-sub { font-size: 0.72rem; color: var(--text-secondary); }
 
-    /* ──────────── SECTION CONTAINERS ──────────── */
+    /* breadth bar inside card */
+    .breadth-bar {
+      margin-top: 10px; height: 5px; border-radius: 3px;
+      background: rgba(245,0,79,0.25); overflow: hidden;
+    }
+    .breadth-bar-fill {
+      height: 100%; border-radius: 3px; background: var(--gain-primary);
+      transition: width 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    /* ── Viz sections ── */
     .viz-section {
       margin-bottom: var(--space-xl);
       background: var(--bg-glass);
@@ -156,237 +119,195 @@
       overflow: hidden;
       animation: slideInUp 0.5s ease-out both;
     }
-    .viz-section:nth-child(2) { animation-delay: 0.1s; }
-    .viz-section:nth-child(3) { animation-delay: 0.2s; }
-    .viz-section:nth-child(4) { animation-delay: 0.3s; }
-    .viz-section:nth-child(5) { animation-delay: 0.4s; }
-
     .viz-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       padding: var(--space-lg) var(--space-xl);
       border-bottom: 1px solid var(--border-subtle);
     }
     .viz-header h2 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
+      font-size: 1.05rem; font-weight: 700; letter-spacing: -0.3px;
+      display: flex; align-items: center; gap: var(--space-sm);
     }
     .viz-header .viz-badge {
-      font-size: 0.68rem;
-      font-family: var(--font-mono);
-      padding: 3px 10px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      color: var(--text-secondary);
-      font-weight: 500;
+      font-size: 0.68rem; font-family: var(--font-mono);
+      padding: 3px 10px; background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle); border-radius: 20px;
+      color: var(--text-secondary); font-weight: 500;
     }
-
     .viz-body { padding: var(--space-lg); }
 
-    /* ──────────── TREEMAP ──────────── */
+    /* ── Two-column row ── */
+    .two-col-row {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-xl);
+      align-items: start;
+    }
+    .two-col-row .viz-section { margin-bottom: 0; }
+
+    /* ── Top Movers ── */
+    .movers-tabs {
+      display: flex; gap: 2px; margin-bottom: var(--space-md);
+      border-bottom: 1px solid var(--border-subtle); padding-bottom: 0;
+    }
+    .movers-tab {
+      padding: 6px 16px; font-size: 0.78rem; font-weight: 600;
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      cursor: pointer; color: var(--text-tertiary); transition: all var(--transition-fast);
+      margin-bottom: -1px;
+    }
+    .movers-tab.active { color: var(--text-primary); border-bottom-color: var(--accent-purple); }
+    .mover-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle); margin-bottom: 6px;
+      background: var(--bg-secondary); cursor: pointer;
+      transition: border-color var(--transition-fast), background var(--transition-fast);
+    }
+    .mover-item:hover { border-color: var(--border-medium); background: var(--bg-tertiary); }
+    .mover-item:last-child { margin-bottom: 0; }
+    .mover-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .mover-rank {
+      font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700;
+      color: var(--text-tertiary); width: 18px; flex-shrink: 0;
+    }
+    .mover-info { min-width: 0; }
+    .mover-ticker { font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem; color: var(--text-primary); }
+    .mover-name { font-size: 0.72rem; color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+    .mover-right { text-align: right; flex-shrink: 0; }
+    .mover-pct { font-family: var(--font-mono); font-weight: 700; font-size: 0.9rem; }
+    .mover-sector { font-size: 0.68rem; color: var(--text-tertiary); }
+
+    /* ── Sector chart ── */
+    .sector-chart-container { width: 100%; position: relative; }
+    .sector-chart-container canvas { width: 100%; display: block; }
+
+    /* ── Treemap ── */
     .treemap-container {
-      position: relative;
-      width: 100%;
-      height: 520px;
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-subtle);
+      position: relative; width: 100%; height: 520px;
+      border-radius: var(--radius-md); overflow: hidden;
+      background: var(--bg-secondary); border: 1px solid var(--border-subtle);
     }
     .treemap-rect {
-      position: absolute;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      cursor: pointer;
-      transition: filter var(--transition-fast), z-index 0s;
-      border: 1px solid rgba(0, 0, 0, 0.25);
-      text-align: center;
-      padding: 4px;
+      position: absolute; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; overflow: hidden;
+      cursor: pointer; transition: filter var(--transition-fast), z-index 0s;
+      border: 1px solid rgba(0,0,0,0.25); text-align: center; padding: 4px;
     }
-    .treemap-rect:hover {
-      filter: brightness(1.25);
-      z-index: 10;
-      border-color: rgba(255, 255, 255, 0.3);
-    }
+    .treemap-rect:hover { filter: brightness(1.25); z-index: 10; border-color: rgba(255,255,255,0.3); }
     .treemap-rect .tm-ticker {
-      font-family: var(--font-mono);
-      font-weight: 700;
-      font-size: 0.78rem;
-      color: #fff;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
+      font-family: var(--font-mono); font-weight: 700; font-size: 0.78rem;
+      color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+      line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
     }
     .treemap-rect .tm-change {
-      font-family: var(--font-mono);
-      font-weight: 600;
-      font-size: 0.68rem;
-      color: rgba(255, 255, 255, 0.85);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      font-family: var(--font-mono); font-weight: 600; font-size: 0.68rem;
+      color: rgba(255,255,255,0.85); text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
-
-    /* Treemap tooltip */
     .tm-tooltip {
-      position: fixed;
-      z-index: 9999;
-      pointer-events: none;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-medium);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-xl);
-      padding: 12px 16px;
-      min-width: 220px;
-      opacity: 0;
-      transform: translateY(4px);
+      position: fixed; z-index: 9999; pointer-events: none;
+      background: var(--bg-elevated); border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md); box-shadow: var(--shadow-xl);
+      padding: 12px 16px; min-width: 220px;
+      opacity: 0; transform: translateY(4px);
       transition: opacity 0.15s ease, transform 0.15s ease;
     }
     .tm-tooltip.visible { opacity: 1; transform: translateY(0); }
     .tm-tooltip .tt-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 2px; color: var(--text-primary); }
     .tm-tooltip .tt-ticker { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 8px; }
     .tm-tooltip .tt-row { display: flex; justify-content: space-between; font-size: 0.8rem; padding: 3px 0; border-top: 1px solid var(--border-subtle); }
-    .tm-tooltip .tt-row:first-of-type { border-top: none; }
     .tm-tooltip .tt-label { color: var(--text-secondary); }
     .tm-tooltip .tt-val { font-family: var(--font-mono); font-weight: 600; }
 
-    /* ──────────── SECTOR BAR CHART ──────────── */
-    .sector-chart-container { width: 100%; position: relative; }
-    .sector-chart-container canvas { width: 100%; display: block; }
+    /* ── Exchange grid ── */
+    .exchange-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .exchange-card {
+      padding: 12px 14px; background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+      transition: transform var(--transition-fast), border-color var(--transition-fast);
+    }
+    .exchange-card:hover { transform: translateY(-2px); border-color: var(--border-medium); }
+    .exchange-card .ex-name { font-weight: 700; font-size: 0.8rem; color: var(--text-primary); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .exchange-card .ex-change { font-family: var(--font-mono); font-size: 1.1rem; font-weight: 700; }
+    .exchange-card .ex-meta { display: flex; justify-content: space-between; margin-top: 6px; }
+    .exchange-card .ex-count { font-size: 0.68rem; color: var(--text-tertiary); font-family: var(--font-mono); }
+    .exchange-card .ex-adv { font-size: 0.68rem; font-family: var(--font-mono); }
+    .exchange-card .ex-bar { margin-top: 6px; height: 3px; border-radius: 2px; background: rgba(245,0,79,0.2); overflow: hidden; }
+    .exchange-card .ex-bar-fill { height: 100%; border-radius: 2px; background: var(--gain-primary); }
 
-    /* ──────────── COUNTRY HEATMAP ──────────── */
+    /* ── Country grid ── */
     .country-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
       gap: var(--space-md);
     }
     .country-card {
       padding: var(--space-md) var(--space-lg);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-subtle);
-      position: relative;
-      overflow: hidden;
-      cursor: default;
+      border-radius: var(--radius-md); border: 1px solid var(--border-subtle);
+      position: relative; overflow: hidden; cursor: default;
       transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
       animation: fadeIn 0.4s ease-out both;
     }
     .country-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--border-medium); }
     .country-card .cc-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm); }
-    .country-card .cc-code { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; background: var(--bg-tertiary); border: 1px solid var(--border-subtle); border-radius: 3px; padding: 2px 5px; color: var(--text-secondary); flex-shrink: 0; }
+    .country-card .cc-code {
+      font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.5px; background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle); border-radius: 3px;
+      padding: 2px 5px; color: var(--text-secondary); flex-shrink: 0;
+    }
     .country-card .cc-name { font-weight: 600; font-size: 0.88rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .country-card .cc-change { font-family: var(--font-mono); font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .country-card .cc-change { font-family: var(--font-mono); font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
     .country-card .cc-meta { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-secondary); }
     .country-card .cc-meta span { font-family: var(--font-mono); }
-    .country-card .cc-breadth-bar { margin-top: 8px; height: 4px; border-radius: 2px; background: rgba(245, 0, 79, 0.3); overflow: hidden; }
-    .country-card .cc-breadth-fill { height: 100%; border-radius: 2px; background: var(--gain-primary); transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .country-card .cc-breadth-bar { margin-top: 8px; height: 4px; border-radius: 2px; background: rgba(245,0,79,0.3); overflow: hidden; }
+    .country-card .cc-breadth-fill { height: 100%; border-radius: 2px; background: var(--gain-primary); transition: width 0.8s cubic-bezier(0.16,1,0.3,1); }
 
-    /* ──────────── EXCHANGE PERFORMANCE ──────────── */
-    .exchange-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
-    }
-    .exchange-card {
-      padding: 14px 16px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      cursor: default;
-      transition: transform var(--transition-fast), border-color var(--transition-fast);
-    }
-    .exchange-card:hover { transform: translateY(-2px); border-color: var(--border-medium); }
-    .exchange-card .ex-name { font-weight: 700; font-size: 0.82rem; color: var(--text-primary); margin-bottom: 6px; }
-    .exchange-card .ex-change { font-family: var(--font-mono); font-size: 1.15rem; font-weight: 700; }
-    .exchange-card .ex-count { font-size: 0.7rem; color: var(--text-tertiary); margin-top: 4px; }
-
-    /* ──────────── TOP MOVERS WIDGET ──────────── */
-    .top-movers-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-lg);
-    }
-    .top-movers-col h3 { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
-    .mover-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-subtle);
-      margin-bottom: 6px;
-      background: var(--bg-secondary);
-      cursor: pointer;
-      transition: border-color var(--transition-fast);
-    }
-    .mover-item:hover { border-color: var(--border-medium); }
-    .mover-ticker { font-family: var(--font-mono); font-weight: 700; font-size: 0.82rem; color: var(--text-primary); }
-    .mover-name { font-size: 0.75rem; color: var(--text-tertiary); }
-    .mover-pct { font-family: var(--font-mono); font-weight: 700; font-size: 0.9rem; }
-
-    /* ──────────── LOADING STATES ──────────── */
+    /* ── Loading ── */
     .loading-overlay {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 200px;
-      color: var(--text-tertiary);
-      font-size: 0.9rem;
-      gap: var(--space-sm);
+      display: flex; align-items: center; justify-content: center;
+      min-height: 200px; color: var(--text-tertiary); font-size: 0.9rem; gap: var(--space-sm);
     }
     .loading-overlay .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid var(--border-medium);
-      border-top-color: var(--accent-purple);
-      border-radius: 50%;
+      width: 20px; height: 20px; border: 2px solid var(--border-medium);
+      border-top-color: var(--accent-purple); border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ──────────── RESPONSIVE ──────────── */
-    @media (max-width: 1024px) {
-      .summary-cards { grid-template-columns: repeat(2, 1fr); }
-      .treemap-container { height: 400px; }
-      .overview-container { padding: var(--space-lg) var(--space-md); }
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      .summary-cards { grid-template-columns: repeat(3, 1fr); }
+      .two-col-row { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
-      .summary-cards { grid-template-columns: 1fr 1fr; }
+      .summary-cards { grid-template-columns: repeat(2, 1fr); }
       .page-title-row { flex-direction: column; align-items: flex-start; }
       .period-selector { flex-wrap: wrap; }
       .treemap-container { height: 350px; }
       .country-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
-      .header-nav { margin-left: var(--space-sm); }
-      .nav-link { padding: 5px 10px; font-size: 0.75rem; }
-      .top-movers-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 480px) {
-      .summary-cards { grid-template-columns: 1fr; }
-      .treemap-container { height: 300px; }
+      .summary-cards { grid-template-columns: 1fr 1fr; }
+      .treemap-container { height: 280px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- GLOBAL INDEX MARQUEE -->
   <div class="marquee-container" id="global-marquee">
     <div class="marquee-content" id="marquee-content">
       <span>Loading global market data...</span>
     </div>
   </div>
-  <!-- HEADER -->
+
   <header class="header">
     <a href="/" class="logo"><img src="images/logo.png" alt="TopGainers Logo" class="logo-img"> TopGainers</a>
-
     <nav class="header-nav">
       <a href="/" class="nav-link">Dashboard</a>
       <a href="/overview.html" class="nav-link active">
@@ -394,33 +315,23 @@
         Overview
       </a>
     </nav>
-
     <div class="search-container">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       <input type="text" id="stock-search" placeholder="Search stocks or tickers…" autocomplete="off">
       <div id="search-results" class="search-results hidden"></div>
     </div>
-
     <div id="market-clocks" class="market-clocks"></div>
-
     <div class="header-actions">
-      <div class="pipeline-status">
-        <span class="status-dot"></span>
-        <span>Live</span>
-      </div>
-      <div class="last-updated">
-        <span id="last-updated-time">Updating...</span>
-      </div>
+      <div class="pipeline-status"><span class="status-dot"></span><span>Live</span></div>
+      <div class="last-updated"><span id="last-updated-time">Updating...</span></div>
       <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
       </button>
     </div>
   </header>
 
-  <!-- MAIN CONTENT -->
   <main class="overview-container">
 
-    <!-- Page Title & Period Selector -->
     <div class="page-title-row">
       <div class="page-title">
         <h1>Market Overview</h1>
@@ -437,54 +348,75 @@
       </div>
     </div>
 
-    <!-- Summary Cards -->
+    <!-- Summary Cards — 6 across -->
     <div class="summary-cards">
       <div class="summary-card">
         <div class="card-label">Total Stocks Tracked</div>
         <div class="card-value" id="card-total">—</div>
-        <div class="card-sub" id="card-total-sub">across all exchanges</div>
+        <div class="card-sub">across all exchanges</div>
       </div>
       <div class="summary-card">
         <div class="card-label">Market Breadth</div>
         <div class="card-value" id="card-breadth">—</div>
-        <div class="card-sub" id="card-breadth-sub">stocks positive</div>
+        <div class="card-sub" id="card-breadth-sub">stocks advancing</div>
+        <div class="breadth-bar"><div class="breadth-bar-fill" id="card-breadth-bar" style="width:0%"></div></div>
       </div>
       <div class="summary-card">
         <div class="card-label">Best Sector</div>
-        <div class="card-value text-gain" id="card-best-sector">—</div>
+        <div class="card-value text-gain" id="card-best-sector" style="font-size:1.1rem">—</div>
         <div class="card-sub" id="card-best-sector-sub"></div>
       </div>
       <div class="summary-card">
         <div class="card-label">Worst Sector</div>
-        <div class="card-value text-loss" id="card-worst-sector">—</div>
+        <div class="card-value text-loss" id="card-worst-sector" style="font-size:1.1rem">—</div>
         <div class="card-sub" id="card-worst-sector-sub"></div>
+      </div>
+      <div class="summary-card">
+        <div class="card-label">Best Country</div>
+        <div class="card-value text-gain" id="card-best-country" style="font-size:1.1rem">—</div>
+        <div class="card-sub" id="card-best-country-sub"></div>
+      </div>
+      <div class="summary-card">
+        <div class="card-label">Worst Country</div>
+        <div class="card-value text-loss" id="card-worst-country" style="font-size:1.1rem">—</div>
+        <div class="card-sub" id="card-worst-country-sub"></div>
       </div>
     </div>
 
-    <!-- Section 0: Top Movers -->
-    <div class="viz-section">
-      <div class="viz-header">
-        <h2>Today's Top Movers</h2>
-        <span class="viz-badge" id="movers-badge">Loading…</span>
-      </div>
-      <div class="viz-body">
-        <div class="top-movers-grid">
-          <div class="top-movers-col">
-            <h3 style="color: var(--gain-primary);">▲ Top Gainers</h3>
-            <div id="movers-gainers"></div>
+    <!-- Two-column: Top Movers + Sector Chart -->
+    <div class="two-col-row">
+      <div class="viz-section">
+        <div class="viz-header">
+          <h2 id="movers-title">Top Movers</h2>
+          <span class="viz-badge" id="movers-badge">Loading…</span>
+        </div>
+        <div class="viz-body">
+          <div class="movers-tabs">
+            <button class="movers-tab active" id="tab-gainers" onclick="window.overview.showMoversTab('gainers')">▲ Gainers</button>
+            <button class="movers-tab" id="tab-losers" onclick="window.overview.showMoversTab('losers')">▼ Losers</button>
           </div>
-          <div class="top-movers-col">
-            <h3 style="color: var(--loss-primary);">▼ Top Losers</h3>
-            <div id="movers-losers"></div>
+          <div id="movers-gainers"></div>
+          <div id="movers-losers" style="display:none"></div>
+        </div>
+      </div>
+
+      <div class="viz-section">
+        <div class="viz-header">
+          <h2>Sector Performance</h2>
+          <span class="viz-badge" id="sector-badge">Loading…</span>
+        </div>
+        <div class="viz-body">
+          <div class="sector-chart-container" id="sector-chart-container">
+            <canvas id="sector-canvas"></canvas>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Section 1: Market Treemap -->
+    <!-- Full-width: Treemap -->
     <div class="viz-section">
       <div class="viz-header">
-        <h2>Market Treemap</h2>
+        <h2>Market Treemap — Top 100 by Market Cap</h2>
         <span class="viz-badge" id="treemap-badge">Loading…</span>
       </div>
       <div class="viz-body">
@@ -494,55 +426,41 @@
       </div>
     </div>
 
-    <!-- Section 2: Sector Performance -->
-    <div class="viz-section">
-      <div class="viz-header">
-        <h2>Sector Performance</h2>
-        <span class="viz-badge" id="sector-badge">Loading…</span>
-      </div>
-      <div class="viz-body">
-        <div class="sector-chart-container" id="sector-chart-container">
-          <canvas id="sector-canvas"></canvas>
+    <!-- Two-column: Exchange + Country -->
+    <div class="two-col-row" style="grid-template-columns: 1fr 1fr;">
+      <div class="viz-section">
+        <div class="viz-header">
+          <h2>Exchange Performance</h2>
+          <span class="viz-badge" id="exchange-badge">Loading…</span>
+        </div>
+        <div class="viz-body">
+          <div class="exchange-grid" id="exchange-grid">
+            <div class="loading-overlay"><div class="spinner"></div>Loading…</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Section 3: Exchange Performance -->
-    <div class="viz-section">
-      <div class="viz-header">
-        <h2>Exchange Performance</h2>
-        <span class="viz-badge" id="exchange-badge">Loading…</span>
-      </div>
-      <div class="viz-body">
-        <div class="exchange-grid" id="exchange-grid">
-          <div class="loading-overlay"><div class="spinner"></div>Loading exchanges…</div>
+      <div class="viz-section">
+        <div class="viz-header">
+          <h2>Country Performance</h2>
+          <span class="viz-badge" id="country-badge">Loading…</span>
         </div>
-      </div>
-    </div>
-
-    <!-- Section 4: Country Heatmap -->
-    <div class="viz-section">
-      <div class="viz-header">
-        <h2>Country Performance</h2>
-        <span class="viz-badge" id="country-badge">Loading…</span>
-      </div>
-      <div class="viz-body">
-        <div class="country-grid" id="country-grid">
-          <div class="loading-overlay"><div class="spinner"></div>Loading countries…</div>
+        <div class="viz-body">
+          <div class="country-grid" id="country-grid">
+            <div class="loading-overlay"><div class="spinner"></div>Loading…</div>
+          </div>
         </div>
       </div>
     </div>
 
   </main>
 
-  <!-- FOOTER -->
   <footer class="app-footer">
     <span>© 2026 TopGainers — Global Stock Intelligence</span> ·
     <span>Data sourced from <a href="https://finance.yahoo.com" target="_blank" rel="noopener">Yahoo Finance</a></span> ·
     <span>Not financial advice</span>
   </footer>
 
-  <!-- Treemap Tooltip -->
   <div class="tm-tooltip" id="tm-tooltip">
     <div class="tt-name" id="tt-name"></div>
     <div class="tt-ticker" id="tt-ticker"></div>
@@ -552,8 +470,8 @@
     <div class="tt-row"><span class="tt-label">Volume Ratio</span><span class="tt-val" id="tt-volume"></span></div>
   </div>
 
-  <script src="js/supabase-api.js?v=20"></script>
-  <script src="js/search.js?v=20"></script>
-  <script src="js/overview.js?v=20"></script>
+  <script src="js/supabase-api.js?v=21"></script>
+  <script src="js/search.js?v=21"></script>
+  <script src="js/overview.js?v=21"></script>
 </body>
 </html>
