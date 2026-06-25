@@ -86,8 +86,8 @@ class App {
           ? utcMins >= s.open && utcMins < s.close
           : utcMins >= s.open || utcMins < s.close
       );
-      const cls = isOpen ? 'open' : 'closed';
-      return `<div class="market-clock-item ${cls}"><span class="market-clock-dot"></span>${s.name} ${isOpen ? 'OPEN' : 'CLOSED'}</div>`;
+      // Open markets: show prominently. Closed: just a dim label, no "CLOSED" noise.
+      return `<div class="market-clock-item ${isOpen ? 'open' : 'closed'}"><span class="market-clock-dot"></span>${s.name}${isOpen ? ' OPEN' : ''}</div>`;
     }).join('');
   }
 
@@ -1024,15 +1024,17 @@ class App {
     const diff = (now - d) / 1000;
     if (diff < 60) return 'just now';
     if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
-    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
-    return Math.floor(diff / 86400) + 'd ago';
+    // For anything older than 1h, show the actual date/time so it's not vague
+    const today = now.toDateString() === d.toDateString();
+    if (today) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
   startLiveRefresh() {
     this._stalenessInterval = setInterval(() => {
       const el = document.getElementById('last-updated-time');
       if (el && this._lastUpdatedAt) {
-        el.textContent = 'Updated ' + this.timeAgo(this._lastUpdatedAt);
+        el.textContent = 'Data: ' + this.timeAgo(this._lastUpdatedAt);
       }
     }, 60000);
 
@@ -1059,7 +1061,7 @@ class App {
       const el = document.getElementById('last-updated-time');
       if (el && data.last_updated) {
         this._lastUpdatedAt = data.last_updated;
-        el.textContent = 'Updated ' + this.timeAgo(data.last_updated);
+        el.textContent = 'Data: ' + this.timeAgo(data.last_updated);
       }
     } catch (e) {
       console.error(e);

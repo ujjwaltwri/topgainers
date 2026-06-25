@@ -320,7 +320,7 @@ body {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-md);
 }
 
 .pipeline-status {
@@ -779,35 +779,38 @@ tr.flash-row {
 .market-clocks {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 .market-clock-item {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 8px;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  padding: 3px 7px;
   border-radius: var(--rad-full);
   background: var(--bg-raised);
   border: 1px solid var(--border-subtle);
   white-space: nowrap;
+  letter-spacing: 0.3px;
 }
 .market-clock-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 .market-clock-item.open .market-clock-dot {
   background: var(--gain-primary);
   animation: pulse 2s ease-in-out infinite;
 }
 .market-clock-item.closed .market-clock-dot {
-  background: var(--ink-tertiary);
+  background: var(--ink-quaternary);
 }
 .market-clock-item.open { color: var(--gain-primary); border-color: rgba(16, 185, 129, 0.2); background: var(--trade-buy-bg); }
-.market-clock-item.closed { color: var(--ink-tertiary); }
+.market-clock-item.closed { color: var(--ink-quaternary); background: transparent; border-color: transparent; padding-left: 0; padding-right: 0; }
 
 /* ──────────── ADVANCE/DECLINE BAR ──────────── */
 .ad-bar-container {

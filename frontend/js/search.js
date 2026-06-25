@@ -20,7 +20,7 @@ class Search {
   }
 
   static async search(query) {
-    if (query.length < 2) {
+    if (query.length < 3) {
       this.hideResults();
       return;
     }

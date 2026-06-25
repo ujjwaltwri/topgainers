@@ -213,7 +213,7 @@ window.SupabaseAPI = {
     }
   },
   
-  async searchStocks(query, limit = 10) {
+  async searchStocks(query, limit = 6) {
     const { data, error } = await supabaseClient
       .from('stocks')
       .select('ticker, name, sector, country, exchange, market_cap')

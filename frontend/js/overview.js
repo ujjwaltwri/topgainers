@@ -48,7 +48,7 @@ class Overview {
           ? utcMins >= s.open && utcMins < s.close
           : utcMins >= s.open || utcMins < s.close
       );
-      return `<div class="market-clock-item ${isOpen ? 'open' : 'closed'}"><span class="market-clock-dot"></span>${s.name} ${isOpen ? 'OPEN' : 'CLOSED'}</div>`;
+      return `<div class="market-clock-item ${isOpen ? 'open' : 'closed'}"><span class="market-clock-dot"></span>${s.name}${isOpen ? ' OPEN' : ''}</div>`;
     }).join('');
   }
 
