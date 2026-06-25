@@ -582,7 +582,7 @@ class App {
     document.getElementById('modal-exchange').textContent = s.exchange || '—';
 
     document.getElementById('modal-price').textContent = this.formatPrice(g.end_price, s.currency);
-    document.getElementById('modal-mcap').textContent = this.formatNumber(s.market_cap, '$');
+    document.getElementById('modal-mcap').textContent = this.formatNumber(s.market_cap, s.currency ? s.currency + ' ' : '');
     document.getElementById('modal-pe').textContent = s.pe_ratio ? s.pe_ratio.toFixed(2) : '—';
     document.getElementById('modal-rsi').textContent = g.rsi_14 ? g.rsi_14.toFixed(1) : '—';
 
@@ -722,7 +722,8 @@ class App {
   populateFundamentals(s) {
     const fmt = (v, suffix = '') => (v !== null && v !== undefined) ? (typeof v === 'number' ? v.toFixed(2) + suffix : v) : '—';
     const fmtPct = v => (v !== null && v !== undefined) ? (v * 100).toFixed(1) + '%' : '—';
-    const fmtB = v => (v !== null && v !== undefined) ? this.formatNumber(v, '$') : '—';
+    const cur = s.currency ? s.currency + ' ' : '';
+    const fmtB = v => (v !== null && v !== undefined) ? this.formatNumber(v, cur) : '—';
 
     const set = (id, val, cls = '') => {
       const el = document.getElementById(id);
