@@ -50,7 +50,7 @@ def get_open_market_groups():
         if is_open:
             open_groups.extend(REGION_TO_GROUPS.get(region, []))
 
-    return list(dict.fromkeys(open_groups))  # deduplicate, preserve order
+    return list(dict.fromkeys(open_groups))  
 
 
 def main():
